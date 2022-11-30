@@ -11,5 +11,5 @@ $Modules = Get-ChildItem -Path "$PSScriptRoot\..\Modules" -Recurse | Where-Objec
 
 # Import Modules
 $Modules | ForEach-Object {
-    New-Item -ItemType SymbolicLink -Path "$HOME\Documents\PowerShell\Modules\$($_.BaseName)" -Target $_.DirectoryName -Force -Verbose
+    New-Item -ItemType SymbolicLink -Path "$HOME\Documents\PowerShell\Modules\$($_.BaseName)" -Target $_.DirectoryName -Force
 }
