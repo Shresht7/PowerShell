@@ -21,14 +21,12 @@
 function Watch-Command(
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [scriptblock] $ScriptBlock,
-
     [int32] $Interval = 1,
-
     [switch] $ClearHost
 ) {
     while ($True) {
         if ($ClearHost) { Clear-Host }
         $ScriptBlock.Invoke()
-        Start-Sleep $Interval
+        Start-Sleep -Seconds $Interval
     }
 }
