@@ -22,13 +22,22 @@ function Write-TypeWriter(
     [UInt32] $Speed = 150,
 
     # The minimum time for a keystroke (default: 10ms)
-    [uint] $MinSpeed = 10
+    [uint] $MinSpeed = 10,
+
+    # The list of characters to pause at
+    [string[]] $PauseAt = @(" ", "`n"),
+
+    # The the multiplier to apply when pausing
+    [ValidatePattern("[0-9]+")]
+    [uint] $PauseMultiplier = 3
 ) {
     $Random = New-Object -TypeName System.Random
     $Text -split '' | ForEach-Object {
         $PauseFor = $MinSpeed + $Random.Next($Speed)
-        $PauseFor *= if ($_ -eq ' ') { 5 } else { 1 }
-        Start-Sleep -Milliseconds $($MinSpeed + $Random.Next($Speed))
+        if ($PauseAt -contains $_) {
+            $PauseFor *= $PauseMultiplier
+        }
+        Start-Sleep -Milliseconds $PauseFor
         Write-Host -NoNewline $_
     }
     Write-NewLine
