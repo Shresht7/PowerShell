@@ -1,3 +1,12 @@
+<#
+.SYNOPSIS
+    Links the modules to $PSModulePath
+.DESCRIPTION
+    Creates symlinks for the modules to the $PSModulePath
+.EXAMPLE
+    . .\Link-Modules.ps1
+#>
+
 # Check to see if the script is running as administrator; exit if not
 if (-Not (Test-IsElevated)) {
     Write-Error "Not in Administrator Mode!"
