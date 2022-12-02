@@ -19,13 +19,16 @@ function Write-TypeWriter(
     [string] $Text,
 
     # Speed of the typewriter (150ms by default)
-    [UInt32] $Speed = 150
+    [UInt32] $Speed = 150,
+
+    # The minimum time for a keystroke (default: 10ms)
+    [uint] $MinSpeed = 10
 ) {
     $Random = New-Object -TypeName System.Random
     $Text -split '' | ForEach-Object {
-        $PauseFor = 1 + $Random.Next($Speed)
+        $PauseFor = $MinSpeed + $Random.Next($Speed)
         $PauseFor *= if ($_ -eq ' ') { 5 } else { 1 }
-        Start-Sleep -Milliseconds $(1 + $Random.Next($Speed))
+        Start-Sleep -Milliseconds $($MinSpeed + $Random.Next($Speed))
         Write-Host -NoNewline $_
     }
     Write-NewLine
