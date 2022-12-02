@@ -18,6 +18,9 @@ function Write-TypeWriter(
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [string] $Text,
 
+    # Characters per minute
+    [uint] $CPM = 350,
+
     # Speed of the typewriter (150ms by default)
     [UInt32] $Speed = 150,
 
@@ -31,6 +34,10 @@ function Write-TypeWriter(
     [ValidatePattern("[0-9]+")]
     [uint] $PauseMultiplier = 3
 ) {
+    if ($CPM) {
+        $Speed = (60 * 1000) / $CPM
+    }
+
     $Random = New-Object -TypeName System.Random
     $Text -split '' | ForEach-Object {
         $PauseFor = $MinSpeed + $Random.Next($Speed)
