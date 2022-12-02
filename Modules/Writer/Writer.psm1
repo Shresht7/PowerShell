@@ -1,3 +1,12 @@
+# Import Helpers
+Get-ChildItem -Path "$PSScriptRoot\Helpers" -Filter "*.ps1" | ForEach-Object {
+    . $_.FullName -Force -Verbose
+}
+
+# ----------------
+# Write-TypeWriter
+# ----------------
+
 <#
 .SYNOPSIS
     Write text like a typewriter
@@ -9,7 +18,7 @@ function Write-TypeWriter(
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [string] $Text,
 
-    # Speed of the typewriter (250ms by default)
+    # Speed of the typewriter (150ms by default)
     [UInt32] $Speed = 150
 ) {
     $Random = New-Object -TypeName System.Random
@@ -19,4 +28,5 @@ function Write-TypeWriter(
         Start-Sleep -Milliseconds $(1 + $Random.Next($Speed))
         Write-Host -NoNewline $_
     }
+    Write-NewLine
 }
