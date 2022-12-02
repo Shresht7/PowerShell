@@ -6,10 +6,16 @@
 .EXAMPLE
     New-Screenshot
     Captures a screenshot and saves it to the screenshot folder
+.EXAMPLE
+    New-Screenshot -Open
+    Captures a screenshot and opens it with default application
 #>
 function New-Screenshot(
     [ValidateScript({ Test-Path -Path $_ })]
-    [string] $Folder = "$HOME\Pictures\Screenshots"
+    [string] $Folder = "$HOME\Pictures\Screenshots",
+
+    # Open the screenshot
+    [switch] $Open
 ) {
     Add-Type -AssemblyName System.Windows.Forms
 
@@ -24,4 +30,8 @@ function New-Screenshot(
 
     $ScreenshotBitmap.Save($FilePath)
     $ScreenshotBitmap.Dispose()
+
+    if ($Open) {
+        Invoke-Item -Path $FilePath
+    }
 }
