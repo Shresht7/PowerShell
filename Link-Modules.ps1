@@ -14,7 +14,7 @@ if (-Not (Test-IsElevated)) {
 }
 
 # Paths
-$SOURCE_PATH = "$PSScriptRoot\..\Modules"
+$SOURCE_PATH = "$PSScriptRoot\Modules"
 $DESTINATION_PATH = "$HOME\Documents\PowerShell\Modules"
 
 # Get all Modules

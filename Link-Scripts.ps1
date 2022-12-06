@@ -14,7 +14,7 @@ if (-Not (Test-IsElevated)) {
 }
 
 # Paths
-$SOURCE_PATH = "$PSScriptRoot\..\Scripts"
+$SOURCE_PATH = "$PSScriptRoot\Scripts"
 $DESTINATION_PATH = "$HOME\Scripts"
 
 # Get all Scripts
