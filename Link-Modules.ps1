@@ -13,12 +13,16 @@ if (-Not (Test-IsElevated)) {
     return
 }
 
+# Paths
+$SOURCE_PATH = "$PSScriptRoot\Modules"
+$DESTINATION_PATH = "$HOME\Documents\PowerShell\Modules"
+
 # Get all Modules
-$Modules = Get-ChildItem -Path "$PSScriptRoot\..\Modules" -Recurse | Where-Object {
+$Modules = Get-ChildItem -Path $SOURCE_PATH -Recurse | Where-Object {
     $_.Extension -eq ".psm1"
 }
 
 # Import Modules
 $Modules | ForEach-Object {
-    New-Item -ItemType SymbolicLink -Path "$HOME\Documents\PowerShell\Modules\$($_.BaseName)" -Target $_.DirectoryName -Force
+    New-Item -ItemType SymbolicLink -Path "$DESTINATION_PATH\$($_.BaseName)" -Target $_.DirectoryName -Force
 }
