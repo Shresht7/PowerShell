@@ -16,3 +16,6 @@ function Find-Path(
 }
 
 Set-Alias which Find-Path
+
+Export-ModuleMember -Function Find-Path
+Export-ModuleMember -Alias which

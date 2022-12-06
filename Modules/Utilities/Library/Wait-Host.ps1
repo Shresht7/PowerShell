@@ -11,3 +11,5 @@ function Wait-Host() {
     Write-Output "Press Any Key To Continue ..."
     $null = $Host.Ui.RawUI.ReadKey("Noecho,Includekeydown")
 }
+
+Export-ModuleMember -Function Wait-Host

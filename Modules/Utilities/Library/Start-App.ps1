@@ -19,3 +19,5 @@ function Start-App(
     if (-Not $App) { return }
     Start-Process "explorer.exe" -ArgumentList "shell:AppsFolder\$(($App).AppId)"
 }
+
+Export-ModuleMember -Function Start-App

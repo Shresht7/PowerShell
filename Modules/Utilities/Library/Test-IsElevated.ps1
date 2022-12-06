@@ -20,3 +20,6 @@ function Test-IsElevated {
 }
 
 Set-Alias isAdmin Test-IsElevated
+
+Export-ModuleMember -Function Test-IsElevated
+Export-ModuleMember -Alias isAdmin

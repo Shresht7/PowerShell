@@ -23,3 +23,5 @@ function Invoke-PesterTestSuite {
         Invoke-Pester -Script $_
     }
 }
+
+Export-ModuleMember -Function Invoke-PesterTestSuite
