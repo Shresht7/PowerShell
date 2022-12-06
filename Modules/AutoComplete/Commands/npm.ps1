@@ -1,6 +1,43 @@
+# ===
+# NPM
+# ===
+
+# -------
+# HELPERS
+# -------
+
+# Retrieves package information from the package json
+function Get-PackageJson(
+    [ValidateScript({ Test-Path -Path $_ })]
+    [string]$Path = $PWD.Path
+) {
+    $PackageJson = Join-Path $Path "package.json"
+    return Get-Content $PackageJson -ErrorAction SilentlyContinue | ConvertFrom-Json
+}
+
+# Retrieves the list of npm scripts from the package json
+function Get-NpmScript(
+    [ValidateScript({ Test-Path $_ })]
+    [string]$Path = $PWD.Path
+) {
+    $Package = Get-PackageJson $Path
+
+    if (-Not $Package) { return }
+
+    $Scripts = $Package.scripts
+    | Get-Member -MemberType NoteProperty
+    | Select-Object -Property Name, @{Name = "Script"; Expression = { $Package.scripts.($_.Name) } }
+
+    return $Scripts
+}
+
+# ---------
+# COMPLETER
+# ---------
+
 # TODO: Add the remaining commands as needed
 
-Register-CommandCompleter -Name npm -Tooltip 'Node Package Manager' -Completions @(
+$NPMCommands = @(
     [Completion]::new('audit', 'Run a security audit', @(
             [Completion]::new('fix', 'Apply remediation to the package tree')
             [Completion]::new('signatures', 'Verify the signature of the downloaded packages')
@@ -40,3 +77,5 @@ Register-CommandCompleter -Name npm -Tooltip 'Node Package Manager' -Completions
             [Completion]::new('--registry', 'The base URL of the npm registry (Default: "https://registry.npmjs.org/")')
         ))
 )
+
+Register-CommandCompleter -Name npm -Tooltip 'Node Package Manager' -Completions $NPMCommands
