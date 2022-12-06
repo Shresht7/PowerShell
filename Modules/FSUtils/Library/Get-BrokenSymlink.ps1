@@ -10,11 +10,10 @@
     Get-BrokenSymlinks | Remove-Item -Confirm
     Removes all broken symlinks asking as you go
 #>
-function Get-BrokenSymlinks(
+function Get-BrokenSymlink(
     # The path to look inside of
-    [ValidateScript({ Test-Path -Path $Path })]
-    [string]$Path = ".",
-
+    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [string] $Path = ".",
     # Search recursively
     [switch]$Recurse
 ) {
