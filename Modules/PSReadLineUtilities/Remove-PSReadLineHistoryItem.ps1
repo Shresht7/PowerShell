@@ -41,7 +41,11 @@ function Remove-PSReadLineHistoryItem {
         # Specifies the number of items to remove from the end of the history. The default value is 1.
         [Parameter(ParameterSetName = "Count")]
         [Alias("Last", "Amount")]
-        [uint] $Count = 1
+        [uint] $Count = 1,
+
+        # Removes duplicate items
+        [Parameter(ParameterSetName = "Duplicate")]
+        [switch] $Duplicate
     )
 
     begin {
@@ -56,12 +60,21 @@ function Remove-PSReadLineHistoryItem {
                 foreach ($filter in $Command) {
                     $ReadlineHistory = $ReadlineHistory | Where-Object { $_ -cne $filter }
                 }
+                Write-Verbose "$($Command.Count) commands removed!"
             }
             "Count" {
                 $Length = $PSReadLineHistory.Length
                 $Mark = $Length - $Count
                 # Get everything but the last $Count items (accounting for off-by-one and the current command itself)
                 $PSReadLineHistory = $PSReadLineHistory[0..($Mark - 1)]
+                Write-Verbose "$Mark commands removed!"
+            }
+            "Duplicate" {
+                $originalCount = ($PSReadLineHistory | Measure-Object -Line).Lines
+                $PSReadLineHistory = $PSReadLineHistory | Sort-Object -Unique
+                $finalCount = ($PSReadLineHistory | Measure-Object -Line).Lines
+                $diffCount = $originalCount - $finalCount
+                Write-Verbose "$diffCount duplicate commands removed!"
             }
         }
     }
