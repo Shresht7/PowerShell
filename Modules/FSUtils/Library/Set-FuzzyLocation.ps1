@@ -7,6 +7,3 @@ function Set-FuzzyLocation() {
 }
 
 Set-Alias cdf Set-FuzzyLocation
-
-Export-ModuleMember -Function Set-FuzzyLocation
-Export-ModuleMember -Alias cdf
