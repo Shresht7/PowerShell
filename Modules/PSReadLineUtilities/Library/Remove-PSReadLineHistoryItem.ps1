@@ -50,7 +50,7 @@ function Remove-PSReadLineHistoryItem {
 
     begin {
         # Get the PSReadLineHistory
-        $ReadlineHistory = Get-PSReadLineHistory
+        $PSReadLineHistory = Get-PSReadLineHistory
     }
 	
     process {
@@ -58,7 +58,7 @@ function Remove-PSReadLineHistoryItem {
             "Command" {
                 # Iterate over all items that are marked-for-removal and filter the ReadLineHistory
                 foreach ($filter in $Command) {
-                    $ReadlineHistory = $ReadlineHistory | Where-Object { $_ -cne $filter }
+                    $PSReadLineHistory = $PSReadLineHistory | Where-Object { $_ -cne $filter }
                 }
                 Write-Verbose "$($Command.Count) commands removed!"
             }
@@ -82,7 +82,7 @@ function Remove-PSReadLineHistoryItem {
     end {
         # Set Content of the PSReadLineHistory
         if ($PSCmdlet.ShouldProcess((Get-PSReadLineHistoryPath))) {
-            Set-PSReadLineHistory $ReadlineHistory
+            Set-PSReadLineHistory $PSReadLineHistory
         }
     }
 }
