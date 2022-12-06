@@ -1,3 +1,5 @@
+# Requires-Modules Utilities, FSUtils
+
 <#
 .SYNOPSIS
     Links the modules to $PSModulePath
@@ -26,3 +28,6 @@ $Modules = Get-ChildItem -Path $SOURCE_PATH -Recurse | Where-Object {
 $Modules | ForEach-Object {
     New-Item -ItemType SymbolicLink -Path "$DESTINATION_PATH\$($_.BaseName)" -Target $_.DirectoryName -Force
 }
+
+# Remove Broken Symlinks
+Get-BrokenSymlink -Path $DESTINATION_PATH -Recurse | Remove-Item -Force

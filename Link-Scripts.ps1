@@ -1,3 +1,5 @@
+# Requires-Modules Utilities, FSUtils
+
 <#
 .SYNOPSIS
     Links the scripts to Scripts folder
@@ -26,3 +28,6 @@ $Scripts = Get-ChildItem -Path $SOURCE_PATH -Recurse | Where-Object {
 $Scripts | ForEach-Object {
     New-Item -ItemType SymbolicLink -Path "$DESTINATION_PATH\$($_.Name)" -Target $_.FullName -Force
 }
+
+# Remove Broken Symlinks
+Get-BrokenSymlink -Path $DESTINATION_PATH -Recurse | Remove-Item -Force
