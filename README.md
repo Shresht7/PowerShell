@@ -1,3 +1,3 @@
-# PowerShell Modules
+# PowerShell
 
-A collection of PowerShell Modules.
+A collection of PowerShell Functions, Scripts and Modules.
