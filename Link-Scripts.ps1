@@ -7,7 +7,6 @@
     Creates symbolic links for each script from the local `Scripts` folder to the `$HOME\Scripts` folder
 .EXAMPLE
     . .\Link-Scripts.ps1
-    Invokes this script
 #>
 
 # Check to see if the script is running as administrator; exit if not

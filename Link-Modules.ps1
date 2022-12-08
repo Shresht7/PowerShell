@@ -2,16 +2,16 @@
 
 <#
 .SYNOPSIS
-    Links the modules to $PSModulePath
+    Symlinks modules from the local `Modules` folder to the `$PSModulePath`
 .DESCRIPTION
-    Creates symlinks for the modules to the $PSModulePath
+    Creates symbolic links for each module from the local `Modules` folder to the `$PSModulePath`
 .EXAMPLE
     . .\Link-Modules.ps1
 #>
 
 # Check to see if the script is running as administrator; exit if not
 if (-Not (Test-IsElevated)) {
-    Write-Error "Not in Administrator Mode!"
+    Write-Error "Not in Administrator Mode! Elevated permissions are required to create Symbolic-Links"
     return
 }
 
@@ -20,9 +20,7 @@ $SOURCE_PATH = "$PSScriptRoot\Modules"
 $DESTINATION_PATH = "$HOME\Documents\PowerShell\Modules"
 
 # Get all Modules
-$Modules = Get-ChildItem -Path $SOURCE_PATH -Recurse | Where-Object {
-    $_.Extension -eq ".psm1"
-}
+$Modules = Get-ChildItem -Path $SOURCE_PATH -Filter "*.psm1" -Recurse
 
 # Import Modules
 $Modules | ForEach-Object {
