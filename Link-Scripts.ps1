@@ -2,16 +2,17 @@
 
 <#
 .SYNOPSIS
-    Links the scripts to Scripts folder
+    Symlinks scripts from the local `Scripts` folder to `$HOME\Scripts`
 .DESCRIPTION
-    Creates symlinks for the scripts to the Scripts folder
+    Creates symbolic links for each script from the local `Scripts` folder to the `$HOME\Scripts` folder
 .EXAMPLE
     . .\Link-Scripts.ps1
+    Invokes this script
 #>
 
 # Check to see if the script is running as administrator; exit if not
 if (-Not (Test-IsElevated)) {
-    Write-Error "Not in Administrator Mode!"
+    Write-Error "Not in Administrator Mode! Elevated permissions are required to create Symbolic-Links"
     return
 }
 
@@ -20,14 +21,10 @@ $SOURCE_PATH = "$PSScriptRoot\Scripts"
 $DESTINATION_PATH = "$HOME\Scripts"
 
 # Get all Scripts
-$Scripts = Get-ChildItem -Path $SOURCE_PATH -Recurse | Where-Object {
-    $_.Extension -eq ".ps1"
-}
+$Scripts = Get-ChildItem -Path $SOURCE_PATH -Filter "*.ps1" -Recurse
 
 # Import Scripts
-$Scripts | ForEach-Object {
-    New-Item -ItemType SymbolicLink -Path "$DESTINATION_PATH\$($_.Name)" -Target $_.FullName -Force
-}
+$Scripts.FullName | Connect-Script
 
 # Remove Broken Symlinks
 Get-BrokenSymlink -Path $DESTINATION_PATH -Recurse | Remove-Item -Force
