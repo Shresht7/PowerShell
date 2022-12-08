@@ -1,14 +1,18 @@
+# ------------------
+# Get-ReversedString
+# ------------------
+
 <#
 .SYNOPSIS
     Reverses the string
 .DESCRIPTION
     A simple function to reverse a `String`
-.PARAMETER $Input
-    The string to reverse
 .EXAMPLE
-    Get-ReversedString "Hello World!"
+    Get-ReversedString -String "Hello World!"
+    Return the string "!dlroW olleH"
 #>
 function Get-ReversedString(
+    # The string to reverse
     [Parameter(Mandatory)]
     [string] $String
 ) {
