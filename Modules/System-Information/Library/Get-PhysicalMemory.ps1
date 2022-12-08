@@ -5,7 +5,6 @@
     Returns information about the physical memory (RAM)
 .EXAMPLE
     Get-PhysicalMemory
-    Returns information about the physical memory
 #>
 function Get-PhysicalMemory() {
     $MemoryBanks = Get-WmiObject -Class Win32_PhysicalMemory
