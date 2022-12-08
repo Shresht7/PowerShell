@@ -2,7 +2,7 @@
 .SYNOPSIS
     Get status of the battery
 .DESCRIPTION
-    Get status of the battery like battery percentage and time remaining
+    Get status of the battery like the battery percentage and time remaining
 .EXAMPLE
     Get-BatteryStatus
     Shows information about the battery
