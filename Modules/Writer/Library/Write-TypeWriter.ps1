@@ -6,19 +6,24 @@
 .SYNOPSIS
     Write text like a typewriter
 .DESCRIPTION
-    Writes the given text like a typewriter would
+    Writes the given text to the console like a typewriter would
+.EXAMPLE
+    Write-TypeWriter -Text "Print characters as if they're being typed on a typewriter"
 #>
 function Write-TypeWriter {
 
+    [CmdletBinding(DefaultParameterSetName = "Speed")]
     param (
         # The text to write
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string] $Text,
     
         # Characters per minute
+        [Parameter(ParameterSetName = "CPM")]
         [uint] $CPM = 350,
     
         # Speed of the typewriter (150ms by default)
+        [Parameter(ParameterSetName = "Speed")]
         [uint] $Speed = 150,
     
         # The minimum time for a keystroke (default: 10ms)
@@ -37,7 +42,7 @@ function Write-TypeWriter {
         $Random = New-Object -TypeName System.Random
 
         # Calculate the speed based on the given CPM (Characters-Per-Minute) if specified
-        if ($CPM) {
+        if ($PSCmdlet.ParameterSetName -eq "CPM") {
             $Speed = (60 * 1000) / $CPM
         }
     }
@@ -61,7 +66,7 @@ function Write-TypeWriter {
 
     end {
         # Write empty newline at the end
-        Write-NewLine
+        Write-Host ""
     }
 
 }
