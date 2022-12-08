@@ -9,6 +9,12 @@ Describe "Get-ReversedString" {
             $String = "Text"
             Get-ReversedString (Get-ReversedString $String) | Should Be $String
         }
+        It "Should accept a string from the pipeline" {
+            "PipeLine" | Get-ReversedString | Should Be "eniLepiP"
+        }
+        It "Should take remaining arguments as value" {
+            Get-ReversedString this is one string | Should Be "gnirts eno si siht"
+        }
     }
     Context ": When a number is passed" {
         It "Should return the reversed string" {
