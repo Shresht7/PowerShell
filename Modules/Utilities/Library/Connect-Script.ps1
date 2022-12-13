@@ -15,6 +15,14 @@ function Connect-Script(
     [Alias("DestinationPath", "Target", "TargetPath", "To")]
     [string] $Destination = "$HOME\Scripts"
 ) {
+
+    # Creating symbolic links requires elevated permissions
+    if (-not (Test-IsElevated)) {
+        Write-Error "Not in Administrator Mode! Elevated permissions are required to create Symbolic-Links"
+        return
+    }
+
+    # Create Symbolic Links
     $Script = Get-Item -Path $Path
     New-Item -ItemType SymbolicLink -Path "$Destination\$($Script.Name)" -Target $Script.FullName -Force
 }
