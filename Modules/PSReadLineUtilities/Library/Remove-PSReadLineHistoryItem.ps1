@@ -86,3 +86,17 @@ function Remove-PSReadLineHistoryItem {
         }
     }
 }
+
+# Removes the currently selected command from the PSReadLineHistory
+Set-PSReadLineKeyHandler -Key Ctrl+Shift+K `
+    -BriefDescription "Removes the item from the console and the PSReadLineHistory" `
+    -ScriptBlock {
+    param ($Key, $Arg)
+
+    $Line = $null
+    $Cursor = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$Line, [ref]$Cursor)
+
+    Remove-PSReadLineHistoryItem -Command $Line
+    [Microsoft.PowerShell.PSConsoleReadLine]::DeleteLine()
+}
