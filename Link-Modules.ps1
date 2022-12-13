@@ -17,7 +17,7 @@ if (-Not (Test-IsElevated)) {
 
 # Paths
 $SOURCE_PATH = "$PSScriptRoot\Modules"
-$DESTINATION_PATH = "$HOME\Documents\PowerShell\Modules"
+$DESTINATION_PATH = $Env:PSModulePath.Split(";")[0]
 
 # Get all Modules
 $Modules = Get-ChildItem -Path $SOURCE_PATH -Filter "*.psm1" -Recurse
