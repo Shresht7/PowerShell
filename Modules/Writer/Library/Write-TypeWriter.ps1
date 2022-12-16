@@ -67,7 +67,6 @@ function Write-TypeWriter {
     end {
         # Write empty newline at the end
         Write-Host ""
-        return $Text
     }
 
 }
