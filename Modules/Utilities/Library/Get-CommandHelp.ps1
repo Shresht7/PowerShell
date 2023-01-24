@@ -27,4 +27,4 @@ function Get-CommandHelp(
     Get-Command -Module $Module | Invoke-Fzf -Preview "pwsh -NoProfile -Command Get-Help {} -Full"
 }
 
-Export-ModuleMember -Function Get-HelpCommand
+Export-ModuleMember -Function Get-CommandHelp
