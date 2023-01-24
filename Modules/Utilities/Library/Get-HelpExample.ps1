@@ -4,16 +4,24 @@
 .DESCRIPTION
     Extracts example code, title and remarks as PowerShell objects from
     the respectively cmdlet's help
+.EXAMPLE
+    Get-HelpExample -Command Get-ChildItem
+    Get examples for the `Get-ChildItem` cmdlet
+.EXAMPLE
+    "Set-Location" | Get-HelpExample
+    Get examples for the `Set-Location` cmdlet
 .LINK
     https://github.com/DBremen/PowerShellScripts/blob/master/Extend%20Builtin/Get-HelpExamples.ps1
 #>
 function Get-HelpExample(
     # Name of the command
-    [Parameter(Mandatory)]
-    [string] $Command
+    [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [Alias('Command', 'CommandName')]
+    [string] $Name
 ) {
-    (Get-Help $Command).examples.example | ForEach-Object {
+    (Get-Help -Name $Name).examples.example | ForEach-Object {
         [PSCustomObject]@{
+            Title   = $_.title
             Code    = $_.Code.Split("`n") | ForEach-Object {
                 if ($_.StartsWith('PS C:\>')) {
                     $_.replace('PS C:\>', '')
@@ -22,10 +30,9 @@ function Get-HelpExample(
                     "# $_"
                 }
             } | Out-String
-            Title   = $_.Title
             Remarks = $_.Remarks | Out-String 
         }
-    }
+    } | Format-List
 }
 
 Export-ModuleMember -Function Get-HelpExample
