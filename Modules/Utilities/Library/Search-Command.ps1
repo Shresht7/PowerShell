@@ -1,16 +1,20 @@
 <#
 .SYNOPSIS
-    Get help for a command interactively
+    Search for a command interactively
 .DESCRIPTION
-    Get help for a command interactively.
-    If no module name is specified, fzf is used to select a module.
+    Search for a command interactively.
     The help is displayed in a preview window.
 .EXAMPLE    
-    Get-CommandHelp
+    Search-Command
+    Search for a command interactively
 .EXAMPLE
-    Get-CommandHelp -Name PSReadLine
+    Search-Command -Name Item
+    Search for a command with `Item` in the name
+.EXAMPLE
+    Search-Command -Module PSReadLine
+    Search for a command in the `PSReadLine` module
 #>
-function Get-CommandHelp(
+function Search-Command(
     # Name of the command
     [Alias('Command', 'CommandName')]
     [string] $Name,
@@ -21,15 +25,17 @@ function Get-CommandHelp(
 ) {
     # If a command is specified, show the help
     if ($Name) {
-        Get-Help $Name -Full
+        return Get-Command -Name *$Name*
+        | Sort-Object -Property Name
+        | Invoke-Fzf -Preview "pwsh -NoProfile -Command Get-Help {} -Full" -PreviewWindow "right:70%" -Height "100%"
     }
 
     # If the module name is specified, get the module; otherwise use fzf to select a module
     $Module = if ($PSBoundParameters["Module"]) {
-        Get-Module -Name $Module
+        Get-Module -Name *$Module*
     }
     else {
-        Get-Module -ListAvailable
+        Get-Module -Name -ListAvailable
         | Sort-Object -Property Name
         | Invoke-Fzf -Preview "pwsh -NoProfile -Command Get-Command -Module {}" -Height "100%"
     }
@@ -49,8 +55,8 @@ function Get-CommandHelp(
         return
     }
 
-    # Get help for the command
-    Get-Help $Command -Full
+    # Return the command
+    return $Command
 }
 
-Export-ModuleMember -Function Get-CommandHelp
+Export-ModuleMember -Function Search-Command
