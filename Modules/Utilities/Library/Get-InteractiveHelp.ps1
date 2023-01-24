@@ -15,8 +15,8 @@ function Get-InteractiveHelp(
     [Alias('Name')]
     [string] $Topic
 ) {
-    $Help = help $Topic
-    $Help | Invoke-Fzf -Preview "pwsh -NoProfile -Command Get-Help {} -Full"
+    Get-Help -Name $Topic
+    | Invoke-Fzf -Preview "pwsh -NoProfile -Command Get-Help {} -Full" -PreviewWindow "right:70%" -Height "100%"
 }
 
 Export-ModuleMember -Function Get-InteractiveHelp
