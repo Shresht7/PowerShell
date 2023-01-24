@@ -11,13 +11,22 @@
     Get-CommandHelp -Name PSReadLine
 #>
 function Get-CommandHelp(
+    # Name of the command
+    [Alias('Command', 'CommandName')]
+    [string] $Name,
+
     # Name of the module
-    [Alias('Module', 'ModuleName')]
-    [string] $Name
+    [Alias('ModuleName')]
+    [string] $Module
 ) {
+    # If a command is specified, show the help
+    if ($Name) {
+        Get-Help $Name -Full
+    }
+
     # If the module name is specified, get the module; otherwise use fzf to select a module
-    $Module = if ($PSBoundParameters["Name"]) {
-        Get-Module -Name $Name
+    $Module = if ($PSBoundParameters["Module"]) {
+        Get-Module -Name $Module
     }
     else {
         Get-Module -ListAvailable
