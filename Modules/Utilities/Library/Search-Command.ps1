@@ -35,7 +35,7 @@ function Search-Command(
         Get-Module -Name *$Module*
     }
     else {
-        Get-Module -Name -ListAvailable
+        Get-Module -ListAvailable
         | Sort-Object -Property Name
         | Invoke-Fzf -Preview "pwsh -NoProfile -Command Get-Command -Module {}" -Height "100%"
     }
