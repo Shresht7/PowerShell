@@ -39,6 +39,9 @@ function Get-CommandHelp(
     if (-not $Command) {
         return
     }
+
+    # Get help for the command
+    Get-Help $Command -Full
 }
 
 Export-ModuleMember -Function Get-CommandHelp
