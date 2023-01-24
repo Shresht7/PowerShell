@@ -25,10 +25,20 @@ function Get-CommandHelp(
         | Invoke-Fzf -Preview "pwsh -NoProfile -Command Get-Command -Module {}" -Height "100%"
     }
 
+    # Exit if no module was selected
+    if (-not $Module) {
+        return
+    }
+
     # Get the commands of the module and use fzf to select a command to get help for
     $Command = Get-Command -Module $Module
     | Sort-Object -Property Name
     | Invoke-Fzf -Preview "pwsh -NoProfile -Command Get-Help {} -Full" -Height "100%" -PreviewWindow "right:70%"
+
+    # Exit if no command was selected
+    if (-not $Command) {
+        return
+    }
 }
 
 Export-ModuleMember -Function Get-CommandHelp
