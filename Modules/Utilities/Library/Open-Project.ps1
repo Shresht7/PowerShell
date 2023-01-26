@@ -25,7 +25,7 @@ function Open-Project(
     # Interactively select a project if none was provided
     if (-not $Path) {
         $Path = Get-ChildItem -Path $ProjectDirectory -Directory
-        | Invoke-Fzf -Preview $PreviewCommand -Height "100%"
+        | Invoke-Fzf -Preview $PreviewCommand -Height "100%" -PreviewWindow "right:60%"
     }
 
     # Open the selected project in VS Code
