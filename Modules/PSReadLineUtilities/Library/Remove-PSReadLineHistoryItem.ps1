@@ -57,10 +57,9 @@ function Remove-PSReadLineHistoryItem {
         switch ($PSCmdlet.ParameterSetName) {
             "Command" {
                 # Iterate over all items that are marked-for-removal and filter the ReadLineHistory
-                foreach ($filter in $Command) {
-                    $PSReadLineHistory = $PSReadLineHistory | Where-Object { $_ -cne $filter }
-                }
+                $PSReadLineHistory = $PSReadLineHistory | Where-Object { $_ -cne $filter }
                 Write-Verbose "$($Command.Count) commands removed!"
+                break
             }
             "Count" {
                 $Length = $PSReadLineHistory.Length
@@ -68,6 +67,7 @@ function Remove-PSReadLineHistoryItem {
                 # Get everything but the last $Count items (accounting for off-by-one and the current command itself)
                 $PSReadLineHistory = $PSReadLineHistory[0..($Mark - 1)]
                 Write-Verbose "$Mark commands removed!"
+                break
             }
             "Duplicate" {
                 $originalCount = ($PSReadLineHistory | Measure-Object -Line).Lines
@@ -75,6 +75,7 @@ function Remove-PSReadLineHistoryItem {
                 $finalCount = ($PSReadLineHistory | Measure-Object -Line).Lines
                 $diffCount = $originalCount - $finalCount
                 Write-Verbose "$diffCount duplicate commands removed!"
+                break
             }
         }
     }
