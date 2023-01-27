@@ -12,7 +12,7 @@
 #>
 function New-Screenshot(
     [ValidateScript({ Test-Path -Path $_ })]
-    [string] $Folder = "$HOME\Pictures\Screenshots",
+    [string] $Folder = $Script:ScreenshotFolder,
 
     # Open the screenshot
     [switch] $Open

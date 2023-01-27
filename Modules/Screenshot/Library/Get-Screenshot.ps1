@@ -12,7 +12,7 @@
 #>
 function Get-Screenshot(
     [ValidateScript({ Test-Path -Path $_ })]
-    [string] $Folder = "$HOME\Pictures\Screenshots"
+    [string] $Folder = $Script:ScreenshotFolder
 ) {
     Get-ChildItem -Path $Folder
 }
