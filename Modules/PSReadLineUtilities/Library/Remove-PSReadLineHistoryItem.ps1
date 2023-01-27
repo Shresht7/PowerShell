@@ -17,7 +17,7 @@
     Remove-PSReadLineHistoryItem -Count 10
     Removes the last 10 items from the PSReadLine history.
 .INPUTS
-    [string[]]
+    [string]
 .OUTPUTS
     None
 .NOTES
@@ -36,7 +36,7 @@ function Remove-PSReadLineHistoryItem {
             ParameterSetName = "Command"
         )]
         [Alias("Name", "Item")]
-        [string[]] $Command,
+        [string] $Command,
 
         # Specifies the number of items to remove from the end of the history. The default value is 1.
         [Parameter(ParameterSetName = "Count")]
