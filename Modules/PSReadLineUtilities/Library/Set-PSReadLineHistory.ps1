@@ -16,6 +16,11 @@ function Set-PSReadLineHistory(
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [string] $Content
 ) {
+    # Check if $Content is valid
+    if ($null -eq $Content || $Content -eq "") {
+        throw "The Content parameter is required."
+    }
+
     $Path = Get-PSReadLineHistoryPath
     $Temp = "$Path.temp"
     $Content | Out-File -FilePath $Temp
