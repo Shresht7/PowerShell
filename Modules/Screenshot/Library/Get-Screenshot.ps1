@@ -12,7 +12,11 @@
 #>
 function Get-Screenshot(
     [ValidateScript({ Test-Path -Path $_ })]
-    [string] $Folder = $Script:ScreenshotFolder
+    [Alias("Folder", "Source", "FolderPath")]
+    [string] $Path = $Script:ScreenshotFolder,
+
+    # Filter the list of screenshots
+    [string] $Filter
 ) {
-    Get-ChildItem -Path $Folder
+    Get-ChildItem -Path $Path -Filter:$Filter -Recurse
 }
