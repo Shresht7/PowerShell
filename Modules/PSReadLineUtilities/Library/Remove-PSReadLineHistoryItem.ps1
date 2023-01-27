@@ -81,9 +81,11 @@ function Remove-PSReadLineHistoryItem {
     }
 
     end {
+        # Join the PSReadLineHistory back into a single string
+        $PSReadLineHistory = $PSReadLineHistory -join "`n"
         # Set Content of the PSReadLineHistory
         if ($PSCmdlet.ShouldProcess((Get-PSReadLineHistoryPath))) {
-            Set-PSReadLineHistory $PSReadLineHistory
+            Set-PSReadLineHistory -Content $PSReadLineHistory
         }
     }
 }
