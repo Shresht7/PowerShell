@@ -25,9 +25,16 @@ function Search-Command(
 ) {
     # If a command is specified, show the help
     if ($Name) {
+        $FzfOptions = @{
+            Prompt        = "Command: "
+            Header        = "Select a command"
+            Preview       = "pwsh -NoProfile -Command Get-Help {} -Full"
+            PreviewWindow = "right:70%"
+            Height        = "100%"
+        }
         return Get-Command -Name *$Name*
         | Sort-Object -Property Name
-        | Invoke-Fzf -Preview "pwsh -NoProfile -Command Get-Help {} -Full" -PreviewWindow "right:70%" -Height "100%"
+        | Invoke-Fzf @FzfOptions
     }
 
     # If the module name is specified, get the module; otherwise use fzf to select a module
@@ -35,9 +42,14 @@ function Search-Command(
         Get-Module -Name *$Module*
     }
     else {
-        Get-Module -ListAvailable
-        | Sort-Object -Property Name
-        | Invoke-Fzf -Preview "pwsh -NoProfile -Command Get-Command -Module {}" -Height "100%"
+        $FzfOptions = @{
+            Prompt        = "Module: "
+            Header        = "Select a module"
+            Preview       = "pwsh -NoProfile -Command Get-Command -Module {}"
+            PreviewWindow = "right:70%"
+            Height        = "100%"
+        }
+        Get-Module -ListAvailable | Sort-Object -Property Name | Invoke-Fzf @FzfOptions
     }
 
     # Exit if no module was selected
@@ -45,10 +57,20 @@ function Search-Command(
         return
     }
 
+    # Make sure the module has been imported
+    Import-Module -Name $Module
+
     # Get the commands of the module and use fzf to select a command to get help for
+    $FzfOptions = @{
+        Prompt        = "Command: "
+        Header        = "Select a command"
+        Preview       = "pwsh -NoProfile -Command Get-Help {} -Full"
+        PreviewWindow = "right:70%"
+        Height        = "100%"
+    }
     $Command = Get-Command -Module $Module
     | Sort-Object -Property Name
-    | Invoke-Fzf -Preview "pwsh -NoProfile -Command Get-Help {} -Full" -Height "100%" -PreviewWindow "right:70%"
+    | Invoke-Fzf @FzfOptions
 
     # Exit if no command was selected
     if (-not $Command) {
