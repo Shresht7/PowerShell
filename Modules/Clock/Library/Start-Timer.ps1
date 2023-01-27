@@ -4,16 +4,18 @@
 .DESCRIPTION
     Starts a timer countdown
 .EXAMPLE
-    Set-Timer -TimeSpan (New-TimeSpan -Seconds 30)
+    Start-Timer -TimeSpan (New-TimeSpan -Seconds 30)
     Sets a timer for 30 seconds
 .EXAMPLE
-    Set-Timer -TimeSpan (New-TimeSpan -Minutes 25) -ScriptBlock { Write-Host "Time's Up!" }
+    Start-Timer -TimeSpan (New-TimeSpan -Minutes 25) -ScriptBlock { Write-Host "Time's Up!" }
     Runs a timer for 25 minutes and then executes the script block
 #>
-function Set-Timer(
-    [Parameter(Mandatory)]
+function Start-Timer(
+    # The time span to count down
+    [Parameter(Position = 0)]
     [timespan] $TimeSpan = (New-TimeSpan -Seconds 60),
 
+    # The script block to execute when the timer is up
     [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [scriptblock] $ScriptBlock
 ) {
