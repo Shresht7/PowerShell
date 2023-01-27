@@ -17,6 +17,7 @@ function Set-PSReadLineHistory(
     [string] $Content
 ) {
     $Path = Get-PSReadLineHistoryPath
-    $Content | Out-File -FilePath "$Path.temp"
+    $Temp = "$Path.temp"
+    $Content | Out-File -FilePath $Temp
     Move-Item -Path $Temp -Destination $Path -Force
 }
