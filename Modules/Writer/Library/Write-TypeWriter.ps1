@@ -9,6 +9,8 @@
     Writes the given text to the console like a typewriter would
 .EXAMPLE
     Write-TypeWriter -Text "Print characters as if they're being typed on a typewriter"
+.EXAMPLE
+    "Let's do this" | Write-TypeWriter
 #>
 function Write-TypeWriter {
 
