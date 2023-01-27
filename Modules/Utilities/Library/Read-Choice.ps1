@@ -37,6 +37,8 @@ function Read-Choice(
     return $Options[$Selection]
 }
 
+Export-ModuleMember -Function Read-Choice
+
 <#
 .SYNOPSIS
     Creates a new ChoiceDescription object.
@@ -59,8 +61,7 @@ function New-Choice(
     [Parameter(Mandatory = $true, Position = 1)]
     [string] $HelpMessage
 ) {
-    return [System.Management.Automation.Host.ChoiceDescription]@{
-        Label       = $Label
-        HelpMessage = $HelpMessage
-    }
+    return [System.Management.Automation.Host.ChoiceDescription]::new($Label, $HelpMessage)
 }
+
+Export-ModuleMember -Function New-Choice
