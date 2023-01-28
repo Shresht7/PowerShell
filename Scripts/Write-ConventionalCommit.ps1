@@ -1,15 +1,17 @@
 <#
 .SYNOPSIS
-    TODO:
+    Write a conventional commit message
 .DESCRIPTION
-    TODO:
+    Write a conventional commit message.
+.LINK
+    https://www.conventionalcommits.org/en/v1.0.0/
 #>
 
 [CmdletBinding()]
 param(
     # The type of the conventional commit
     [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
-    [ValidateSet('feat', 'fix', 'docs', 'style', 'refactor')]
+    [ValidateSet('build', 'chore', 'ci', 'docs', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style', 'test')]
     [string] $Type,
 
     # (Optional) The scope of the commit
@@ -26,23 +28,30 @@ param(
     [string] $Description
 )
 
-# TODO: Add the remaining conventional commit types
+# List of valid types
 $CONVENTIONAL_COMMIT_TYPES = @(
+    'build'
+    'chore'
+    'ci'
+    'docs'
     'feat'
     'fix'
-    'docs'
-    'style'
+    'perf'
     'refactor'
+    'revert'
+    'style'
+    'test'
 )
 
 # Prompt the user for the commit type, if not provided already
 if (-not $Type) {
     $Type = $CONVENTIONAL_COMMIT_TYPES | Invoke-Fzf
 }
+Write-Host -Object "Type: $($PSStyle.Foreground.Red)$Type$($PSStyle.Reset)"
 
 # Prompt the user for the commit scope
 if (-not $Scope) {
-    $Scope = Read-Host -Prompt "Scope (Optional)"
+    $Scope = Read-Host -Prompt "Scope $($PSStyle.Foreground.BrightBlack)(Optional)$($PSStyle.Reset)"
     if (-not $Scope) {
         $Scope = ""
     }
@@ -66,6 +75,9 @@ if (-not $Description) {
         $Description = "`n`n" + $Description
     }
 }
+
+# Draw the separator
+Write-Host -Object ("-" * $Host.UI.RawUI.WindowSize.Width)
 
 # Assemble the commit message
 $COMMIT = $Type + $Scope + ": " + $Message + $Description
