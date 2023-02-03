@@ -11,24 +11,59 @@
     Invoke-Script .
     Opens the interactive selection in the current directory
 .EXAMPLE
-    Invoke-Script "bin" -Recurse
+    Invoke-Script -Path "Write-CommitMessage.ps1"
+    Invokes the script "Write-CommitMessage.ps1" directly
+.EXAMPLE
+    Invoke-Script -Path "bin" -Recurse
     Opens the interactive selection in the "bin" folder and look for scripts recursively
 .NOTES
-    Requires the PSFzf Module
+    Requires the PSFzf Module and the fzf utility
 #>
 function Invoke-Script(
-    [Alias("Directory", "Source", "SourcePath", "From")]
+    # Path to the script or the folder containing the scripts
+    [Alias("Name", "FullName", "Source", "SourcePath", "From")]
     [string] $Path = "$HOME\Scripts",
+
+    # Query to filter the scripts
+    [Alias("Filter", "Search")]
+    [string] $Query,
 
     # Look for scripts recursively
     [switch] $Recurse
 ) {
-    # Get a list of all the scripts
-    $Scripts = Get-ChildItem -Path $Path -Filter "*.ps1" -Recurse:$Recurse
-    # Select a script to run
-    $Script = $Scripts | Invoke-Fzf -FilepathWord -Preview "bat --style=numbers --color=always {}" -PreviewWindow "right:60%" -Height 100
-    # Invoke the script
-    . $Script
+    $Item = Get-Item -Path $Path
+
+    # If the $Path is a PowerShell script, then invoke it directly
+    if ($Item.Extension -eq ".ps1") {
+        . $Item.FullName
+    }
+
+    # Else if the $Path is a directory, then Invoke-PSFzf
+    if ($Item.PSIsContainer) {
+
+        # Get a list of all the scripts
+        $Scripts = Get-ChildItem -Path $Path -Filter "*.ps1" -Recurse:$Recurse
+
+        # Set Options for Fzf
+        $FzfOptions = @{
+            Preview       = "bat --style=numbers --color=always {}"
+            PreviewWindow = "right:60%"
+            Height        = 100
+            Prompt        = ". "
+            Header        = "Select a script to invoke using PowerShell`n`n"
+            Query         = $Query
+        }
+
+        # Select a script to run
+        $Script = $Scripts | Invoke-Fzf @FzfOptions
+    
+        # Invoke the script if it was selected
+        if ($Script) {
+            . $Script
+        }
+
+    }
+    
 }
 
 Set-Alias script Invoke-Script
