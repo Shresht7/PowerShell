@@ -32,7 +32,7 @@ function Get-HelpExample(
             } | Out-String
             Remarks = $_.Remarks | Out-String 
         }
-    } | Format-List
+    }
 }
 
 Export-ModuleMember -Function Get-HelpExample
