@@ -1,2 +1,2 @@
-# Import Auto-Complete
-. AutoComplete.ps1
+# Import AutoComplete
+. $PSScriptRoot\AutoComplete.ps1
