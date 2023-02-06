@@ -22,7 +22,9 @@ function Remove-NodeModules {
         [string] $Path = (
             Get-ChildItem -Directory -Path $PWD.Path |
             Where-Object { Test-Path -Path (Join-Path -Path $_.FullName -ChildPath "node_modules") } |
-            Invoke-Fzf -Multi -Preview "pwsh -NoProfile -Command Get-Size -Path {}\node_modules" -Header "Select a folder to remove the node_modules folder from"
+            Invoke-Fzf -Multi `
+                -Preview "pwsh -NoProfile -Command Get-Size -Path {}\node_modules" `
+                -Header "Select a folder to remove the node_modules folder from"
         )
     )
 

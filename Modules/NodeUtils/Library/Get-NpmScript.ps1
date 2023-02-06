@@ -29,7 +29,7 @@ function Get-NpmScript(
     # Get the npm scripts from the package.json file
     $Scripts = $Package.scripts
     | Get-Member -MemberType NoteProperty
-    | Select-Object -Property Name, @{Name = "Script"; Expression = { $Package.scripts.($_.Name) } }
+    | Select-Object -Property Name, @{ Name = "Script"; Expression = { $Package.scripts.($_.Name) } }
 
     # Return the list of scripts
     return $Scripts

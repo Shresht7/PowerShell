@@ -1,3 +1,15 @@
+<#
+.SYNOPSIS
+    Invoke an npm script
+.DESCRIPTION
+    Invoke an npm script from a package.json file
+.EXAMPLE
+    Invoke-NpmScript
+    Invoke an npm script from the package.json file in the current directory
+.EXAMPLE
+    Invoke-NpmScript -Path "C:\Projects\MyProject"
+    Invoke an npm script from the package.json file in the given directory
+#>
 function Invoke-NpmScript(
     # Name of the npm script to invoke
     [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
@@ -8,6 +20,7 @@ function Invoke-NpmScript(
     [ValidateScript({ Test-Path -Path $_ })]
     [string] $Path = $PWD.Path
 ) {
+    # Get the list of npm scripts
     $Scripts = Get-NpmScript -Path $Path
 
     # If the name is not specified, then use Fzf to select the script
