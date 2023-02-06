@@ -3,5 +3,5 @@ Get-ChildItem -Path "$PSScriptRoot\Library" -Filter "*.ps1" | ForEach-Object {
     . $_.FullName -Force -Verbose
 }
 
-# Import Auto-Complete
-. .\AutoComplete.ps1
+# Import AutoComplete
+. $PSScriptRoot\AutoComplete.ps1
