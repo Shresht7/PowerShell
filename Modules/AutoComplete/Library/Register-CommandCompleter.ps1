@@ -1,5 +1,5 @@
 # Commands Global
-$Script:COMMANDS = @{'Next' = [System.Collections.ArrayList]::new() }
+$Script:COMMANDS = @{ Completions = [System.Collections.ArrayList]::new() }
 
 <#
 .SYNOPSIS
@@ -33,7 +33,7 @@ function Register-CommandCompleter(
 ) {
     # Add Command to the Global $COMMANDS tree object
     $SuperCommand = New-Completion -Name $Name -Tooltip $Tooltip -Completions $Completions
-    $null = $Script:COMMANDS.Next.Add($SuperCommand)
+    $null = $Script:COMMANDS.Completions.Add($SuperCommand)
     
     # Register Auto-Complete Arguments
     Register-ArgumentCompleter -CommandName $Name -ScriptBlock {
@@ -58,15 +58,15 @@ function Register-CommandCompleter(
         $Selection = $Script:COMMANDS
         foreach ($SubCommand in $Command) {
             # Find the next command in the tree object and set it as the current selection
-            $Selection = $Selection.Next | Where-Object { $_.Name -Like $SubCommand }
+            $Selection = $Selection.Completions | Where-Object { $_.Name -Like $SubCommand }
             # Make use of the script block to generate the next selection, if any
             if ($null -ne $Selection.Script) {
-                $Selection.Next += $Selection.Script.Invoke()
+                $Selection.Completions += $Selection.Script.Invoke()
             }
         }
 
         # Filter the completions that match the word to complete
-        $Completions = $Selection.Next | Where-Object { $_.Name -Like "${WordToComplete}*" } | ForEach-Object {
+        $Completions = $Selection.Completions | Where-Object { $_.Name -Like "${WordToComplete}*" } | ForEach-Object {
             # Create a new CompletionResult object to return
             [CompletionResult]::new($_.Name, $_.Name, $_.Type, $_.Tooltip)
         }
