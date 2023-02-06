@@ -3,6 +3,14 @@
     Instantiate a new Completion object
 .DESCRIPTION
     Instantiate a new Completion object
+.EXAMPLE
+    New-Completion -Name 'install' -Tooltip 'Install a package' -Completions @(
+        New-Completion -Name '-g' -Tooltip 'Save as a global dependency'
+        New-Completion -Name '--global' -Tooltip 'Save as a global dependency'
+        New-Completion -Name '--save-dev' -Tooltip 'Save as dev-dependency'
+    )
+.EXAMPLE
+    New-Completion -Name "uninstall" -Tooltip "Uninstall a package"
 #>
 function New-Completion(
     # The name of the command
@@ -20,10 +28,11 @@ function New-Completion(
     [Alias('Next', 'NextCompletions', 'SubCompletions')]
     [Completion[]] $Completions,
 
-    # The script block to execute to get the next set of completions
+    # The script block to execute to get the next set of completions.
+    # These completions will be added to the $Completions array.
     [Parameter(Position = 3)]
     [Alias('Script', 'ScriptBlock')]
-    [scriptblock] $CompletionsScript
+    [scriptblock] $CompletionsScriptBlock
 ) {
 
     # If no tooltip was passed in, use the name
@@ -33,8 +42,8 @@ function New-Completion(
     if (($null -eq $Completions) -or ($Completions.Length -eq 0)) { $Completions = @() }
 
     # If no script block is provided, use $null
-    if ($null -eq $CompletionsScript) { $CompletionsScript = $null }
+    if ($null -eq $CompletionsScriptBlock) { $CompletionsScriptBlock = $null }
 
     # Return the new Completion object
-    return [Completion]::new($Name, $Tooltip, $Completions, $CompletionsScript)
+    return [Completion]::new($Name, $Tooltip, $Completions, $CompletionsScriptBlock)
 }

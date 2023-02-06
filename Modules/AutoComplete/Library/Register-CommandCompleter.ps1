@@ -1,6 +1,3 @@
-# Commands Global
-$Script:COMMANDS = @{ Completions = [System.Collections.ArrayList]::new() }
-
 <#
 .SYNOPSIS
     Register a command completer
@@ -9,31 +6,34 @@ $Script:COMMANDS = @{ Completions = [System.Collections.ArrayList]::new() }
     The script block starts by tracking the current command selection in the $COMMANDS tree object,
     then filters the completions that match the word to complete and returns them as CompletionResult objects.
 .EXAMPLE
-    Register-CommandCompleter -Name 'git' -Tooltip 'git source control' -Completions @(
-        [Completion]::new('add', 'Add file contents to the index'),
-        [Completion]::new('branch', 'List, create, or delete branches', @(
-            [Completion]::new('-a', 'List both remote-tracking branches and local branches'),
-            [Completion]::new('-d', 'Delete fully merged branch'),
-            [Completion]::new('-D', 'Delete branch (even if not merged)'),
-        )),
+    Register-CommandCompleter -Name npm -Tooltip "Node Package Manager" -Completions @(
+        New-Completion -Name 'install' -Tooltip 'Install a package' -Completions @(
+            New-Completion -Name '-g' -Tooltip 'Save as a global dependency'
+            New-Completion -Name '--global' -Tooltip 'Save as a global dependency'
+            New-Completion -Name '--save-dev' -Tooltip 'Save as dev-dependency'
+        )
+        New-Completion -Name "uninstall" -Tooltip "Uninstall a package"
     )
 #>
 function Register-CommandCompleter(
     # The name of the command
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
-    [Alias('Command')]
+    [Alias('Command', 'CommandName')]
     [string] $Name,
 
     # The tooltip to display
-    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 1)]
+    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [Alias('Description', 'Help', 'HelpText', 'HelpMessage', 'Message')]
     [string] $Tooltip,
 
     # The completions object
+    [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [Alias('Next', 'NextCompletions', 'SubCompletions')]
     [Completion[]] $Completions
 ) {
     # Add Command to the Global $COMMANDS tree object
     $SuperCommand = New-Completion -Name $Name -Tooltip $Tooltip -Completions $Completions
-    $null = $Script:COMMANDS.Completions.Add($SuperCommand)
+    $Script:COMMANDS.Completions += $SuperCommand
     
     # Register Auto-Complete Arguments
     Register-ArgumentCompleter -CommandName $Name -ScriptBlock {
