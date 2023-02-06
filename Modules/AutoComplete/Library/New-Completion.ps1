@@ -7,7 +7,7 @@
 function New-Completion(
     [string] $Name,
     [string] $Tooltip,
-    [Completion[]] $Next,
+    [Completion[]] $Completions,
     [scriptblock] $Script
 ) {
 
@@ -15,11 +15,11 @@ function New-Completion(
     if (($null -eq $Tooltip) -or ($Tooltip -eq "")) { $Tooltip = $Name }
 
     # If no next completions are provided, use an empty array
-    if (($null -eq $Next) -or ($Next.Length -eq 0)) { $Next = @() }
+    if (($null -eq $Completions) -or ($Completions.Length -eq 0)) { $Completions = @() }
 
     # If no script block is provided, use $null
     if ($null -eq $Script) { $Script = $null }
 
     # Return the new Completion object
-    return [Completion]::new($Name, $Tooltip, $Next, $Script)
+    return [Completion]::new($Name, $Tooltip, $Completions, $Script)
 }

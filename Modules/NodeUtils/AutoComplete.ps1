@@ -7,7 +7,7 @@
 # TODO: Add the remaining commands as needed
 
 $NPMCommands = @(
-    New-Completion -Name 'access' -Tooltip 'Used to set access controls on private packages' -Next @(
+    New-Completion -Name 'access' -Tooltip 'Used to set access controls on private packages' -Completions @(
         New-Completion -Name 'list'
         New-Completion -Name 'get'
         New-Completion -Name 'set'
@@ -15,12 +15,12 @@ $NPMCommands = @(
         New-Completion -Name 'revoke'
     )
     New-Completion -Name 'adduser'
-    New-Completion -Name 'audit' -Tooltip 'Run a security audit' -Next @(
+    New-Completion -Name 'audit' -Tooltip 'Run a security audit' -Completions @(
         New-Completion -Name 'fix' -Tooltip 'Apply remediation to the package tree'
         New-Completion -Name 'signatures' -Tooltip 'Verify the signature of the downloaded packages'
     )
     New-Completion -Name 'bugs'
-    New-Completion -Name 'cache' -Tooltip 'Used to add, list or clean npm cache' -Next @(
+    New-Completion -Name 'cache' -Tooltip 'Used to add, list or clean npm cache' -Completions @(
         New-Completion -Name 'add'
         New-Completion -Name 'clean'
         New-Completion -Name 'ls'
@@ -28,7 +28,7 @@ $NPMCommands = @(
     )
     New-Completion -Name 'ci' -Tooltip 'Similar to npm install; meant to be used in automated environments'
     New-Completion -Name 'completion' -Tooltip 'Enables tab-completion in all npm commands'
-    New-Completion -Name 'config' -Tooltip 'change the npm configs' -Next @(
+    New-Completion -Name 'config' -Tooltip 'change the npm configs' -Completions @(
         New-Completion -Name 'set'
         New-Completion -Name 'get'
         New-Completion -Name 'delete'
@@ -39,7 +39,7 @@ $NPMCommands = @(
     New-Completion -Name 'dedupe' -Tooltip 'Simplifies the overall structure by moving dependencies further up the tree'
     New-Completion -Name 'deprecate' -Tooltip 'Update the npm registry entry for a package, providing a deprecation warning to all who attempt to install it'
     New-Completion -Name 'diff' -Tooltip 'Prints the diff of patches of files for packages published to the npm registry'
-    New-Completion -Name 'dist-tag' -Tooltip 'Add, remove and enumerate distribution tags' -Next @(
+    New-Completion -Name 'dist-tag' -Tooltip 'Add, remove and enumerate distribution tags' -Completions @(
         New-Completion -Name 'add'
         New-Completion -Name 'rm'
         New-Completion -Name 'ls'
@@ -54,14 +54,14 @@ $NPMCommands = @(
     New-Completion -Name 'fund' -Tooltip 'Retrieves information on how to fund the dependencies of a given project'
     New-Completion -Name 'help' -Tooltip 'Show the appropriate documentation page'
     New-Completion -Name 'help-search' -Tooltip 'Search the npm markdown documentation files for the term provided, and then list the results, sorted by relevance'
-    New-Completion -Name 'hook' -Tooltip 'Allows you to manage `npm hooks`, including adding, removing, listing and updating' -Next @(
+    New-Completion -Name 'hook' -Tooltip 'Allows you to manage `npm hooks`, including adding, removing, listing and updating' -Completions @(
         New-Completion -Name 'add'
         New-Completion -Name 'ls'
         New-Completion -Name 'rm'
         New-Completion -Name 'update'
     )
     New-Completion -Name 'init' -Tooltip 'Initialize an npm package'
-    New-Completion -Name 'install' -Tooltip 'Install a package' -Next @(
+    New-Completion -Name 'install' -Tooltip 'Install a package' -Completions @(
         New-Completion -Name '-g' -Tooltip 'Global'
         New-Completion -Name '--global' -Tooltip 'Global'
         New-Completion -Name '--save-dev' -Tooltip 'Save as dev-dependency'
@@ -71,28 +71,28 @@ $NPMCommands = @(
     New-Completion -Name 'logout' -Tooltip "When logged into a registry that supports token-based authentication, tell the server to end the token's session"
     New-Completion -Name 'ls' -Tooltip 'Prints to stdout all the versions of packages that are installed, as well as their dependencies when `--all` is specified, in a tree structure'
     New-Completion -Name 'outdated' -Tooltip 'Checks the registry to see if any (or specific) installed packages are currently outdated'
-    New-Completion -Name 'owner' -Tooltip 'Manage ownership of published packages' -Next @(
+    New-Completion -Name 'owner' -Tooltip 'Manage ownership of published packages' -Completions @(
         New-Completion -Name 'add'
         New-Completion -Name 'rm'
         New-Completion -Name 'ls'
     )
     New-Completion -Name 'ping' -Tooltip 'Ping the configured or given npm registry and verify authentication'
-    New-Completion -Name 'pkg' -Tooltip 'Automates management of `package.json` files' -Next @(
+    New-Completion -Name 'pkg' -Tooltip 'Automates management of `package.json` files' -Completions @(
         New-Completion -Name 'set'
         New-Completion -Name 'get'
         New-Completion -Name 'delete'
     )
-    New-Completion -Name 'prefix' -Tooltip 'Print the local prefix to standard output' -Next @(
+    New-Completion -Name 'prefix' -Tooltip 'Print the local prefix to standard output' -Completions @(
         New-Completion -Name '-g'
         New-Completion -Name '--global'
     )
-    New-Completion -Name 'profile' -Tooltip 'Change your profile information on the registry' -Next @(
+    New-Completion -Name 'profile' -Tooltip 'Change your profile information on the registry' -Completions @(
         New-Completion -Name 'enable-2fa'
         New-Completion -Name 'disable-2fa'
         New-Completion -Name 'get'
         New-Completion -Name 'set'
     )
-    New-Completion -Name 'prune' -Tooltip 'Removes extraneous packages' -Next @(
+    New-Completion -Name 'prune' -Tooltip 'Removes extraneous packages' -Completions @(
         New-Completion -Name '--production'
         New-Completion -Name '--no-production'
         New-Completion -Name '--dry-run'
@@ -103,7 +103,7 @@ $NPMCommands = @(
     New-Completion -Name 'repo' -Tooltip "This command tries to guess at the likely location of a package's repository URL"
     New-Completion -Name 'restart' -Tooltip 'Restarts a project'
     New-Completion -Name 'root' -Tooltip 'Prints the effective `node_modules` folder to stdout'
-    New-Completion -Name 'run' -Tooltip 'Run arbitrary script package' -Next @() -Script {
+    New-Completion -Name 'run' -Tooltip 'Run arbitrary script package' -Completions @() -Script {
             (Get-NpmScript | ForEach-Object { New-Completion -Name $_.Name -Tooltip $_.Script })
     }
     New-Completion -Name 'search' -Tooltip 'Search for packages'
@@ -112,18 +112,18 @@ $NPMCommands = @(
     New-Completion -Name 'start' -Tooltip 'Start a package'
     New-Completion -Name 'stop' -Tooltip 'Stop a package'
     New-Completion -Name 'test' -Tooltip 'Test a package'
-    New-Completion -Name 'token' -Tooltip 'Manage your authentication tokens' -Next @(
+    New-Completion -Name 'token' -Tooltip 'Manage your authentication tokens' -Completions @(
         New-Completion -Name 'list' -Tooltip 'Show a table of all active authentication tokens'
         New-Completion -Name 'revoke' -Tooltip 'Remove an authentication token'
         New-Completion -Name 'create' -Tooltip 'Create a new authentication token'
     )
     New-Completion -Name 'uninstall' -Tooltip 'Remove a package'
     New-Completion -Name 'unstar' -Tooltip 'Removes an item from your favorite packages'
-    New-Completion -Name 'update' -Tooltip 'Update packages' -Next @(
+    New-Completion -Name 'update' -Tooltip 'Update packages' -Completions @(
         New-Completion -Name '--global' -Tooltip 'Update global packages'
     )
 
-    New-Completion -Name 'version' -Tooltip 'Bump a package version' -Next @(
+    New-Completion -Name 'version' -Tooltip 'Bump a package version' -Completions @(
         New-Completion -Name 'major'
         New-Completion -Name 'minor'
         New-Completion -Name 'patch'
@@ -134,7 +134,7 @@ $NPMCommands = @(
         New-Completion -Name 'from-git'
     )
 
-    New-Completion -Name 'whoami' -Tooltip 'Display npm username' -Next @(
+    New-Completion -Name 'whoami' -Tooltip 'Display npm username' -Completions @(
         New-Completion -Name '--registry' -Tooltip 'The base URL of the npm registry (Default: "https://registry.npmjs.org/")'
     )
 )

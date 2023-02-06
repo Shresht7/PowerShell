@@ -32,7 +32,7 @@ function Register-CommandCompleter(
     [Completion[]] $Completions
 ) {
     # Add Command to the Global $COMMANDS tree object
-    $SuperCommand = New-Completion -Name $Name -Tooltip $Tooltip -Next $Completions
+    $SuperCommand = New-Completion -Name $Name -Tooltip $Tooltip -Completions $Completions
     $null = $Script:COMMANDS.Next.Add($SuperCommand)
     
     # Register Auto-Complete Arguments

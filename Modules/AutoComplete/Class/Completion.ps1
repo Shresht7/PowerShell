@@ -11,13 +11,13 @@ class Completion {
     [string] $Name
     [string] $Tooltip
     [CompletionResultType] $Type = [CompletionResultType]::ParameterValue
-    [Completion[]] $Next
+    [Completion[]] $Completions
     [scriptblock] $Script
 
-    Completion([string] $Name, [string] $Tooltip, [Completion[]] $Next, [scriptblock] $Script) {
+    Completion([string] $Name, [string] $Tooltip, [Completion[]] $Completions, [scriptblock] $Script) {
         $this.Name = $Name
         $this.Tooltip = $Tooltip
-        $this.Next = $Next
+        $this.Completions = $Completions
         $this.Script = $Script
     }
 }
