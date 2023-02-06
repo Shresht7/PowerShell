@@ -18,7 +18,7 @@ function Open-Project(
     [string] $ProjectDirectory = "$HOME\Projects",
 
     # The preview command
-    [string] $PreviewCommand = 'bat --style=numbers --color=always {}\README.md'
+    [string] $PreviewCommand = 'pwsh -NoProfile -Command if (Test-Path -Path {}\README.md) { bat --style=numbers --color=always {}\README.md } else { Get-ChildItem -Path {} }'
 
 
 ) {
