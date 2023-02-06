@@ -12,11 +12,11 @@
 #>
 function Get-RandomString(
     # The length of the random string
-    [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [int32] $Length = 10,
 
     # The characters to use for the random string
-    [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [string] $Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 ) {
     $Random = New-Object System.Random
