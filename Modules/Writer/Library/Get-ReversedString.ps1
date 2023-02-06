@@ -1,7 +1,3 @@
-# ------------------
-# Get-ReversedString
-# ------------------
-
 <#
 .SYNOPSIS
     Reverses the string
@@ -28,19 +24,16 @@
 #>
 function Get-ReversedString(
     # The string to reverse
-    [Parameter(
-        Mandatory,
-        ValueFromPipeline,
-        ValueFromPipelineByPropertyName,
-        ValueFromRemainingArguments
-    )]
-    [Alias("Text")]
-    [string] $String
+    [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, ValueFromRemainingArguments)]
+    [Alias("String")]
+    [string] $Text
 ) {
-    $InputArray = $String.ToCharArray()
-    $ReversedString = ""
+    $ReversedString = "" # Variable to store the results
+    # Convert to character array and iterate over it backwards collecting each character
+    $InputArray = $Text.ToCharArray()
     for ($i = $InputArray.Length; $i -ge 0; $i--) {
         $ReversedString += $InputArray[$i]
     }
+    # Return the results
     return $ReversedString
 }
