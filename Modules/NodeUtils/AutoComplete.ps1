@@ -6,6 +6,8 @@
 
 # TODO: Add the remaining commands as needed
 
+# TODO: Use the same variable for pnpm commands
+
 $NPMCommands = @(
     New-Completion -Name 'access' -Tooltip 'Used to set access controls on private packages' -Completions @(
         New-Completion -Name 'list'

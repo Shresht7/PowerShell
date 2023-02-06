@@ -1,6 +1,8 @@
 # Requires-Module AutoComplete
 
-$GoCommands = @(
+# TODO: Add the remaining commands as needed
+
+Register-CommandCompleter -Name go -Tooltip 'Go Command-Line-Interface' -Completions @(
     New-Completion -Name 'help' -Tooltip 'get help'
     New-Completion -Name 'bug' -Tooltip 'start a bug report'
     New-Completion -Name 'build' -Tooltip 'compile packages and dependencies'
@@ -21,5 +23,3 @@ $GoCommands = @(
     New-Completion -Name 'version' -Tooltip 'print Go version'
     New-Completion -Name 'vet' -Tooltip 'report likely mistakes in packages'
 )
-
-Register-CommandCompleter -Name go -Tooltip 'Go Command-Line-Interface' -Completions $GoCommands
