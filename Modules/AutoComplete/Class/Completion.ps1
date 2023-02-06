@@ -14,24 +14,6 @@ class Completion {
     [Completion[]] $Next
     [scriptblock] $Script
 
-    Completion([string] $Name) {
-        $this.Name = $Name
-        $this.Tooltip = $Name
-        $this.Next = @()
-    }
-
-    Completion([string] $Name, [string] $Tooltip) {
-        $this.Name = $Name
-        $this.Tooltip = $Tooltip
-        $this.Next = @()
-    }
-
-    Completion([string] $Name, [string] $Tooltip, [Completion[]] $Next) {
-        $this.Name = $Name
-        $this.Tooltip = $Tooltip
-        $this.Next = $Next
-    }
-
     Completion([string] $Name, [string] $Tooltip, [Completion[]] $Next, [scriptblock] $Script) {
         $this.Name = $Name
         $this.Tooltip = $Tooltip
