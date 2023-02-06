@@ -8,5 +8,5 @@
     Get the path to the global npm folder
 #>
 function Get-NpmGlobalPath {
-    Find-Path -Command npm | Select-Object -First 1 | Split-Path -Parent
+    return (npm config get prefix)
 }
