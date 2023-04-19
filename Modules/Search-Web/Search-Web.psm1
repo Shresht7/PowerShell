@@ -28,8 +28,8 @@ function Search-Web(
  
     # Build the search query URL
     $Search = $SearchEngines | Where-Object { $_.shortcut -eq $Engine } | Select-Object -First 1
-    $Search.url.Replace("%s", $EncodedQuery)
+    $Query = $Search.url.Replace("%s", $EncodedQuery)
  
     # Launch the URL using the Start-Process cmdlet (opens the URL with the default browser)
-    Start-Process $Search
+    Start-Process $Query
 }
