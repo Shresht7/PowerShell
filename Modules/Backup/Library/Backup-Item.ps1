@@ -6,7 +6,7 @@
 .SYNOPSIS
 Creates a backup of the given item
 .DESCRIPTION
-Creates a backup-copy of the given item in the specified backup folder (default: $HOME/Archive/Backups).
+Creates a backup-copy of the given item in the specified backup folder (default: $HOME/Archives/Backups).
 By default, a .zip archive is created with the backup contents but you can also ask it to copy the item as is.
 .EXAMPLE
 Backup-Item important-file.txt

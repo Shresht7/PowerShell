@@ -30,11 +30,10 @@ Remove-Backup -Age 7 -Confirm
 Will ask to confirm before deleting any backups older than 7 days
 #>
 function Remove-Backup(
-    [Parameter()]
     [String]$Name,
         
     # TODO: Change this to UInt32 to prevent adding negative days. (Ok while testing)
-    [Int32]$Age = 31,
+    [Int32]$Age = 31, # TODO: Update the age to something more sensible (like a year or something)
     
     # Path to the backup folder
     [String]$BackupPath = $Script:BACKUP_PATH,
