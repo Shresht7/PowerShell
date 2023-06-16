@@ -28,8 +28,8 @@ function Backup-Item {
         # The item to backup
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateScript({ Test-Path -IsValid $_ })]
-        [Alias("Item", "Path", "Input")]
-        [string] $Name,
+        [Alias("Item", "Name", "Input")]
+        [string] $Path,
 
         # The type of backup to create. "Archive" to create a .zip file or "Copy" to copy the contents as is
         [ValidateSet("Archive", "Copy")]
@@ -67,12 +67,12 @@ function Backup-Item {
     
     Process {
         # Gather Information
-        $OriginalPath = Resolve-Path $Name
+        $OriginalPath = Resolve-Path -Path $Path
         if (-not $OriginalPath) {
             Write-Error "The specified item to backup does not exist. Please provide a valid item."
             return
         }
-        $Item = Get-Item $OriginalPath
+        $Item = Get-Item -Path $OriginalPath
         $Date = Get-Date -Format FileDateTimeUniversal
 
         # Determine Destination
@@ -92,28 +92,28 @@ function Backup-Item {
         }
 
         # Check Should Process and exit if false
-        if (-Not $PSCmdlet.ShouldProcess($Destination, "Backing up $Name to $Destination")) { return }
+        if (-Not $PSCmdlet.ShouldProcess($Destination, "Backing up $Path to $Destination")) { return }
         
         # Perform Backup Operation
         switch ($Type) {
             "Archive" {
-                Write-Verbose "Archiving $Name`t-->`t$Destination"
-                $null = Compress-Archive -Path $Name -CompressionLevel Optimal -DestinationPath $Destination
+                Write-Verbose "Archiving $Path`t-->`t$Destination"
+                $null = Compress-Archive -Path $Path -CompressionLevel Optimal -DestinationPath $Destination
                 break
             }
             "Copy" {
-                Write-Verbose "Copying $Name`t-->`t$Destination"
-                $null = Copy-Item -Path $Name -Destination $Destination -Recurse
+                Write-Verbose "Copying $Path`t-->`t$Destination"
+                $null = Copy-Item -Path $Path -Destination $Destination -Recurse
                 break
             }
         }
 
         # Get file hash of the produced backup
-        $Hash = Get-FileHash $Destination
+        $Hash = Get-FileHash -Path $Destination
         
         # Create the output object
         $Output = [PSCustomObject]@{
-            Name        = $Name
+            Name        = $Path
             Source      = $OriginalPath
             Destination = $Destination
             Date        = Get-Date
