@@ -28,9 +28,5 @@ function Get-Backup(
     [Alias("Path", "Destination", "DestinationPath")]
     [string]$BackupPath = $Script:BACKUP_PATH
 ) {
-    $Res = Get-ChildItem -Path $BackupPath -Exclude '__BACKUPS__.csv'
-    if ($Filter) {
-        $Res = $Res | Where-Object { $_.Name -Like $Filter }
-    }
-    return $Res | Sort-Object LastWriteTime -Descending
+    return Get-ChildItem -Path $BackupPath -Exclude '__BACKUPS__.csv' -Filter $Filter | Sort-Object LastWriteTime -Descending
 }
