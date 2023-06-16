@@ -1,3 +1,4 @@
+# The Default Backup Location
 $Script:BACKUP_PATH = "$HOME\Archives\Backups"
 
 # Import Library
