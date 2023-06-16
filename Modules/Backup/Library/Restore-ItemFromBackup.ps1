@@ -1,10 +1,10 @@
-# ------------
-# Restore-Item
-# ------------
+# ----------------------
+# Restore-ItemFromBackup
+# ----------------------
 
 <#
 .SYNOPSIS
-Restore-Item: Restores an item from the backup.
+Restores an item from the backup.
 .DESCRIPTION
 Restores the most recent copy of the given item from the defined backup folder.
 .PARAMETER Name
@@ -23,7 +23,7 @@ Restore-Item -Name README -Path Git
 Restores the most recent backup of the README to the `Git` folder.
 #>
 
-function Restore-Item {
+function Restore-ItemFromBackup {
 
     [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "HIGH")]
     Param (
