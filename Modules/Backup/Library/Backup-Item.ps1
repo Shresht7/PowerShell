@@ -42,7 +42,7 @@ function Backup-Item {
         [string] $HashAlgorithm = "SHA256",
     
         # Path to the backup directory
-        [ValidateScript({ Test-Path -IsValid $_ })]
+        [ValidateScript({ Test-Path $_ })]
         [Alias("Output", "DestinationPath")]
         [string] $BackupPath = $Script:BACKUP_PATH,
 
@@ -53,7 +53,7 @@ function Backup-Item {
     
     Begin {
         # Create the Backup Directory if it doesn't exist
-        if (-Not (Test-Path -IsValid $BackupPath -PathType Container)) {
+        if (-Not (Test-Path -Path $BackupPath -PathType Container)) {
             try {
                 Write-Verbose "Creating $BackupPath"
                 $null = New-Item -ItemType Directory $BackupPath -ErrorAction Stop
@@ -80,7 +80,7 @@ function Backup-Item {
         $Destination = Join-Path $DestFolder "$Date`_$($Item.Name)$(if ($Type -eq "Archive") { ".zip" })"
         
         # Create the destination if it doesn't already exist
-        if (-Not (Test-Path -IsValid $DestFolder)) {
+        if (-Not (Test-Path -Path $DestFolder)) {
             try {
                 Write-Verbose "Creating $DestFolder"
                 $null = New-Item -ItemType Directory $DestFolder -Force -ErrorAction Stop
