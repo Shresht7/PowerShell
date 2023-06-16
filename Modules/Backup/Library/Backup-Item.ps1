@@ -52,14 +52,24 @@ function Backup-Item {
     Begin {
         # Create the Backup Directory if it doesn't exist
         if (-Not (Test-Path $BackupPath -PathType Container)) {
-            Write-Verbose "Creating $BackupPath"
-            $null = New-Item -ItemType Directory $BackupPath
+            try {
+                Write-Verbose "Creating $BackupPath"
+                $null = New-Item -ItemType Directory $BackupPath -ErrorAction Stop
+            }
+            catch {
+                Write-Error "Failed to create the backup directory: $($_.Exception.Message)"
+                return
+            }
         }
     }
     
     Process {
         # Gather Information
         $OriginalPath = Resolve-Path $Name
+        if (-not $OriginalPath) {
+            Write-Error "The specified item to backup does not exist. Please provide a valid item."
+            return
+        }
         $Item = Get-Item $OriginalPath
         $Date = Get-Date -Format FileDateTimeUniversal
 
@@ -69,8 +79,14 @@ function Backup-Item {
         
         # Create the destination if it doesn't already exist
         if (-Not (Test-Path $DestFolder)) {
-            Write-Verbose "Creating $DestFolder"
-            $null = New-Item -ItemType Directory $DestFolder -Force
+            try {
+                Write-Verbose "Creating $DestFolder"
+                $null = New-Item -ItemType Directory $DestFolder -Force -ErrorAction Stop
+            }
+            catch {
+                Write-Error "Failed to create the backup destination directory: $($_.Exception.Message)"
+                return
+            }
         }
 
         # Check Should Process and exit if false
