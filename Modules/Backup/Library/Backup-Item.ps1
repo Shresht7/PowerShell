@@ -33,11 +33,12 @@ function Backup-Item {
 
         # The type of backup to create. "Archive" to create a .zip file or "Copy" to copy the contents as is
         [ValidateSet("Archive", "Copy")]
+        [Alias("BackupType")]
         [string] $Type = "Archive",
 
         # The algorithm to use to compute the file hash
         [ValidateSet("MD5", "SHA1", "SHA256", "SHA384", "SHA512")]
-        [Alias("Algorithm", "Hash", "Checksum")]
+        [Alias("Algorithm", "Hash", "Checksum", "ChecksumAlgorithm")]
         [string] $HashAlgorithm = "SHA256",
     
         # Path to the backup directory
@@ -46,6 +47,7 @@ function Backup-Item {
         [string] $BackupPath = $Script:BACKUP_PATH,
 
         # Metadata file - keeps a log of the backup operations
+        [Alias("LogFilePath")]
         [string] $MetadataFilePath = (Join-Path $Script:BACKUP_PATH "__BACKUPS__.csv")
     )
     
