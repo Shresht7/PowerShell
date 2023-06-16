@@ -4,7 +4,7 @@
 .DESCRIPTION
     Periodically execute a script-block on a given time interval.
     This allows you to see the program output change over time. By default, the interval is set to 1 second.
-    This script-block runs until explicitly stopped.
+    This script-block runs until explicitly stopped using the `Escape` key.
 .EXAMPLE
     Watch-Command { Get-Date }
     Will execute 'Get-Date' every second.
@@ -25,8 +25,20 @@ function Watch-Command(
     [switch] $ClearHost
 ) {
     while ($True) {
+        # Clear the screen
         if ($ClearHost) { Clear-Host }
+
+        # Invoke the script-block
         $ScriptBlock.Invoke()
+
+        # Check if the Escape key is pressed and break the loop
+        if ([System.Console]::KeyAvailable) {
+            $key = [System.Console]::ReadKey($true)
+            if ($key.Key -eq [System.ConsoleKey]::Escape) {
+                break
+            }
+        }
+
         Start-Sleep -Seconds $Interval
     }
 }
