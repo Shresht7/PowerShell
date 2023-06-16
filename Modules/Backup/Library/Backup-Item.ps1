@@ -53,7 +53,7 @@ function Backup-Item {
     
     Begin {
         # Create the Backup Directory if it doesn't exist
-        if (Test-Path -IsValid $BackupPath -PathType Container) {
+        if (-Not (Test-Path -IsValid $BackupPath -PathType Container)) {
             try {
                 Write-Verbose "Creating $BackupPath"
                 $null = New-Item -ItemType Directory $BackupPath -ErrorAction Stop
@@ -68,7 +68,7 @@ function Backup-Item {
     Process {
         # Gather Information
         $OriginalPath = Get-Item -LiteralPath $Path
-        if (-not $OriginalPath) {
+        if (-Not $OriginalPath) {
             Write-Error "The specified item to backup does not exist. Please provide a valid item."
             return
         }
@@ -80,7 +80,7 @@ function Backup-Item {
         $Destination = Join-Path $DestFolder "$Date`_$($Item.Name)$(if ($Type -eq "Archive") { ".zip" })"
         
         # Create the destination if it doesn't already exist
-        if (Test-Path -IsValid $DestFolder) {
+        if (-Not (Test-Path -IsValid $DestFolder)) {
             try {
                 Write-Verbose "Creating $DestFolder"
                 $null = New-Item -ItemType Directory $DestFolder -Force -ErrorAction Stop
