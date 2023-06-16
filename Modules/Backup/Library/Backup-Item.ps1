@@ -67,7 +67,7 @@ function Backup-Item {
     
     Process {
         # Gather Information
-        $OriginalPath = Resolve-Path -Path $Path
+        $OriginalPath = Get-Item -LiteralPath $Path
         if (-not $OriginalPath) {
             Write-Error "The specified item to backup does not exist. Please provide a valid item."
             return
