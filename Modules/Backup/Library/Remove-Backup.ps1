@@ -4,30 +4,34 @@
 
 <#
 .SYNOPSIS
-Remove old Backups
+Remove-Backup: Remove old backups.
 .DESCRIPTION
-Remove old backup entries older than the retention period (default: 31 days)
-.PARAMETER $Name
-Wildcard name to filter the backups
-.PARAMETER $Age
-Only remove backups older than the given age. (default: 31 days)
-.PARAMETER $BackupPath
-Path to the backup folder
+Remove old backup entries older than the retention period (default: 31 days).
+.PARAMETER Name
+Wildcard name to filter the backups.
+.PARAMETER Age
+Only remove backups older than the given age (in days). Default is 31 days.
+.PARAMETER BackupPath
+Path to the backup folder.
+.PARAMETER WhatIf
+Only show the potential action without performing it.
+.PARAMETER Confirm
+Confirm before performing the action.
 .EXAMPLE
 Remove-Backup
-Removes any backups that are older than the default age
+Removes any backups that are older than the default age (31 days).
 .EXAMPLE
 Remove-Backup -Age 5
-Remove any backups that are older than 5 days
+Remove any backups that are older than 5 days.
 .EXAMPLE
 Remove-Backup -Name '*Console*' -Age 14
-Removes any backups that match the wildcard `*Console*` and are older than 14 days
+Removes any backups that match the wildcard `*Console*` and are older than 14 days.
 .EXAMPLE
 Remove-Backup -Name '*.ps1' -WhatIf
-Shows what will happen if you perform the action `Remove-Backup -Name '*.ps1'`
+Shows what will happen if you perform the action `Remove-Backup -Name '*.ps1'`.
 .EXAMPLE
 Remove-Backup -Age 7 -Confirm
-Will ask to confirm before deleting any backups older than 7 days
+Asks to confirm before deleting any backups older than 7 days.
 #>
 function Remove-Backup(
     [String]$Name,
@@ -36,6 +40,7 @@ function Remove-Backup(
     [Int32]$Age = 31, # TODO: Update the age to something more sensible (like a year or something)
     
     # Path to the backup folder
+    [ValidateScript({ Test-Path -Path $_ })]
     [String]$BackupPath = $Script:BACKUP_PATH,
 
     # Only show the potential action without performing it
@@ -45,8 +50,8 @@ function Remove-Backup(
     [switch] $Confirm
 ) {
     # Get the list of backups that match the given criteria
-    $Backups = if ($null -eq $Name) { Get-ChildItem -Path $BackupPath } else { Get-ChildItem -Path $Backups -Filter $Name }
+    $BackupItems = if ($null -eq $Name) { Get-ChildItem -Path $BackupPath } else { Get-ChildItem -Path $BackupItems -Filter $Name }
 
     # Remove backups older than the set age (in days)
-    $Backups | Where-Object { (Get-Date) -lt $_.LastAccessTime.AddDays(-$days) } | Remove-Item -Confirm:$Confirm -WhatIf:$WhatIf
+    $BackupItems | Where-Object { (Get-Date) -lt $_.LastAccessTime.AddDays(-$days) } | Remove-Item -Recurse -Confirm:$Confirm -WhatIf:$WhatIf
 }
