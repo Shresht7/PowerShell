@@ -113,10 +113,10 @@ function Backup-Item {
         
         # Create the output object
         $Output = [PSCustomObject]@{
+            Date        = Get-Date
             Name        = $Path
             Source      = $OriginalPath
             Destination = $Destination
-            Date        = Get-Date
             Algorithm   = $Hash.Algorithm
             Hash        = $Hash.Hash   
         }
