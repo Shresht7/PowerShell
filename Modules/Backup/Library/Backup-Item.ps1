@@ -109,7 +109,9 @@ function Backup-Item {
         }
 
         # Get file hash of the produced backup
-        $Hash = Get-FileHash -Path $Destination
+        if (-Not (Test-Path -Path $Destination -PathType Container)) {
+            $Hash = Get-FileHash -Path $Destination
+        }
         
         # Create the output object
         $Output = [PSCustomObject]@{
