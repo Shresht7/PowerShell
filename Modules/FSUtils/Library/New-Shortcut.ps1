@@ -45,14 +45,13 @@ function New-Shortcut(
     }
     $Shortcut = $Shell.CreateShortcut($Name)
 
-    # Update Shortcut Information
-    $Shortcut.TargetPath = $Target
-    if ($Arguments) {
-        $Shortcut.Arguments = $Arguments
+    # Set shortcut properties
+    $ShortcutProperties = @{
+        TargetPath  = $Target
+        Arguments   = $Arguments
+        Description = $Description
     }
-    if ($Description) {
-        $Shortcut.Description = $Description
-    }
+    $ShortcutObject.SetProperties($ShortcutProperties)
 
     # Save the Shortcut
     $Shortcut.Save()
