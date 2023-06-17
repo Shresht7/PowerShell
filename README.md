@@ -15,7 +15,6 @@ A collection of PowerShell Functions, Scripts and Modules.
 
 ### [`AutoComplete`](./Modules/AutoComplete/)
 ### [`Backup`](./Modules/Backup/)
-### [`Clock`](./Modules/Clock/)
 ### [`FSUtils`](./Modules/FSUtils/)
 ### [`PSReadLineUtilities`](./Modules/PSReadLineUtilities/)
 ### [`Screenshot`](./Modules/Screenshot/)
