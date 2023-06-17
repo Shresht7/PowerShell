@@ -28,5 +28,3 @@ function Set-LocationFuzzy(
     | Invoke-Fzf @FzfOptions 
     | Set-Location
 }
-
-Set-Alias cdf Set-LocationFuzzy
