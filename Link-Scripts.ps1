@@ -23,7 +23,11 @@ $DESTINATION_PATH = "$HOME\Scripts"
 $Scripts = Get-ChildItem -Path $SOURCE_PATH -Filter "*.ps1" -Recurse
 
 # Import Scripts
-$Scripts.FullName | Connect-Script
+$Scripts | ForEach-Object {
+    $Script = $_.FullName
+    $Script | Connect-Script -Destination "$HOME\Scripts"
+    $Script | Connect-Script -Destination "$HOME\Documents\PowerShell\Scripts"
+}
 
 # Remove Broken Symlinks
 Get-BrokenSymlink -Path $DESTINATION_PATH -Recurse | Remove-Item -Force
