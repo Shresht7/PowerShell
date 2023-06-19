@@ -2,7 +2,7 @@
 .SYNOPSIS
     Reverses the string
 .DESCRIPTION
-    A simple function to reverse a `String`
+    A simple function to reverse a string
 .INPUTS
     System.String
     Takes in a string to reverse
@@ -25,7 +25,7 @@
 function Get-ReversedString(
     # The string to reverse
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, ValueFromRemainingArguments)]
-    [Alias("String")]
+    [Alias("String", "InputString")]
     [string] $Text
 ) {
     $ReversedString = "" # Variable to store the results
