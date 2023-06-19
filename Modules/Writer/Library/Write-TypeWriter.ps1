@@ -17,8 +17,8 @@ function Write-TypeWriter {
     [CmdletBinding(DefaultParameterSetName = "Speed")]
     param (
         # The text to write
-        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [string] $Text,
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [string] $Text = " ",
     
         # Characters per minute
         [Parameter(ParameterSetName = "CPM")]
@@ -64,6 +64,7 @@ function Write-TypeWriter {
             # Pause for the duration
             Start-Sleep -Milliseconds $PauseFor
         }
+        Write-Host ""
     }
 
     end {
