@@ -48,3 +48,9 @@ Returns a list of all screenshots stored in the specified folder.
 **Path**: The folder where the screenshots are located.
 **Filter**: Filter the list of screenshots based on a pattern.
 **Latest**: Retrieve the most recent screenshot.
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](./LICENSE).
