@@ -25,7 +25,7 @@ function Search-Web(
     $EncodedQuery = [System.Web.HttpUtility]::UrlEncode($Query)
  
     # Build the search query URL
-    $Search = $SearchEngines | Where-Object { $_.shortcut -eq $Engine } | Select-Object -First 1
+    $Search = $Script:SearchEngines | Where-Object { $_.shortcut -eq $Engine } | Select-Object -First 1
     $Query = $Search.url.Replace("%s", $EncodedQuery)
  
     # Launch the URL using the Start-Process cmdlet (opens the URL with the default browser)
