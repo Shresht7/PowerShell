@@ -6,14 +6,14 @@
 #>
 
 [CmdletBinding()]
-Param (
+param (
     # Specifies the destination folder where the battery report will be saved. Default is "$Home\Data\Battery-Report".
     [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
     [Alias("Destination", "Path", "Store")]
     [string] $DestinationFolder = "$Home\Data\Battery-Report"
 ) 
 
-Process {
+process {
 
     # Check if the destination folder exists, if not create it
     if (!(Test-Path $DestinationFolder)) {
@@ -44,7 +44,6 @@ Process {
         # Write and log the error message
         Write-Error "❌ An error occurred: $($_.Exception.Message) ❌"
         $_.Exception.Message | Out-File -FilePath ".\battery-report.log" -Append
-
     
     }
 }

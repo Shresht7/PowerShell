@@ -8,7 +8,7 @@
 #>
 
 [CmdletBinding()]
-param(
+param (
     # The type of the conventional commit
     [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
     [ValidateSet('build', 'chore', 'ci', 'docs', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style', 'test')]
