@@ -9,8 +9,6 @@
 .OUTPUTS
     System.String
     This function returns a string representing the path of the screenshot folder.
-.NOTES
-    The $Script:ScreenshotFolder variable must be set before using this function.
 #>
 function Get-ScreenshotFolder() {
     return $Script:ScreenshotFolder
