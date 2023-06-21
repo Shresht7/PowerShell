@@ -24,12 +24,15 @@ function Search-Web(
     # Encode the query string
     $EncodedQuery = [System.Web.HttpUtility]::UrlEncode($Query)
  
-    # Build the search query URL
+    # Look for the search engine
     $Search = $Script:SearchEngines | Where-Object { $_.shortcut -eq $Engine } | Select-Object -First 1
+    if (-not $Search) { throw "Failed to find search engine: $Engine" }
+
+    # Build the search engine query
     $Query = $Search.url.Replace("%s", $EncodedQuery)
  
     # Launch the URL using the Start-Process cmdlet (opens the URL with the default browser)
-    Start-Process $Query
+    Start-Process $Query -ErrorAction Stop
 }
 
 # Register argument completer for the available search engines

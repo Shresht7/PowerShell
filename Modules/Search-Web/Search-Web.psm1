@@ -1,5 +1,5 @@
 # Search-Engines JSON file
-$Script:SearchEnginesJsonFile = "$HOME\Data\searchEngines.json"
+$Script:SearchEnginesJsonFile = "$HOME\Datax\searchEngines.json"
 
 # If the Search-Engine JSON file exists, load the Search-Engine data
 if (Test-Path -Path $Script:SearchEnginesJsonFile) {
@@ -7,11 +7,12 @@ if (Test-Path -Path $Script:SearchEnginesJsonFile) {
 }
 # ... otherwise load the default data
 else {
-    $Script:SearcEngines = @{
-        name     = "Google"
-        shortcut = "google"
-        url      = "https://google.com/search?q=%s"
-    }
+    $Script:SearchEngines = @(
+        @{
+            name     = "Google"
+            shortcut = "google"
+            url      = "https://google.com/search?q=%s"
+        })
 }
 
 # Source Private Functions
