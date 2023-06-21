@@ -28,7 +28,7 @@ This module provides functionality for capturing and managing screenshots in Pow
 
 ## 📕 Reference
 
-> Note: By default, the module assumes a folder named `Screenshots` in the `$HOME\Pictures` directory for storing the screenshots. You can modify the default folder or specify a different folder using the -Folder parameter.
+> Note: By default, the module assumes a folder named `Screenshots` in the `$HOME\Pictures` directory for storing the screenshots. You can modify the default folder or specify a different folder using the `-Folder` parameter or using the `Set-ScreenshotFolder` cmdlet.
 
 ### New-Screenshot
 
