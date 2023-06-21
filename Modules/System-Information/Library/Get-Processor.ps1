@@ -7,5 +7,5 @@
     Get-Processor
 #>
 function Get-Processor() {
-    Get-WmiObject -Class Win32_Processor
+    Get-CimInstance -ClassName Win32_Processor
 }
