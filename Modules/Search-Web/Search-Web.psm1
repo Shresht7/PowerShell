@@ -1,8 +1,18 @@
 # Search-Engines JSON file
-$Script:SearchEnginesJsonFile = "$PSScriptRoot\searchEngines.json"
+$Script:SearchEnginesJsonFile = "$HOME\Data\searchEngines.json"
 
-# Search-Engines Data
-$Script:SearchEngines = Get-Content -Path $Script:SearchEnginesJsonFile | ConvertFrom-Json
+# If the Search-Engine JSON file exists, load the Search-Engine data
+if (Test-Path -Path $Script:SearchEnginesJsonFile) {
+    $Script:SearchEngines = Get-Content -Path $Script:SearchEnginesJsonFile | ConvertFrom-Json
+}
+# ... otherwise load the default data
+else {
+    $Script:SearcEngines = @{
+        name     = "Google"
+        shortcut = "google"
+        url      = "https://google.com/search?q=%s"
+    }
+}
 
 # Source Private Functions
 Get-ChildItem -Path "$PSScriptRoot\Private" -Filter "*.ps1" | ForEach-Object {
