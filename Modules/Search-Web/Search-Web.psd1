@@ -9,7 +9,7 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    # RootModule = ''
+    RootModule    = 'Search-Web'
 
     # Version number of this module.
     ModuleVersion = '1.0.0'
@@ -30,7 +30,7 @@
     Copyright     = '(c) Shresht7. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description   = 'PowerShell module to search the web using several search-engines'
+    Description   = 'PowerShell module to search the web using search-engines'
 
     # Minimum version of the PowerShell engine required by this module
     # PowerShellVersion = ''
@@ -66,7 +66,7 @@
     # FormatsToProcess = @()
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-    NestedModules = @('Search-Web.psm1')
+    # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     # FunctionsToExport = @()
