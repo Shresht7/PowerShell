@@ -19,7 +19,6 @@ function Search-Web(
     [string] $Query,
 
     # The search engine to use to perform the search
-    [ValidateSet("Google", "Bing", "DuckDuckGo", "GitHub", "Gist", "Wikipedia", "YouTube", "NPM", "MDN", "Wolfram")]
     [string] $Engine = "google"
 ) {
     # Encode the query string
@@ -31,4 +30,15 @@ function Search-Web(
  
     # Launch the URL using the Start-Process cmdlet (opens the URL with the default browser)
     Start-Process $Query
+}
+
+# Register argument completer for the available search engines
+Register-ArgumentCompleter -CommandName Search-Web -ParameterName Engine -ScriptBlock {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    $Script:SearchEngines | Where-Object { $_.shortcut -like "$wordToComplete*" } | ForEach-Object {
+        New-Object -Type System.Management.Automation.CompletionResult -ArgumentList $_.shortcut,
+        $_.shortcut,
+        "ParameterValue",
+        $_.name
+    }
 }
