@@ -1,5 +1,5 @@
 # Search-Engines JSON file
-$Script:SearchEnginesJsonFile = ".\searchEngines.json"
+$Script:SearchEnginesJsonFile = "$PSScriptRoot\searchEngines.json"
 
 # Search-Engines Data
 $Script:SearchEngines = Get-Content -Path $Script:SearchEnginesJsonFile | ConvertFrom-Json
