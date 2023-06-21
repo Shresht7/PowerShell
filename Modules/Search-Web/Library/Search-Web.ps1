@@ -19,6 +19,7 @@ function Search-Web(
     [string] $Query,
 
     # The search engine to use to perform the search
+    [ValidateSet("Google", "Bing", "DuckDuckGo", "GitHub", "Gist", "Wikipedia", "YouTube", "NPM", "MDN", "Wolfram")]
     [string] $Engine = "google"
 ) {
     # Encode the query string
