@@ -9,7 +9,7 @@
     New-Shortcut -Name "MyShortcut" -Target "C:\Program Files\MyApplication" -Type "FileSystem"
     This example creates a new file system shortcut with the name "MyShortcut" that points to the specified target path.
     .EXAMPLE
-    New-Shortcut -Name "MyURLShortcut" -Target "https://www.example.com" -Type "URL" -Arguments "-incognito"
+    New-Shortcut -Name "MyURLShortcut" -Target "https://www.example.com" -Type "URL"
     This example creates a new URL shortcut with the name "MyURLShortcut" that points to the specified target URL. 
     The shortcut will include the specified arguments when it is run.
 #>
@@ -21,8 +21,8 @@ function New-Shortcut(
 
     # The target path for the shortcut
     [Parameter(Mandatory)]
-    [Alias("TargetPath", "Destination", "DestinationPath")]
-    [string] $Target,
+    [Alias("Target", "Destination", "DestinationPath")]
+    [string] $TargetPath,
 
     # The type of shortcut to create. Can be either "FileSystem" or "URL"
     [Parameter(Mandatory)]
@@ -46,12 +46,16 @@ function New-Shortcut(
     $Shortcut = $Shell.CreateShortcut($Name)
 
     # Set shortcut properties
-    $ShortcutProperties = @{
-        TargetPath  = $Target
-        Arguments   = $Arguments
-        Description = $Description
+    switch ($Type) {
+        "FileSystem" {
+            $Shortcut.TargetPath = $TargetPath
+            $Shortcut.Description = $Description
+            $Shortcut.Arguments = $Arguments
+        }
+        "URL" {
+            $Shortcut.TargetPath = $TargetPath
+        }
     }
-    $ShortcutObject.SetProperties($ShortcutProperties)
 
     # Save the Shortcut
     $Shortcut.Save()
