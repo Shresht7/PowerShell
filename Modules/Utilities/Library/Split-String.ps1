@@ -45,6 +45,7 @@ function Split-String(
     [string] $Delimiter = "\s+",
 
     # An optional array of indices to return specific split elements. If not provided, the entire split array is returned.
+    [Alias("Fields")]
     [int[]] $Index
 ) {
     process {
