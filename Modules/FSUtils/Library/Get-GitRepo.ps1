@@ -22,41 +22,35 @@ function Get-GitRepo(
     [ValidateScript({ Test-Path -Path $_ })]
     [string] $Path = "."
 ) {
-    begin {
-        $Results = [System.Collections.ArrayList]::new()
-    }
+    $Results = [System.Collections.ArrayList]::new()
 
-    process {
-        # Find `.git` directories
-        Get-ChildItem -Path $Path -Recurse -Directory -Hidden
-        | Where-Object { $_.Name -eq ".git" }
-        | ForEach-Object {
-            # Select the parent folder
-            $Folder = $_.Parent
+    # Find `.git` directories
+    Get-ChildItem -Path $Path -Recurse -Directory -Hidden
+    | Where-Object { $_.Name -eq ".git" }
+    | ForEach-Object {
+        # Select the parent folder
+        $Folder = $_.Parent
 
-            # Get the current branch
-            $Branch = (git -C "$Folder" branch --show-current)
-            # Get the latest tag
-            $LatestTagId = (git -C "$Folder" rev-list --tags --max-count=1)
-            if ($LatestTagId) {
-                $LatestTag = (git -C "$Folder" describe --tags $LatestTagId)
-            }
-            # Get the current status of the repository
-            $Status = (git -C "$Folder" status --short)
-            $Status = if ($Status -like " M *") { "modified" } else { "clean" }
-
-            # Store the results
-            $null = $Results.Add([PSCustomObject]@{
-                    Name      = $Folder.BaseName
-                    Path      = $Folder
-                    Branch    = $Branch
-                    LatestTag = $LatestTag
-                    Status    = $Status
-                })
+        # Get the current branch
+        $Branch = (git -C "$Folder" branch --show-current)
+        # Get the latest tag
+        $LatestTagId = (git -C "$Folder" rev-list --tags --max-count=1)
+        if ($LatestTagId) {
+            $LatestTag = (git -C "$Folder" describe --tags $LatestTagId)
         }
+        # Get the current status of the repository
+        $Status = (git -C "$Folder" status --short)
+        $Status = if ($Status -like " M *") { "modified" } else { "clean" }
+
+        # Store the results
+        $null = $Results.Add([PSCustomObject]@{
+                Name      = $Folder.BaseName
+                Path      = $Folder
+                Branch    = $Branch
+                LatestTag = $LatestTag
+                Status    = $Status
+            })
     }
 
-    end {
-        $Results | Format-Table
-    }
+    return $Results
 }
