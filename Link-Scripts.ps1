@@ -1,5 +1,3 @@
-# Requires-Modules Utilities, FSUtils
-
 <#
 .SYNOPSIS
     Symlinks scripts from the local `Scripts` folder to `$HOME\Scripts`
@@ -8,6 +6,10 @@
 .EXAMPLE
     . .\Link-Scripts.ps1
 #>
+
+# Import the Helper functions
+Import-Module -Name "$PSScriptRoot\Modules\Utilities" -Cmdlet Test-IsElevated, Connect-Script
+Import-Module -Name "$PSScriptRoot\Modules\FSUtils" -Cmdlet Find-Path
 
 # Check to see if the script is running as administrator; exit if not
 if (-Not (Test-IsElevated)) {
