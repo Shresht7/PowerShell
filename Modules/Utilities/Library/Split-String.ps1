@@ -60,3 +60,6 @@ function Split-String(
         return $SplitString
     }
 }
+
+Set-Alias cut Split-String
+Export-ModuleMember -Alias cut
