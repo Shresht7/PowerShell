@@ -17,9 +17,14 @@ if (-Not (Test-IsElevated)) {
     return
 }
 
-# Paths
+# Source Path
 $SOURCE_PATH = "$PSScriptRoot\Modules"
-$DESTINATION_PATH = $Env:PSModulePath.Split(";")[0]
+
+# Windows and Linux have different delimters apparently
+$Delimiter = if($PSVersionTable.OS -like "*Windows*") { ";" } else { ":" }
+
+# Destination Path
+$DESTINATION_PATH = $Env:PSModulePath.Split($Delimiter)[0]
 
 # Get all Modules
 $Modules = Get-ChildItem -Path $SOURCE_PATH -Filter "*.psm1" -Recurse
