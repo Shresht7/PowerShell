@@ -41,7 +41,7 @@ function Remove-PSReadLineHistoryItem {
         # Specifies the number of items to remove from the end of the history. The default value is 1.
         [Parameter(ParameterSetName = "Count")]
         [Alias("Last", "Amount")]
-        [uint] $Count = 1,
+        [uint32] $Count = 1,
 
         # Removes duplicate items
         [Parameter(ParameterSetName = "Duplicate")]
