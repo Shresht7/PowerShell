@@ -22,21 +22,21 @@ function Write-TypeWriter {
     
         # Characters per minute
         [Parameter(ParameterSetName = "CPM")]
-        [uint] $CPM = 350,
+        [uint32] $CPM = 350,
     
         # Speed of the typewriter (150ms by default)
         [Parameter(ParameterSetName = "Speed")]
-        [uint] $Speed = 150,
+        [uint32] $Speed = 150,
     
         # The minimum time for a keystroke (default: 10ms)
-        [uint] $MinSpeed = 10,
+        [uint32] $MinSpeed = 10,
     
         # The list of characters to pause at
         [string[]] $PauseAt = @(" ", "`n"),
     
         # The the multiplier to apply when pausing
         [ValidatePattern("[0-9]+")]
-        [uint] $PauseMultiplier = 3
+        [uint32] $PauseMultiplier = 3
     )
 
     begin {
