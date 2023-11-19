@@ -66,9 +66,11 @@ function Register-CommandCompleter(
         }
 
         # Filter the completions that match the word to complete
-        $Completions = $Selection.Completions | Where-Object { $_.Name -Like "${WordToComplete}*" } | ForEach-Object {
-            # Create a new CompletionResult object to return
-            [CompletionResult]::new($_.Name, $_.Name, $_.Type, $_.Tooltip)
+        $Completions = $Selection.Completions | ForEach-Object {
+            if ($_.Name -Like "*${wordToComplete}*") {
+                # Create a new CompletionResult object to return
+                [CompletionResult]::new($_.Name, $_.Name, $_.Type, $_.Tooltip)
+            }
         }
 
         # Return the completions
