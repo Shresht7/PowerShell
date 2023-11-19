@@ -7,15 +7,23 @@
     then filters the completions that match the word to complete and returns them as CompletionResult objects.
 .EXAMPLE
     Register-CommandCompleter -Name npm -Tooltip "Node Package Manager" -Completions @(
+        
         New-Completion -Name 'install' -Tooltip 'Install a package' -Completions @(
             New-Completion -Name '-g' -Tooltip 'Save as a global dependency'
             New-Completion -Name '--global' -Tooltip 'Save as a global dependency'
             New-Completion -Name '--save-dev' -Tooltip 'Save as dev-dependency'
         )
+
+        New-Completion -Name 'run' -Tooltip 'Run a script' -Script {
+            (Get-NpmScript | ForEach-Object { New-Completion -Name $_.Name -Tooltip $_.Script })
+        }
+
         New-Completion -Name "uninstall" -Tooltip "Uninstall a package"
+    
     )
 #>
 function Register-CommandCompleter(
+
     # The name of the command
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
     [Alias('Command', 'CommandName')]
@@ -30,7 +38,9 @@ function Register-CommandCompleter(
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [Alias('Next', 'NextCompletions', 'SubCompletions')]
     [Completion[]] $Completions
+
 ) {
+ 
     # Add Command to the Global $COMMANDS tree object
     $SuperCommand = New-Completion -Name $Name -Tooltip $Tooltip -Completions $Completions
     $Script:COMMANDS.Completions += $SuperCommand
@@ -75,5 +85,6 @@ function Register-CommandCompleter(
 
         # Return the completions
         return $Completions
+
     }
 }
