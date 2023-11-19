@@ -60,8 +60,8 @@ function Register-CommandCompleter(
             # Find the next command in the tree object and set it as the current selection
             $Selection = $Selection.Completions | Where-Object { $_.Name -Like $SubCommand }
             # Make use of the script block to generate the next selection, if any
-            if ($null -ne $Selection.Script) {
-                $Selection.Completions += $Selection.Script.Invoke()
+            if ($null -ne $Selection.CompletionsScriptBlock) {
+                $Selection.Completions += $Selection.CompletionsScriptBlock.Invoke()
             }
         }
 
