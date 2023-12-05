@@ -75,8 +75,8 @@ function New-Completion(
     # The script block to execute to get the next set of completions.
     # These completions will be added to the $Completions array.
     [Parameter(Position = 3)]
-    [Alias('Script', 'ScriptBlock')]
-    [scriptblock] $CompletionsScriptBlock
+    [Alias('Script')]
+    [scriptblock] $ScriptBlock
 ) {
 
     # If no tooltip was passed in, use the name
@@ -86,8 +86,8 @@ function New-Completion(
     if (($null -eq $Completions) -or ($Completions.Length -eq 0)) { $Completions = @() }
 
     # If no script block is provided, use $null
-    if ($null -eq $CompletionsScriptBlock) { $CompletionsScriptBlock = $null }
+    if ($null -eq $ScriptBlock) { $ScriptBlock = $null }
 
     # Return the new Completion object
-    return [Completion]::new($Name, $Tooltip, $Completions, $CompletionsScriptBlock)
+    return [Completion]::new($Name, $Tooltip, $Completions, $ScriptBlock)
 }

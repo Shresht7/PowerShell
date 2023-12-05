@@ -76,7 +76,7 @@ Creates a new `Completion` object.
 - **Name**: The name of the completion.
 - **Tooltip**: The tooltip to display when the user presses `Ctrl+Space` while the cursor is on the completion.
 - **Completions**: An array of `Completion` objects to use for auto-completion.
-- **Script**: A script block to dynamically generate completions.
+- **ScriptBlock**: A script block to dynamically generate completions.
 
 #### Examples
 
@@ -97,7 +97,7 @@ Creates a new `Completion` object.
     ```
 4. Create a completion with dynamically generated sub-completions
     ```powershell
-    New-Completion -Name 'advanced' -Tooltip 'with dynamic sub-completions' -Script {
+    New-Completion -Name 'advanced' -Tooltip 'with dynamic sub-completions' -ScriptBlock {
         1..5 | ForEach-Object { New-Completion -Name $_ }
     }
     ```
