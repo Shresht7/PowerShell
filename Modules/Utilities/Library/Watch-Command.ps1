@@ -19,16 +19,20 @@ Watch-Command { Get-Date } -Interval 60
 Will execute `Get-Date` every 60 seconds
 #>
 function Watch-Command(
+    # The Script-Block to execute repeatedly
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [scriptblock] $ScriptBlock,
 
+    # The update interval timespan (in seconds)
+    [ValidateRange(1, 3600)]
     [int32] $Interval = 1,
 
+    # Switch to clear the host screen on each tick (default: $false)
     [switch] $ClearHost
 ) {
-    while ($True) {
+    do {
         if ($ClearHost) { Clear-Host }
         $ScriptBlock.Invoke()
         Start-Sleep $Interval
-    }
+    } while ($host.UI.RawUI.KeyAvailable -eq $false -or $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyUp").VirtualKeyCode -ne 27) # Escape Key to stop the loop and exit
 }
