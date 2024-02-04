@@ -30,9 +30,9 @@ function Watch-Command(
     # Switch to clear the host screen on each tick (default: $false)
     [switch] $ClearHost
 ) {
-    do {
+    while ($True) {
         if ($ClearHost) { Clear-Host }
         $ScriptBlock.Invoke()
         Start-Sleep $Interval
-    } while ($host.UI.RawUI.KeyAvailable -eq $false -or $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyUp").VirtualKeyCode -ne 27) # Escape Key to stop the loop and exit
+    }
 }
