@@ -31,6 +31,7 @@ function Invoke-Script(
     # Look for scripts recursively
     [switch] $Recurse
 ) {
+    # Get the given item
     $Item = Get-Item -Path $Path
 
     # If the $Path is a PowerShell script, then invoke it directly
@@ -42,7 +43,7 @@ function Invoke-Script(
     if ($Item.PSIsContainer) {
 
         # Get a list of all the scripts
-        $Scripts = Get-ChildItem -Path $Path -Filter "*.ps1" -Recurse:$Recurse
+        $Scripts = Get-ChildItem -Path $Path -Recurse:$Recurse
 
         # Set Options for Fzf
         $FzfOptions = @{
@@ -50,16 +51,22 @@ function Invoke-Script(
             PreviewWindow = "right:60%"
             Height        = 100
             Prompt        = ". "
-            Header        = "Select a script to invoke using PowerShell`n`n"
+            Header        = "Select a script to run`n`n"
             Query         = $Query
         }
 
         # Select a script to run
         $Script = $Scripts | Invoke-Fzf @FzfOptions
-    
+
+        # Return early if no script was selected
+        if (-not $Script) { return }
+
         # Invoke the script if it was selected
-        if ($Script) {
+        if ($Script.EndsWith(".ps1")) {
             . $Script
+        }
+        elseif ($Script.EndsWith(".js")) {
+            node $Script
         }
 
     }
