@@ -71,7 +71,7 @@ function Remove-PSReadLineHistoryItem {
             }
             "Duplicate" {
                 $originalCount = ($PSReadLineHistory | Measure-Object -Line).Lines
-                $PSReadLineHistory = $PSReadLineHistory | Sort-Object -Unique
+                $PSReadLineHistory = $PSReadLineHistory | Select-Object -Unique
                 $finalCount = ($PSReadLineHistory | Measure-Object -Line).Lines
                 $diffCount = $originalCount - $finalCount
                 Write-Verbose "$diffCount duplicate commands removed!"
