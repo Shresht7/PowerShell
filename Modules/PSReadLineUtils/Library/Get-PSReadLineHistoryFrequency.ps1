@@ -15,7 +15,7 @@ function Get-PSReadLineHistoryFrequency {
     foreach ($line in Get-PSReadLineHistory) {
         # If the command is already in the hash-table, increment the count
         if (!$frequency[$line]) {
-            $frequency.Add($line, 1)
+            $frequency.Add($line, 1) | Out-Null
         }
         # Otherwise, add the command to the hash-table
         else {
