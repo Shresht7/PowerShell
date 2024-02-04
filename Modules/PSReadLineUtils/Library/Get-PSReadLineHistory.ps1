@@ -10,30 +10,26 @@
 function Get-PSReadLineHistory {
     $History = [System.Collections.ArrayList]@(
         $last = ''
-        $lines = ''
+        $lineBlock = @()
 
         # Read the history file line by line
         foreach ($line in [System.IO.File]::ReadLines((Get-PSReadLineHistoryPath))) {
 
             # If the line ends with a backtick, it's a continuation of the previous line
             if ($line.EndsWith('`')) {
-                # Remove the backtick and add the line to the list of lines
+                # Remove the backtick and add the line to the lineBlock variable
                 $line = $line.SubString(0, $line.Length - 1)
-                # If this is the first line, just set the lines variable
-                $lines = if (!$lines) {
-                    $line
-                }
-                # Otherwise, add the line to the list of lines
-                else {
-                    "$lines`n$line"
-                }
+                $lineBlock.Add($line) | Out-Null
                 continue
             }
 
-            # If there are lines, add the current line to the list of lines
-            if ($lines) {
-                $line = "$lines`n$line"
-                $lines = '' # Reset the lines variable
+            # If the line does not end with a backtick, but we have an existing lineBlock,
+            # then add the line to the lineBlock and join the lines together with a newline
+            # and reset the lineBlock variable
+            if ($lineBlock) {
+                $lineBlock.Add($line) | Out-Null
+                $line = $lineBlock -join "`n"
+                $lineBlock = @()
             }
     
             # If the line is not the same as the last line, add it to the history
