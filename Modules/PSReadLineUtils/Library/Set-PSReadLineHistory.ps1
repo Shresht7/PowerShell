@@ -5,6 +5,9 @@
     Sets (overwrites) the contents of the PSReadLine history file. Useful after performing
     some manipulation on the existing history (using Get-PSReadLineHistory)
 .EXAMPLE
+    $History | Set-PSReadLineHistory
+    Updates the PSReadLineHistory Contents with $History
+.EXAMPLE
     Set-PSReadLineHistory -Content ($Content)
     Updates the PSReadLineHistory Contents with $Contents
 .EXAMPLE
@@ -16,11 +19,6 @@ function Set-PSReadLineHistory(
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [string] $Content
 ) {
-    # Check if $Content is valid
-    if ($null -eq $Content || $Content -eq "") {
-        throw "The Content parameter is required."
-    }
-
     $Path = Get-PSReadLineHistoryPath
     $Temp = "$Path.temp"
     $Content | Out-File -FilePath $Temp
