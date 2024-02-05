@@ -10,7 +10,7 @@
 function Get-PSReadLineHistory {
     $History = [System.Collections.ArrayList]@(
         $last = ''
-        $lineBlock = @()
+        $lineBlock = [System.Collections.ArrayList]@()
 
         # Read the history file line by line
         foreach ($line in [System.IO.File]::ReadLines((Get-PSReadLineHistoryPath))) {
