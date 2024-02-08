@@ -28,6 +28,6 @@ function Set-Reminder(
     $task = New-ScheduledTask -Action $action -Trigger $trigger -Settings $settings
 
     # Register the scheduled task under the S7\Reminders folder in the scheduler
-    Register-ScheduledTask -TaskPath "\S7\Reminders" -TaskName "Reminder" -InputObject $task
+    Register-ScheduledTask -TaskPath $Script:TaskPath -TaskName "Reminder" -InputObject $task
 
 }
