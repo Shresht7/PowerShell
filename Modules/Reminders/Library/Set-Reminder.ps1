@@ -21,8 +21,11 @@ function Set-Reminder(
     [datetime] $At
 ) {
 
+    # Make a script-block to create a BurntToast notification
+    $script = "{ New-BurntToastNotification -Text $Message }"
+
     # Create a scheduled task for the reminder
-    $action = New-ScheduledTaskAction -Execute "pwsh.exe" -Argument "-NoProfile -Command `"& { Write-Host '$Message' }`""
+    $action = New-ScheduledTaskAction -Execute "pwsh.exe" -Argument "-NoProfile -Command `"& $script`""
     $trigger = New-ScheduledTaskTrigger -Once -At $At
     $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable
     $task = New-ScheduledTask -Action $action -Trigger $trigger -Settings $settings
