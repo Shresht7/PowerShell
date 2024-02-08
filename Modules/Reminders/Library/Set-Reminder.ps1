@@ -22,15 +22,15 @@ function Set-Reminder(
 ) {
 
     # Make a script-block to create a BurntToast notification
-    $script = "{ New-BurntToastNotification -Text $Message }"
+    $script = "{ New-BurntToastNotification -Text '$Message' }"
 
     # Create a scheduled task for the reminder
     $action = New-ScheduledTaskAction -Execute "pwsh.exe" -Argument "-NoProfile -Command `"& $script`""
     $trigger = New-ScheduledTaskTrigger -Once -At $At
     $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable
-    $task = New-ScheduledTask -Action $action -Trigger $trigger -Settings $settings
+    $task = New-ScheduledTask -Action $action -Trigger $trigger -Settings $settings -Description "Reminder: $Message"
 
     # Register the scheduled task under the S7\Reminders folder in the scheduler
-    Register-ScheduledTask -TaskPath $Script:TaskPath -TaskName "Reminder" -InputObject $task
+    Register-ScheduledTask -TaskPath $Script:TaskPath -TaskName "Reminder_$(New-Guid)" -InputObject $task
 
 }
