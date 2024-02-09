@@ -38,7 +38,7 @@ function Set-Reminder(
     $script = "{ New-BurntToastNotification -Text '$Message' }"
 
     # Create a scheduled task for the reminder
-    $action = New-ScheduledTaskAction -Execute "pwsh.exe" -Argument "-NoProfile -Command `"& $script`""
+    $action = New-ScheduledTaskAction -Execute "pwsh.exe" -Argument "-NoProfile -WindowStyle Hidden -Command `"& $script`""
     $trigger = New-ScheduledTaskTrigger -Once -At $At
     $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable
     $task = New-ScheduledTask -Action $action -Trigger $trigger -Settings $settings -Description "Reminder: $Message"
