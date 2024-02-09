@@ -13,6 +13,7 @@
 function Set-Reminder(
     # The reminder message
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [Alias('For')]
     [string] $Message,
 
     # The time to be reminded at
