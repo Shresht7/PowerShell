@@ -38,7 +38,7 @@ function Get-Reminder(
         [PSCustomObject]@{
             ID      = $_.TaskName
             Message = $_.Description -replace "Reminder: "
-            At      = $_.Triggers[0].StartBoundary
+            At      = [DateTime]::Parse($_.Triggers[0].StartBoundary)
             State   = $_.State
         }
     }
