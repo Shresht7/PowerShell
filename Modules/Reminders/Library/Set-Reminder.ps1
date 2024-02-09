@@ -9,6 +9,9 @@
 .EXAMPLE
     Set-Reminder -Message "Go to the meeting" -At (Get-Date).AddMinutes(30)
     Creates a reminder to go to the meeting in 30 minutes.
+.EXAMPLE
+    Set-Reminder -Message "Breakfast" -In (New-TimeSpan -Minutes 15)
+    Creates a reminder for breakfast in 15 minutes.
 #>
 function Set-Reminder(
     # The reminder message
@@ -17,10 +20,19 @@ function Set-Reminder(
     [string] $Message,
 
     # The time to be reminded at
-    [Parameter(Mandatory)]
+    [Parameter(Mandatory, ParameterSetName = 'At')]
     [Alias("Time")]
-    [datetime] $At
+    [datetime] $At,
+
+    # The time to be reminded in
+    [Parameter(Mandatory, ParameterSetName = 'In')]
+    [timespan] $In
 ) {
+
+    # If the -In parameter is specified, calculate the reminder time based on the current time
+    if ($PSCmdlet.ParameterSetName -eq 'In') {
+        $At = (Get-Date).Add($In)
+    }
 
     # Make a script-block to create a BurntToast notification
     $script = "{ New-BurntToastNotification -Text '$Message' }"
