@@ -12,8 +12,9 @@ function Connect-Module(
     [Alias("Name", "Source", "SourcePath", "From")]
     [string] $Path,
 
+    # The destination path to link the module to (usually `$HOME\Documents\PowerShell\Modules`).
     [Alias("DestinationPath", "Target", "TargetPath", "To")]
-    [string] $Destination = $Env:PSModulePath.Split(";")[0]
+    [string] $Destination = (if ($PSVersionTable.OS -like "*Windows*") { $Env:PSModulePath.Split(";")[0] } else { $Env:PSModulePath.Split(":")[0] })
 ) {
     # Creating symbolic links requires elevated permissions
     if (-not (Test-IsElevated)) {
