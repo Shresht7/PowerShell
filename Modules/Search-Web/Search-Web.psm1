@@ -1,5 +1,5 @@
 # Search-Engines JSON file
-$Script:SearchEnginesJsonFile = "$HOME\Datax\searchEngines.json"
+$Script:SearchEnginesJsonFile = "$HOME\Data\searchEngines.json"
 
 # If the Search-Engine JSON file exists, load the Search-Engine data
 if (Test-Path -Path $Script:SearchEnginesJsonFile) {
