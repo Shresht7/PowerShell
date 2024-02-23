@@ -30,7 +30,18 @@ while ($True) {
     if ($connection.Status -eq 'Success') {
         # Internet connection is restored. Notify the user and exit the loop
         Write-Host "Internet Connection Restored" -ForegroundColor Green
-        New-BurntToastNotification -Text "Internet Connection Restored" 
+
+        # Notify the user using the BurntToast module
+        $NotificationParams = @{
+            Text    = @(
+                "Internet Connection Restored",
+                "The internet connection is back up and running!"
+            )
+            AppLogo = "~\Pictures\Icons\wifi-white.png"
+        }
+        New-BurntToastNotification @NotificationParams
+
+        # Exit the loop
         break
     }
 
