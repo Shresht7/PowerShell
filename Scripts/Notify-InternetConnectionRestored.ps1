@@ -7,7 +7,7 @@
 .EXAMPLE
     .\Notify-InternetConnectionRestored.ps1
     Continuously checks for the internet connection to "www.google.com"
-    every 5 seconds and notifies the user when the connection is restored
+    every 30 seconds and notifies the user when the connection is restored
 .EXAMPLE
     .\Notify-InternetConnectionRestored.ps1 -TargetName "www.example.com" -Interval 10
     Continuously checks for the internet connection to "www.example.com"
@@ -18,8 +18,8 @@ param (
     # The target website to check for internet connection (default: "www.google.com")
     [string] $TargetName = "www.google.com",
 
-    # The interval in seconds between each connection check (default: 5)
-    [int]$Interval = 5
+    # The interval in seconds between each connection check (default: 30)
+    [int]$Interval = 30
 )
 
 # Main loop to continuously check for the internet connection
