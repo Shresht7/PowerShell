@@ -25,7 +25,7 @@ param (
 # Main loop to continuously check for the internet connection
 while ($True) {
     # Check if the internet connection is restored
-    $Connection = Test-Connection -TargetName $TargetName -Count 1 -Quiet
+    $Connection = Test-Connection -TargetName $TargetName -Count 1
 
     if ($Connection.Status -eq 'Success') {
         # Internet connection is restored. Notify the user and exit the loop
