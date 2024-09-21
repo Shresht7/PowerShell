@@ -13,12 +13,10 @@
 function New-RandomString(
     # The length of the random string
     [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [ValidateRange()]
     [UInt32] $Length = 10,
 
     # The characters to use for the random string
     [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [ValidateNotNullOrEmpty()]
     [string] $Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 ) {
     $Random = New-Object System.Random
