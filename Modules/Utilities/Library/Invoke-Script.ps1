@@ -68,6 +68,14 @@ function Invoke-Script(
         elseif ($Script.EndsWith(".js")) {
             node $Script
         }
+        elseif ($Script.EndsWith(".py")) {
+            if (Find-Path uv) {
+                uv run $Script
+            }
+            else {
+                python $Script
+            }
+        }
 
     }
     
