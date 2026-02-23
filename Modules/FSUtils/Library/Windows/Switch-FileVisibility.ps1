@@ -9,7 +9,7 @@
     Toggles the visibility of hidden files in Windows Explorer
 .NOTES
     This function modifies the registry key that controls hidden file visibility
-     and then calls `Sync-ExplorerSettings` to refresh the file explorer settings, 
+     and then calls `Invoke-ExplorerRefresh` to refresh the file explorer settings, 
     ensuring that the changes take effect immediately.
 #>
 function Switch-FileVisibility {
@@ -25,5 +25,5 @@ function Switch-FileVisibility {
         Write-Output "Hidden files are now visible!"
     }
 
-    Sync-ExplorerSettings # Refresh the file explorer to reflect the changes
+    Invoke-ExplorerRefresh # Refresh the file explorer to reflect the changes
 }

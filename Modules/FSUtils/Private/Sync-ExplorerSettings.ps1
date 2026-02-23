@@ -8,7 +8,7 @@
     This is necessary after changing the file visibility settings, 
     as the file explorer does not automatically refresh to reflect the changes
 #>
-function Sync-ExplorerSettings {
+function Invoke-ExplorerRefresh {
     # Refresh all open file explorer windows to reflect the changes
     $shell = New-Object -ComObject Shell.Application
     foreach ($window in $shell.Windows()) {
