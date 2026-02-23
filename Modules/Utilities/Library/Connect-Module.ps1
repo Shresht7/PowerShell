@@ -8,18 +8,29 @@
     Links the MyModule path to the `$PSModulePath`
 #>
 function Connect-Module(
+    # The path to the module to link
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [Alias("Name", "Source", "SourcePath", "From")]
     [string] $Path,
 
     # The destination path to link the module to (usually `$HOME\Documents\PowerShell\Modules`).
     [Alias("DestinationPath", "Target", "TargetPath", "To")]
-    [string] $Destination = (if ($PSVersionTable.OS -like "*Windows*") { $Env:PSModulePath.Split(";")[0] } else { $Env:PSModulePath.Split(":")[0] })
+    [string] $Destination
 ) {
     # Creating symbolic links requires elevated permissions
     if (-not (Test-IsElevated)) {
         Write-Error "Not in Administrator Mode! Elevated permissions are required to create Symbolic-Links"
         return
+    }
+
+    # If no destination is provided, use the first path in `$PSModulePath`
+    if ([string]::IsNullOrWhiteSpace($Destination)) {
+        if ($PSVersionTable.OS -like "*Windows*") {
+            $Destination = $Env:PSModulePath.Split(";")[0]
+        }
+        else {
+            $Destination = $Env:PSModulePath.Split(":")[0] 
+        }
     }
    
     # Create Symbolic Links
