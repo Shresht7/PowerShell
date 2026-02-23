@@ -43,7 +43,7 @@ function Invoke-Script(
     if ($Item.PSIsContainer) {
 
         # Get a list of all the scripts
-        $Scripts = Get-ChildItem -Path $Path -Recurse:$Recurse
+        $Scripts = Get-ChildItem -Path $Path -Recurse:$Recurse -File -FollowSymlink:$Recurse
 
         # Set Options for Fzf
         $FzfOptions = @{
