@@ -9,7 +9,11 @@ This cmdlet allows you to perform fuzzy searches on a collection of objects usin
 The input collection of objects to search. Defaults to Get-ChildItem.
 
 .PARAMETER Property
-The name of the property to use for fuzzy searching.
+The name of the property to use for fuzzy searching. Mutually exclusive with -DisplayScript.
+
+.PARAMETER DisplayScript
+A script block to build the display string for each object (e.g. { "$($_.Name) ($($_.Id))" }).
+Mutually exclusive with -Property.
 
 .PARAMETER OutputScript
 A script block to transform the output.
@@ -31,20 +35,29 @@ This example selects a process from the list of running processes based on their
 Get-ChildItem | Select-FuzzyObject -Property Name -Multi -OutputScript { $_.FullName }
 This example allows selecting multiple files and returns their full paths.
 
+.EXAMPLE
+Get-Process | Select-FuzzyObject -DisplayScript { "$($_.Name) ($($_.Id))" }
+This example shows process name and ID in fzf and returns the selected process object.
+
 .NOTES
 File Name      : Select-FuzzyObject.ps1
 Author         : Shresht7
 Prerequisite   : PowerShell v3.0
 #>
 function Select-FuzzyObject {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Property')]
     param (
         # The Input Object
         [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [object[]] $InputObject = (Get-ChildItem),
 
         # The property name to use for the fuzzy search
+        [Parameter(ParameterSetName = 'Property')]
         [string] $Property = "Name",
+
+        # Script block to build the display string for each object
+        [Parameter(ParameterSetName = 'Script')]
+        [scriptblock] $DisplayScript,
 
         # Transforms the resulting output using a script-block
         [scriptblock] $OutputScript,
@@ -80,12 +93,21 @@ function Select-FuzzyObject {
         $HasProperty = $Collection.Count -gt 0 -and ($Collection | Get-Member -Name $Property)
 
         # Validate that the specified property exists on the input objects
-        if ($PSBoundParameters.ContainsKey('Property') -and -not $HasProperty) {
+        if ($PSCmdlet.ParameterSetName -eq 'Property' -and $PSBoundParameters.ContainsKey('Property') -and -not $HasProperty) {
             throw "The property '$Property' does not exist on the input objects."
         }
 
         # Determine the display values to perform fzf on
-        $DisplayValues = if ($HasProperty) { $Collection.$Property } else { $Collection }
+        $DisplayValues = if ($PSCmdlet.ParameterSetName -eq 'Script') {
+            $Collection | ForEach-Object $DisplayScript
+        }
+        elseif ($HasProperty) {
+            $Collection.$Property
+        }
+        else {
+            $Collection
+        }
+        
         # Tag each display value with its index so we can recover the original object after selection
         $Operand = 0..($Collection.Count - 1) | ForEach-Object { "$_`:$($DisplayValues[$_])" }
 
