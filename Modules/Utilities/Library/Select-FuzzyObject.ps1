@@ -66,10 +66,15 @@ function Select-FuzzyObject {
 
     process {
         # Add each pipeline item to the collection as they come in
-        $Collection.AddRange($InputObject) | Out-Null
+        [void]$Collection.AddRange($InputObject)
     }
 
     end {
+        # Validate that the specified property exists on the input objects
+        if ($PSBoundParameters.ContainsKey('Property') -and -not ($Collection | Get-Member -Name $Property)) {
+            throw "The property '$Property' does not exist on the input objects."
+        }
+
         # Determine the thing we will perform fzf on
         $Operand = if ($Collection.$Property.Length -gt 0) { $Collection.$Property } else { $Collection }
 
@@ -88,7 +93,7 @@ function Select-FuzzyObject {
         $Result = $null
 
         # If the operation was performed on a collection of objects, return the filtered objects ...
-        if ($Operand.Length -gt 0) {
+        if ($Operand.Count -gt 0) {
             $Result = $Collection | Where-Object { $Selection -contains $_.$Property }
         }
         # ... otherwise, return the actual selection
