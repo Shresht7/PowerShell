@@ -76,7 +76,7 @@ function Select-FuzzyObject {
         }
 
         # Determine the thing we will perform fzf on
-        $Operand = if ($Collection.$Property.Length -gt 0) { $Collection.$Property } else { $Collection }
+        $Operand = if ($Collection | Get-Member -Name $Property) { $Collection.$Property } else { $Collection }
 
         # Perform fuzzy search using fzf
         $Selection = $Operand
