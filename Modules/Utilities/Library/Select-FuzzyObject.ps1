@@ -64,16 +64,13 @@ function Select-FuzzyObject {
         # A collection to aggregate the input objects coming from the pipeline
         $Collection = [System.Collections.ArrayList]::new()
     }
+
     process {
         # Add each pipeline item to the collection as they come in
         $Collection.AddRange($InputObject) | Out-Null
     }
-    end {
-        # If the input is not from the pipeline, set the input object as the collection
-        if (!$PSBoundParameters.ContainsKey('InputObject')) {
-            $Collection = $InputObject
-        }
 
+    end {
         # Determine the thing we will perform fzf on
         $Operand = if ($Collection.$Property.Length -gt 0) { $Collection.$Property } else { $Collection }
 
