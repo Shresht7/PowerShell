@@ -75,30 +75,31 @@ function Select-FuzzyObject {
             throw "The property '$Property' does not exist on the input objects."
         }
 
-        # Determine the thing we will perform fzf on
-        $Operand = if ($Collection | Get-Member -Name $Property) { $Collection.$Property } else { $Collection }
+        # Determine the display values to perform fzf on
+        $DisplayValues = if ($Collection | Get-Member -Name $Property) { $Collection.$Property } else { $Collection }
+        # Tag each display value with its index so we can recover the original object after selection
+        $Operand = 0..($Collection.Count - 1) | ForEach-Object { "$_`:$($DisplayValues[$_])" }
 
         # Perform fuzzy search using fzf
         $Selection = $Operand
         | fzf `
+            --with-nth '2..' --delimiter ':' `
         $(if ($Multi) { "--multi" }) `
         $(if ($Preview) {
                 $Res = $Preview.ToString()
-                "--preview=$Res"      
+                "--preview=$Res"
             }) `
             @FzfArgs
 
-        
         # A variable to store the results
         $Result = $null
 
-        # If the operation was performed on a collection of objects, return the filtered objects ...
-        if ($Operand.Count -gt 0) {
-            $Result = $Collection | Where-Object { $Selection -contains $_.$Property }
-        }
-        # ... otherwise, return the actual selection
-        else {
-            $Result = $Selection
+        # Recover the original objects by parsing the index prefix from each selected line
+        if ($Selection) {
+            $Result = $Selection | ForEach-Object {
+                $Index = [int]($_ -split ':', 2)[0]
+                $Collection[$Index]
+            }
         }
 
         # If the Out script is present, perform the Out script on each resulting entry and return the results
