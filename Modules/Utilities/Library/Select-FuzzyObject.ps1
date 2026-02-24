@@ -86,7 +86,7 @@ function Select-FuzzyObject(
 
         
         # A variable to store the results
-        $Result = ""
+        $Result = $null
 
         # If the operation was performed on a collection of objects, return the filtered objects ...
         if ($Operand.Length -gt 0) {
