@@ -71,7 +71,7 @@ function Select-FuzzyObject {
 
     end {
         # Validate that the specified property exists on the input objects
-        if ($PSBoundParameters.ContainsKey('Property') -and -not ($Collection | Get-Member -Name $Property)) {
+        if ($PSBoundParameters.ContainsKey('Property') -and $Collection.Count -gt 0 -and -not ($Collection | Get-Member -Name $Property)) {
             throw "The property '$Property' does not exist on the input objects."
         }
 
