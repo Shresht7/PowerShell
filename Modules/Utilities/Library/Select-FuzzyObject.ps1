@@ -90,7 +90,7 @@ function Select-FuzzyObject(
 
         # If the operation was performed on a collection of objects, return the filtered objects ...
         if ($Operand.Length -gt 0) {
-            $Result = $Collection | Where-Object { $_.$Property -eq $Selection -or $Selection -contains $_.$Property }
+            $Result = $Collection | Where-Object { $Selection -contains $_.$Property }
         }
         # ... otherwise, return the actual selection
         else {
