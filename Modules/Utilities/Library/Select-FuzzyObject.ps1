@@ -28,14 +28,13 @@ Get-Process | Select-FuzzyObject -Property Name
 This example selects a process from the list of running processes based on their names.
 
 .EXAMPLE
-Get-ChildItem | Select-FuzzyObject -Property Name -Multi -Out { $_.FullName }
+Get-ChildItem | Select-FuzzyObject -Property Name -Multi -OutputScript { $_.FullName }
 This example allows selecting multiple files and returns their full paths.
 
 .NOTES
 File Name      : Select-FuzzyObject.ps1
 Author         : Shresht7
 Prerequisite   : PowerShell v3.0
-Copyright 2019 - Your Company
 #>
 function Select-FuzzyObject {
     [CmdletBinding()]
