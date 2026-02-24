@@ -22,7 +22,14 @@ A script block to transform the output.
 Specifies whether multiple items can be selected.
 
 .PARAMETER Preview
-A script block to customize the preview functionality.
+A fzf preview command string (e.g. 'bat {1}' or 'cat {1}'). Passed directly to fzf's --preview flag.
+Field placeholders like {1}, {2} are automatically offset to account for the internal index field.
+Prefer this over passing --preview via -FzfArgs.
+
+.PARAMETER Delimiter
+The field delimiter used internally to separate the index from the display value.
+Defaults to the ASCII Unit Separator (0x1F), which is invisible and safe for most inputs.
+Prefer this over passing --delimiter via -FzfArgs.
 
 .PARAMETER FzfArgs
 Additional arguments to pass to the Fzf utility.
@@ -66,7 +73,10 @@ function Select-FuzzyObject {
         [switch] $Multi,
 
         # Script to run for the preview
-        [scriptblock] $Preview,
+        [string] $Preview,
+
+        # Field delimiter used to separate the internal index from the display value
+        [string] $Delimiter = [char]0x1F,
 
         # Base Fzf Arguments
         [string[]] $FzfArgs
@@ -97,29 +107,32 @@ function Select-FuzzyObject {
             throw "The property '$Property' does not exist on the input objects."
         }
 
+        # Warn if FzfArgs contains --delimiter or --with-nth as they conflict with internal index-based selection
+        if ($FzfArgs -match '^--(delimiter|with-nth)(=.*)?$') {
+            Write-Warning "--delimiter and --with-nth are used internally for index-based selection. Use -Delimiter instead of --delimiter, and avoid --with-nth in -FzfArgs."
+        }
+
         # Determine the display values to perform fzf on
         $DisplayValues = if ($PSCmdlet.ParameterSetName -eq 'Script') {
             $Collection | ForEach-Object $DisplayScript
-        }
-        elseif ($HasProperty) {
+        } elseif ($HasProperty) {
             $Collection.$Property
-        }
-        else {
+        } else {
             $Collection
         }
-        
+
         # Tag each display value with its index so we can recover the original object after selection
-        $Operand = 0..($Collection.Count - 1) | ForEach-Object { "$_`:$($DisplayValues[$_])" }
+        $Operand = 0..($Collection.Count - 1) | ForEach-Object { "$_$Delimiter$($DisplayValues[$_])" }
+
+        # Shift numeric placeholders in the preview string by +1 to account for the internal index field
+        $AdjustedPreview = $Preview -replace '\{(\d+)\}', { "{$([int]$_.Groups[1].Value + 1)}" }
 
         # Perform fuzzy search using fzf
         $Selection = $Operand
         | fzf `
-            --with-nth '2..' --delimiter ':' `
+            --with-nth '2..' --delimiter $Delimiter `
         $(if ($Multi) { "--multi" }) `
-        $(if ($Preview) {
-                $Res = $Preview.ToString()
-                "--preview=$Res"
-            }) `
+        $(if ($Preview) { "--preview=$AdjustedPreview" }) `
             @FzfArgs
 
         # A variable to store the results
@@ -128,7 +141,7 @@ function Select-FuzzyObject {
         # Recover the original objects by parsing the index prefix from each selected line
         if ($Selection) {
             $Result = $Selection | ForEach-Object {
-                $Index = [int]($_ -split ':', 2)[0]
+                $Index = [int]($_ -split $Delimiter, 2)[0]
                 $Collection[$Index]
             }
         }
