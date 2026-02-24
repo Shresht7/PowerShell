@@ -37,26 +37,29 @@ Author         : Shresht7
 Prerequisite   : PowerShell v3.0
 Copyright 2019 - Your Company
 #>
-function Select-FuzzyObject(
-    # The Input Object
-    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [object[]] $InputObject = (Get-ChildItem),
+function Select-FuzzyObject {
+    [CmdletBinding()]
+    param (
+        # The Input Object
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [object[]] $InputObject = (Get-ChildItem),
 
-    # The property name to use for the fuzzy search
-    [string] $Property = "Name",
+        # The property name to use for the fuzzy search
+        [string] $Property = "Name",
 
-    # Transforms the resulting output using a script-block
-    [scriptblock] $OutputScript,
+        # Transforms the resulting output using a script-block
+        [scriptblock] $OutputScript,
 
-    # Select multiple items
-    [switch] $Multi,
+        # Select multiple items
+        [switch] $Multi,
 
-    # Script to run for the preview
-    [scriptblock] $Preview,
+        # Script to run for the preview
+        [scriptblock] $Preview,
 
-    # Base Fzf Arguments
-    [string[]] $FzfArgs
-) {
+        # Base Fzf Arguments
+        [string[]] $FzfArgs
+    )
+
     begin {
         # A collection to aggregate the input objects coming from the pipeline
         $Collection = [System.Collections.ArrayList]::new()
