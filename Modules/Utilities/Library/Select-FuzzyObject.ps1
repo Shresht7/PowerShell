@@ -63,7 +63,7 @@ function Select-FuzzyObject(
     }
     process {
         # Add each pipeline item to the collection as they come in
-        $Collection.Add($InputObject) | Out-Null
+        $Collection.AddRange($InputObject) | Out-Null
     }
     end {
         # If the input is not from the pipeline, set the input object as the collection
