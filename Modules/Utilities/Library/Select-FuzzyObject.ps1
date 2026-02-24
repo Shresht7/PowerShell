@@ -70,13 +70,16 @@ function Select-FuzzyObject {
     }
 
     end {
+        # Check if the collection has the specified property (if it has any items)
+        $HasProperty = $Collection.Count -gt 0 -and ($Collection | Get-Member -Name $Property)
+
         # Validate that the specified property exists on the input objects
-        if ($PSBoundParameters.ContainsKey('Property') -and $Collection.Count -gt 0 -and -not ($Collection | Get-Member -Name $Property)) {
+        if ($PSBoundParameters.ContainsKey('Property') -and -not $HasProperty) {
             throw "The property '$Property' does not exist on the input objects."
         }
 
         # Determine the display values to perform fzf on
-        $DisplayValues = if ($Collection | Get-Member -Name $Property) { $Collection.$Property } else { $Collection }
+        $DisplayValues = if ($HasProperty) { $Collection.$Property } else { $Collection }
         # Tag each display value with its index so we can recover the original object after selection
         $Operand = 0..($Collection.Count - 1) | ForEach-Object { "$_`:$($DisplayValues[$_])" }
 
