@@ -70,6 +70,12 @@ function Select-FuzzyObject {
     }
 
     end {
+        # Check if the collection is empty, and return early
+        if ($Collection.Count -eq 0) {
+            Write-Warning "No input objects were provided."
+            return
+        }
+
         # Check if the collection has the specified property (if it has any items)
         $HasProperty = $Collection.Count -gt 0 -and ($Collection | Get-Member -Name $Property)
 
