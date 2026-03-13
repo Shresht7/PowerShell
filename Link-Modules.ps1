@@ -35,7 +35,7 @@ $Delimiter = if ($PSVersionTable.OS -like "*Windows*") { ";" } else { ":" }
 $DESTINATION_PATH = $Env:PSModulePath.Split($Delimiter)[0]
 
 # Get all Modules
-$Modules = Get-ChildItem -Path $SOURCE_PATH -Filter "*.psm1" -Recurse
+$Modules = Get-ChildItem -Path $SOURCE_PATH -Filter "*.psd1" -Recurse
 
 # Import Modules
 $Modules | ForEach-Object {
