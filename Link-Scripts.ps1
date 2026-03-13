@@ -31,6 +31,16 @@ foreach ($Destination in $DESTINATION_PATH) {
     }
 }
 
+# Remove Broken Symlinks
+Get-ChildItem -Path $DESTINATION_PATH -Recurse |
+Where-Object { $_.LinkType -eq "SymbolicLink" -and -not (Test-Path -Path $_.LinkTarget) } |
+ForEach-Object {
+    if ($PSCmdlet.ShouldProcess($_.FullName, "Remove Broken Symbolic Link")) {
+        Remove-Item -Path $_.FullName -Force
+    }
+}
+
+
 # Get everything directly under the Scripts folder
 $Items = Get-ChildItem -Path $SOURCE_PATH
 
@@ -71,14 +81,5 @@ $Items | ForEach-Object {
             }
         }
 
-    }
-}
-
-# Remove Broken Symlinks
-Get-ChildItem -Path $DESTINATION_PATH -Recurse |
-Where-Object { $_.LinkType -eq "SymbolicLink" -and -not (Test-Path -Path $_.LinkTarget) } |
-ForEach-Object {
-    if ($PSCmdlet.ShouldProcess($_.FullName, "Remove Broken Symbolic Link")) {
-        Remove-Item -Path $_.FullName -Force
     }
 }

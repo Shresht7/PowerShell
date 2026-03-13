@@ -34,6 +34,15 @@ if (-not (Test-Path $DESTINATION_PATH)) {
     exit 1
 }
 
+# Remove Broken Symlinks
+Get-ChildItem -Path $DESTINATION_PATH -Recurse |
+Where-Object { $_.LinkType -eq "SymbolicLink" -and -not (Test-Path -Path $_.LinkTarget) } |
+ForEach-Object {
+    if ($PSCmdlet.ShouldProcess($_.FullName, "Remove Broken Symbolic Link")) {
+        Remove-Item -Path $_.FullName -Force
+    }
+}
+
 # Get all Modules
 $Modules = Get-ChildItem -Path $SOURCE_PATH -Filter "*.psd1" -Recurse
 
@@ -75,15 +84,6 @@ $Modules | ForEach-Object {
 
     if ($PSCmdlet.ShouldProcess("$DESTINATION_PATH\$($_.BaseName)", "Create Symbolic Link")) {
         New-Item -ItemType SymbolicLink -Path "$DESTINATION_PATH\$($_.BaseName)" -Target $_.DirectoryName -Force
-    }
-}
-
-# Remove Broken Symlinks
-Get-ChildItem -Path $DESTINATION_PATH -Recurse |
-Where-Object { $_.LinkType -eq "SymbolicLink" -and -not (Test-Path -Path $_.LinkTarget) } |
-ForEach-Object {
-    if ($PSCmdlet.ShouldProcess($_.FullName, "Remove Broken Symbolic Link")) {
-        Remove-Item -Path $_.FullName -Force
     }
 }
 
