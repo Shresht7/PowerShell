@@ -7,12 +7,6 @@
     . .\Link-Modules.ps1
 #>
 
-# Check to see if the script is running as administrator; exit if not
-if (-Not (Test-IsElevated)) {
-    Write-Error "Not in Administrator Mode! Elevated permissions are required to create Symbolic-Links"
-    return
-}
-
 # Source Path
 $SOURCE_PATH = "$PSScriptRoot\Modules"
 
