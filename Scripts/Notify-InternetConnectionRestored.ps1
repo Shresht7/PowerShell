@@ -18,6 +18,15 @@ param (
     # The target website to check for internet connection (default: "www.google.com")
     [string] $TargetName = "www.google.com",
 
+    # Title of the notification
+    [string] $NotificationTitle = "Internet Connection Restored",
+
+    # Message of the notification
+    [string] $NotificationMessage = "The internet connection is back up and running!",
+
+    # Notification image/logo
+    [string] $NotificationLogo = "$HOME\Pictures\Icons\wifi-white.png",
+
     # The interval in seconds between each connection check (default: 30)
     [int]$Interval = 30
 )
@@ -29,19 +38,18 @@ while ($True) {
     # Check if the internet connection is restored
     $Connection = Test-Connection -TargetName $TargetName -Count 1 -Quiet
 
-    if ($Connection -eq 'True') {
+    if ($Connection -eq $true) {
         # Internet connection is restored. Notify the user and exit the loop
         Write-Host "Internet Connection Restored" -ForegroundColor Green
-
-        # Notify the user using the BurntToast module
-        $NotificationParams = @{
-            Text    = @(
-                "Internet Connection Restored",
-                "The internet connection is back up and running!"
-            )
-            AppLogo = "~\Pictures\Icons\wifi-white.png"
+        
+        # Notify the user
+        if (Get-Command -ListAvailable -Name BurntToast) {
+            $NotificationParams = @{
+                Text    = @($NotificationTitle, $NotificationMessage)
+                AppLogo = $NotificationLogo
+            }
+            New-BurntToastNotification @NotificationParams
         }
-        New-BurntToastNotification @NotificationParams
 
         # Exit the loop
         break
