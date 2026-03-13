@@ -59,7 +59,7 @@ while ($True) {
         elseif (Get-Module -ListAvailable -Name BurntToast) {
             $NotificationParams = @{
                 Text    = @($NotificationTitle, $NotificationMessage)
-                AppLogo = $NotificationLogo
+                AppLogo = (Resolve-Path $NotificationLogo).Path 
             }
             New-BurntToastNotification @NotificationParams
         }
