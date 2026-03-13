@@ -9,7 +9,7 @@
     Continuously checks for the internet connection to "www.google.com"
     every 30 seconds and notifies the user when the connection is restored
 .EXAMPLE
-    .\Notify-InternetConnectionRestored.ps1 -TargetName "www.example.com" -Interval 10
+    .\Notify-InternetConnectionRestored.ps1 -Target "www.example.com" -Interval 10
     Continuously checks for the internet connection to "www.example.com"
     every 10 seconds and notifies the user when the connection is restored
 .EXAMPLE
@@ -23,7 +23,7 @@
 
 param (
     # The target website to check for internet connection (default: "www.google.com")
-    [string] $TargetName = "www.google.com",
+    [string] $Target = "www.google.com",
 
     # Title of the notification
     [string] $NotificationTitle = "Internet Connection Restored",
@@ -38,40 +38,24 @@ param (
     [int]$Interval = 30
 )
 
-Write-Host "Checking for Internet connectivity..."
+# Import NetworkUtils Module
+Import-Module -Name NetworkUtils
 
-# Main loop to continuously check for the internet connection
-while ($True) {
-    # Check if the internet connection is restored
-    $Connection = Test-Connection -TargetName $TargetName -Count 1 -Quiet
-
-    if ($Connection -eq $true) {
-        # Internet connection is restored. Notify the user and exit the loop
-        Write-Host "Internet Connection Restored" -ForegroundColor Green
-        
-        # Notify the user
-        if (Get-Command wintoast -ErrorAction SilentlyContinue) {
-            wintoast --title $NotificationTitle --message $NotificationMessage --logo $NotificationLogo
-        }
-        elseif (Get-Command notify-send -ErrorAction SilentlyContinue) {
-            notify-send $NotificationTitle $NotificationMessage -i $NotificationLogo
-        }
-        elseif (Get-Module -ListAvailable -Name BurntToast) {
-            $NotificationParams = @{
-                Text    = @($NotificationTitle, $NotificationMessage)
-                AppLogo = (Resolve-Path $NotificationLogo).Path 
-            }
-            New-BurntToastNotification @NotificationParams
-        }
-        else {
-            Write-Warning "No supported notification tool found. Please install 'wintoast', 'notify-send' or the 'BurntToast' PowerShell module for notifications."
-            Write-Host "`a $NotificationTitle - $NotificationMessage" -ForegroundColor Green
-        }
-
-        # Exit the loop
-        break
+# Wait for the internet connection to be restored and notify the user
+Wait-OnInternetConnection -Target $Target -Interval $Interval -OnConnectionRestored {
+    
+    # Notify the user using the available notification tool
+    if (Get-Command wintoast -ErrorAction SilentlyContinue) {
+        wintoast --title $NotificationTitle --message $NotificationMessage --logo $NotificationLogo
+    }
+    elseif (Get-Command notify-send -ErrorAction SilentlyContinue) {
+        notify-send "$NotificationTitle" "$NotificationMessage" --icon=$NotificationLogo
+    }
+    elseif (Get-Module -Name BurntToast -ErrorAction SilentlyContinue) {
+        New-BurntToastNotification -Text $NotificationTitle, $NotificationMessage -AppLogo $NotificationLogo
+    }
+    else {
+        Write-Warning "No supported notification tool found. Please install 'wintoast', 'notify-send' or the 'BurntToast' PowerShell module."
     }
 
-    # Wait for the specified interval before checking again
-    Start-Sleep -Seconds $Interval
 }
