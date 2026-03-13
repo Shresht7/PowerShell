@@ -81,9 +81,5 @@ $Modules | ForEach-Object {
             New-Item -ItemType SymbolicLink -Path $LinkPath -Target $TargetDirectory
         }
     }
-
-    if ($PSCmdlet.ShouldProcess("$DESTINATION_PATH\$($_.BaseName)", "Create Symbolic Link")) {
-        New-Item -ItemType SymbolicLink -Path "$DESTINATION_PATH\$($_.BaseName)" -Target $_.DirectoryName -Force
-    }
 }
 
