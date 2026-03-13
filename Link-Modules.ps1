@@ -34,6 +34,12 @@ $Delimiter = if ($PSVersionTable.OS -like "*Windows*") { ";" } else { ":" }
 # Destination Path
 $DESTINATION_PATH = $Env:PSModulePath.Split($Delimiter)[0]
 
+# Ensure the destination path exists
+if (-not (Test-Path $DESTINATION_PATH)) {
+    Write-Error "Destination path '$DESTINATION_PATH' does not exist. Please ensure that the first path in `$PSModulePath is valid."
+    exit 1
+}
+
 # Get all Modules
 $Modules = Get-ChildItem -Path $SOURCE_PATH -Filter "*.psd1" -Recurse
 
