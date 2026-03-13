@@ -21,7 +21,7 @@ if (-Not (Test-IsElevated)) {
 $SOURCE_PATH = "$PSScriptRoot\Modules"
 
 # Windows and Linux have different delimters apparently
-$Delimiter = if($PSVersionTable.OS -like "*Windows*") { ";" } else { ":" }
+$Delimiter = if ($PSVersionTable.OS -like "*Windows*") { ";" } else { ":" }
 
 # Destination Path
 $DESTINATION_PATH = $Env:PSModulePath.Split($Delimiter)[0]
@@ -35,4 +35,6 @@ $Modules | ForEach-Object {
 }
 
 # Remove Broken Symlinks
-Get-BrokenSymlink -Path $DESTINATION_PATH -Recurse | Remove-Item -Force
+Get-ChildItem -Path $DESTINATION_PATH -Recurse |
+Where-Object { $_.LinkType -eq "SymbolicLink" -and -not (Test-Path -Path $_.LinkTarget) } |
+Remove-Item -Force
