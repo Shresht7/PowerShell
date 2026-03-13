@@ -39,6 +39,40 @@ $Modules = Get-ChildItem -Path $SOURCE_PATH -Filter "*.psd1" -Recurse
 
 # Import Modules
 $Modules | ForEach-Object {
+    $ModuleName = $_.BaseName
+    $TargetDirectory = $_.DirectoryName
+    $LinkPath = Join-Path $DESTINATION_PATH $ModuleName
+
+    if (Test-Path -LiteralPath $LinkPath) {
+        $Existing = Get-Item -LiteralPath $LinkPath -Force
+        
+        if ($Existing.LinkType -eq "SymbolicLink") {
+            if ($Existing.Target -eq $TargetDirectory) {
+                # The symbolic link already points to the correct target
+                Write-Verbose "Skipping: $LinkPath already points to correct target"
+                return
+            }
+            else {
+                # The symbolic link points to a different target, update it
+                Write-Verbose "A symbolic link already exists at '$LinkPath' but points to '$($Existing.Target)' instead of '$TargetDirectory'. Updating the symbolic link to point to the correct target."
+                if ($PSCmdlet.ShouldProcess($LinkPath, "Update Symbolic Link")) {
+                    Remove-Item -LiteralPath $LinkPath -Force
+                    New-Item -ItemType SymbolicLink -Path $LinkPath -Target $TargetDirectory
+                }
+            }
+        }
+        else {
+            Write-Warning "A non-symbolic item already exists at '$LinkPath'. Skipping the creation of the symbolic link for module '$ModuleName' to avoid conflicts."
+            continue
+        }
+    }
+    else {
+        # Create the symbolic link if it doesn't exist
+        if ($PSCmdlet.ShouldProcess($LinkPath, "Create Symbolic Link")) {
+            New-Item -ItemType SymbolicLink -Path $LinkPath -Target $TargetDirectory
+        }
+    }
+
     if ($PSCmdlet.ShouldProcess("$DESTINATION_PATH\$($_.BaseName)", "Create Symbolic Link")) {
         New-Item -ItemType SymbolicLink -Path "$DESTINATION_PATH\$($_.BaseName)" -Target $_.DirectoryName -Force
     }
