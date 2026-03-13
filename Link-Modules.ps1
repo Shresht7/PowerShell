@@ -5,12 +5,30 @@
     Creates symbolic links for each module from the local `Modules` folder to the `$PSModulePath`
 .EXAMPLE
     . .\Link-Modules.ps1
+    This will create symbolic links for each module in the local `Modules` folder to the first path in `$PSModulePath`
+.EXAMPLE
+    . .\Link-Modules.ps1 -Confirm
+    This will prompt for confirmation before creating each symbolic link.
+.EXAMPLE
+    . .\Link-Modules.ps1 -WhatIf
+    This will simulate the actions without making any changes, showing what symbolic links would be created.
+.NOTES
+    This script requires either elevated permissions (administrator mode) or developer-mode to create symbolic links on Windows.    
 #>
+
+[CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = "High")]
+param (
+    # Confirm before creating symlinks
+    [switch] $Confirm,
+
+    # WhatIf to simulate the actions without making changes
+    [switch] $WhatIf
+)
 
 # Source Path
 $SOURCE_PATH = "$PSScriptRoot\Modules"
 
-# Windows and Linux have different delimters apparently
+# Windows and Linux have different delimiters apparently
 $Delimiter = if ($PSVersionTable.OS -like "*Windows*") { ";" } else { ":" }
 
 # Destination Path
@@ -21,10 +39,17 @@ $Modules = Get-ChildItem -Path $SOURCE_PATH -Filter "*.psm1" -Recurse
 
 # Import Modules
 $Modules | ForEach-Object {
-    New-Item -ItemType SymbolicLink -Path "$DESTINATION_PATH\$($_.BaseName)" -Target $_.DirectoryName -Force
+    if ($PSCmdlet.ShouldProcess("$DESTINATION_PATH\$($_.BaseName)", "Create Symbolic Link")) {
+        New-Item -ItemType SymbolicLink -Path "$DESTINATION_PATH\$($_.BaseName)" -Target $_.DirectoryName -Force
+    }
 }
 
 # Remove Broken Symlinks
 Get-ChildItem -Path $DESTINATION_PATH -Recurse |
 Where-Object { $_.LinkType -eq "SymbolicLink" -and -not (Test-Path -Path $_.LinkTarget) } |
-Remove-Item -Force
+ForEach-Object {
+    if ($PSCmdlet.ShouldProcess($_.FullName, "Remove Broken Symbolic Link")) {
+        Remove-Item -Path $_.FullName -Force
+    }
+}
+
