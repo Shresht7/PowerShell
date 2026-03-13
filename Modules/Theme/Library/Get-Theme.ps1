@@ -4,8 +4,14 @@
 .DESCRIPTION
     This function retrieves the current Windows  Color Theme, which can be either Light or Dark.
 .EXAMPLE
+    Get-Theme
+    Retrieves the current Windows Color Theme as a string ("Light" or "Dark").
+.EXAMPLE
     Get-Theme -AsValue
-    Retrieves the current Windows Color Theme as a boolean value (True for Light, False for Dark).    
+    Retrieves the current Windows Color Theme as a numeric value (1 for Light, 0 for Dark).
+.EXAMPLE
+    Get-Theme -AsBoolean
+    Retrieves the current Windows Color Theme as a numeric value (1 for Light, 0 for Dark).
 .EXAMPLE
     Get-Theme -AsString
     Retrieves the current Windows Color Theme as a string ("Light" or "Dark").
@@ -17,9 +23,14 @@
 function Get-Theme {
     [CmdletBinding(DefaultParameterSetName = "AsString")]
     param(
-        # If specified, returns the theme as a boolean value (True for Light, False for Dark)
+        # If specified, returns the theme as a numeric value (1 for Light, 0 for Dark)
         [Parameter(ParameterSetName = "AsValue")]
         [switch] $AsValue,
+
+        # If specified, returns the theme as a boolean value (True for Light, False for Dark)
+        [Parameter(ParameterSetName = "AsBoolean")]
+        [switch] $AsBoolean,
+
         # If specified, returns the theme as a string ("Light" or "Dark")
         [Parameter(ParameterSetName = "AsString")]
         [switch] $AsString
@@ -34,6 +45,9 @@ function Get-Theme {
     # Return the theme based on the specified parameter set
     if ($AsValue) {
         return $currentTheme
+    }
+    elseif ($AsBoolean) {
+        return [bool]$currentTheme
     }
     else {
         return $currentTheme ? "Light" : "Dark"
