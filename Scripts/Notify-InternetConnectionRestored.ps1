@@ -12,6 +12,13 @@
     .\Notify-InternetConnectionRestored.ps1 -TargetName "www.example.com" -Interval 10
     Continuously checks for the internet connection to "www.example.com"
     every 10 seconds and notifies the user when the connection is restored
+.EXAMPLE
+    .\Notify-InternetConnectionRestored.ps1 -NotificationTitle "Connection Restored" -NotificationMessage "You are back online!" -NotificationLogo "$HOME\Pictures\Icons\wifi-green.png"
+    Continuously checks for the internet connection to "www.google.com"
+    every 30 seconds and notifies the user with a custom title, message and logo when the connection is restored
+.NOTES
+    This script requires either 'wintoast' (Windows), 'notify-send' (Linux) or the 'BurntToast' PowerShell module (Windows) for notifications.
+    Please ensure that one of these is installed and available in the system PATH for notifications to work.
 #>
 
 param (
@@ -43,12 +50,23 @@ while ($True) {
         Write-Host "Internet Connection Restored" -ForegroundColor Green
         
         # Notify the user
-        if (Get-Command -ListAvailable -Name BurntToast) {
+        if (Find-Path wintoast) {
+            wintoast --title $NotificationTitle --message $NotificationMessage --logo $NotificationLogo
+        }
+        elseif (Find-Path notify-send) {
+            notify-send $NotificationTitle $NotificationMessage -i $NotificationLogo
+        }
+        elseif (Get-Command -ListAvailable -Name BurntToast) {
             $NotificationParams = @{
                 Text    = @($NotificationTitle, $NotificationMessage)
                 AppLogo = $NotificationLogo
             }
             New-BurntToastNotification @NotificationParams
+        }
+        else {
+            Write-Warning "No supported notification tool found. Please install 'wintoast', 'notify-send' or the 'BurntToast' PowerShell module for notifications."
+            Write-Host "`a $NotificationTitle - $NotificationMessage" -ForegroundColor Green
+            exit 1
         }
 
         # Exit the loop
