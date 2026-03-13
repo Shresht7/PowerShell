@@ -50,13 +50,13 @@ while ($True) {
         Write-Host "Internet Connection Restored" -ForegroundColor Green
         
         # Notify the user
-        if (Find-Path wintoast) {
+        if (Get-Command wintoast -ErrorAction SilentlyContinue) {
             wintoast --title $NotificationTitle --message $NotificationMessage --logo $NotificationLogo
         }
-        elseif (Find-Path notify-send) {
+        elseif (Get-Command notify-send -ErrorAction SilentlyContinue) {
             notify-send $NotificationTitle $NotificationMessage -i $NotificationLogo
         }
-        elseif (Get-Command -ListAvailable -Name BurntToast) {
+        elseif (Get-Module -ListAvailable -Name BurntToast) {
             $NotificationParams = @{
                 Text    = @($NotificationTitle, $NotificationMessage)
                 AppLogo = $NotificationLogo
@@ -66,7 +66,6 @@ while ($True) {
         else {
             Write-Warning "No supported notification tool found. Please install 'wintoast', 'notify-send' or the 'BurntToast' PowerShell module for notifications."
             Write-Host "`a $NotificationTitle - $NotificationMessage" -ForegroundColor Green
-            exit 1
         }
 
         # Exit the loop
