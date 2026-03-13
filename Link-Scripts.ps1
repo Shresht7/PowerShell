@@ -25,13 +25,17 @@ param (
     [switch] $WhatIf
 )
 
-# Import the Helper functions
-Import-Module -Name "$PSScriptRoot\Modules\Utilities" -Cmdlet Test-IsElevated, Connect-Script
-Import-Module -Name "$PSScriptRoot\Modules\FSUtils" -Cmdlet Find-Path
-
 # Paths
 $SOURCE_PATH = "$PSScriptRoot\Scripts"
 $DESTINATION_PATH = @("$HOME\Scripts", "$HOME\Documents\PowerShell\Scripts")
+
+# Ensure that the destination paths exist
+foreach ($Destination in $DESTINATION_PATH) {
+    if (-not (Test-Path $Destination)) {
+        Write-Error "Destination path '$Destination' does not exist. Please ensure that the path is valid."
+        exit 1
+    }
+}
 
 # Get all Scripts
 $Scripts = Get-ChildItem -Path $SOURCE_PATH -Filter "*.ps1" -Recurse
