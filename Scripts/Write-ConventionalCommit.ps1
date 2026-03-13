@@ -2,28 +2,37 @@
 .SYNOPSIS
     Write a conventional commit message
 .DESCRIPTION
-    Write a conventional commit message.
+    This script prompts the user for the type, scope, message, and description of a conventional commit and outputs the formatted commit message.
+.EXAMPLE
+    PS> Write-ConventionalCommit
+    Type: feat
+    Scope (Optional): my-module
+    Commit Message: Add new feature to my module
+    Description (Optional): This feature allows users to do X, Y, and Z.
+    Output: feat(my-module): Add new feature to my module
+
+    If the user provides a description, it will be included in the output as well:
+        feat(my-module): Add new feature to my module
+
+        This feature allows users to do X, Y, and Z.
 .LINK
-    https://www.conventionalcommits.org/en/v1.0.0/
+    https://www.conventionalcommits.org
 #>
 
 [CmdletBinding()]
 param (
-    # The type of the conventional commit
-    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
+    # The type of the conventional commit (e.g., feat, fix, docs, etc.)
     [ValidateSet('build', 'chore', 'ci', 'docs', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style', 'test')]
     [string] $Type,
 
-    # (Optional) The scope of the commit
+    # (Optional) The scope of the commit (e.g., the name of the package or module being changed)
     [string] $Scope,
 
-    # The commit message describing the subject of the change
-    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 1)]
-    [Alias('Commit', 'CommitMessage', 'Subject', 'Summary')]
+    # The commit message describing the subject of the change (e.g., "Add new feature", "Fix bug in module", etc.)
+    [Alias('Commit', 'CommitMessage', 'Subject', 'Summary', 'Title')]
     [string] $Message,
 
-    # The description of the change
-    [Parameter(Position = 2)]
+    # The description of the change (e.g., a more detailed explanation of the change, why it was made, etc.)
     [Alias('Body')]
     [string] $Description
 )
@@ -45,7 +54,12 @@ $CONVENTIONAL_COMMIT_TYPES = @(
 
 # Prompt the user for the commit type, if not provided already
 if (-not $Type) {
-    $Type = $CONVENTIONAL_COMMIT_TYPES | Invoke-Fzf
+    $Type = if (Get-Command -Name Select-Fuzzy -ErrorAction SilentlyContinue) {
+        $CONVENTIONAL_COMMIT_TYPES | Select-Fuzzy
+    }
+    else {
+        Read-Host -Prompt "Type (e.g., feat, fix, docs, etc.)"
+    }
 }
 Write-Host -Object "Type: $($PSStyle.Foreground.Red)$Type$($PSStyle.Reset)"
 
