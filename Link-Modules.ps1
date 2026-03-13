@@ -17,13 +17,7 @@
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = "High")]
-param (
-    # Confirm before creating symlinks
-    [switch] $Confirm,
-
-    # WhatIf to simulate the actions without making changes
-    [switch] $WhatIf
-)
+param ()
 
 # Source Path
 $SOURCE_PATH = "$PSScriptRoot\Modules"
