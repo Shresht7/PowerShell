@@ -37,14 +37,15 @@ foreach ($Destination in $DESTINATION_PATH) {
     }
 }
 
-# Get all Scripts
-$Scripts = Get-ChildItem -Path $SOURCE_PATH -Filter "*.ps1" -Recurse
+# Get everything directly under the Scripts folder
+$Items = Get-ChildItem -Path $SOURCE_PATH
 
-# Import Scripts
-$Scripts | ForEach-Object {
+# Link it
+$Items | ForEach-Object {
     foreach ($Destination in $DESTINATION_PATH) {
-        if ($PSCmdlet.ShouldProcess("$Destination\$($_.Name)", "Create Symbolic Link")) {
-            New-Item -ItemType SymbolicLink -Path "$Destination\$($_.Name)" -Target $_.FullName -Force
+        $LinkPath = Join-Path $Destination $_.Name
+        if ($PSCmdlet.ShouldProcess($LinkPath, "Create Symbolic Link")) {
+            New-Item -ItemType SymbolicLink -Path $LinkPath -Target $_.FullName -Force
         }
     }
 }
