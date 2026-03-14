@@ -39,13 +39,20 @@ else {
     $Language = $null
 }
 
-# Invoke the cheat.sh API
-$Response = if ($Language) {
-    Invoke-WebRequest -Uri "https://cheat.sh/$Language/$Query"
+# URL encode the query
+$Query = [System.Web.HttpUtility]::UrlEncode($Query)
+
+# Determine the cheat.sh url
+$URL = if ($Language) {
+    "https://cheat.sh/$Language/$Query"
 }
 else {
-    Invoke-WebRequest -Uri "https://cheat.sh/$Query"
+    "https://cheat.sh/$Query"
 }
+Write-Verbose "Invoke-WebRequest: $URL"
+
+# Invoke the cheat.sh API and get the response
+$Response = Invoke-WebRequest -Uri $URL -UseBasicParsing
 
 # Write the response body to the console
 $Response.Content
