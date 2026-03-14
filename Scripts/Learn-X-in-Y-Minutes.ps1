@@ -32,11 +32,17 @@
 
 [CmdletBinding(DefaultParameterSetName = "Show")]
 param (
+    # The programming language or topic to search for in the Learn X in Y Minutes documentation.
+    # If not specified, all markdown files in the root of the repository will be listed for selection in the fuzzy search interface.
+    [Parameter(Position = 0, Mandatory, ValueFromPipeline, ParameterSetName = "Show")]
+    [string] $Language,
+        
     # The output format of the selected file.
     # Can be "Content" to display the content of the file,
     # "Pager" to display the content in `bat` with syntax highlighting,
-    # or "Path" to display the path of the file.
-    [Parameter(Mandatory = $false, Position = 0, ParameterSetName = "Show")]
+    # "Path" to display the path of the file,
+    # or "Web" to open the file in the web browser.
+    [Parameter(Mandatory = $false, ParameterSetName = "Show")]
     [ValidateSet("Content", "Pager", "Path", "Web")]
     [string] $Output = "Pager",
 
@@ -79,9 +85,15 @@ if ($List) {
     exit
 }
 
-# Use Select-Fuzzy to select one or more markdown files from the list of markdown files with a preview of the content of the file in `bat` with syntax highlighting
-$Selection = $MarkdownFiles |
-Select-Fuzzy -Property BaseName -MultiSelect -Preview { bat $_.FullName --color=always --language $_.Extension.TrimStart('.') }
+$Selection = if ($Language) {
+    # If the $Language parameter is specified, filter the list of markdown files to only include files that match the specified language or topic
+    $MarkdownFiles | Where-Object { $_.BaseName -like "*$Language*" }
+}
+else {
+    # If the $Language parameter is not specified, use fuzzy search to select one or more markdown files from the list of markdown files
+    $MarkdownFiles |
+    Select-Fuzzy -Property BaseName -MultiSelect -Preview { bat $_.FullName --color=always --language $_.Extension.TrimStart('.') }
+}
 
 # If no file is selected, exit the script
 if ($null -eq $Selection) {
