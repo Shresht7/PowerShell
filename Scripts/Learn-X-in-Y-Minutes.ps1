@@ -95,7 +95,7 @@ $Selection = if ($Language) {
 else {
     # If the $Language parameter is not specified, use fuzzy search to select one or more markdown files from the list of markdown files
     $MarkdownFiles |
-    Select-Fuzzy -Property BaseName -MultiSelect -Preview { bat $_.FullName --color=always --language markdown }
+    Select-Fuzzy -Property BaseName -MultiSelect -Preview { bat $_.FullName --color=always --language markdown } -PreviewSize 75%
 }
 
 # If no file is selected, exit the script
