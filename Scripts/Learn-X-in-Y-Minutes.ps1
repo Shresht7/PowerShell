@@ -119,6 +119,6 @@ switch ($Output) {
     }
     "Web" {
         # Open the selected markdown file in the web browser
-        Start-Process https://learnxinyminutes.com/$($Selection.BaseName)
+        $Selection | ForEach-Object { Start-Process "https://learnxinyminutes.com/$($_.BaseName)" }
     }
 }
