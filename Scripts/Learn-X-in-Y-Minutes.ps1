@@ -21,6 +21,9 @@
 .EXAMPLE
     .\learn-x-in-y-minutes.ps1 -Output Web
     This will open the selected markdown file in the web browser.
+.EXAMPLE
+    .\learn-x-in-y-minutes.ps1 -List
+    This will list all the markdown files in the root of the learnxinyminutes-docs repository.
 .NOTES
     Required Modules:
         Requires `git` for cloning the repository and updating it. (https://git-scm.com/)
