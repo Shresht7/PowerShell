@@ -16,7 +16,7 @@
 Param(
     # The query to search for in the cheat.sh API
     [Parameter(ValueFromRemainingArguments = $true)]
-    [string] $Query = ":intro"
+    [string] $Query
 )
 
 $ProgrammingLanguages = @(
@@ -41,7 +41,13 @@ else {
 
 # If query is empty, show a fuzzy selection interface of concepts to choose from
 if (-not $Query) {
-    $Query = (Invoke-WebRequest -Uri "https://cheat.sh/$Language/:list").Content -split "`n" | Select-Fuzzy
+    $ListURL = if ($Language) {
+        "https://cheat.sh/$Language/:list"
+    }
+    else {
+        "https://cheat.sh/:list"
+    }
+    $Query = (Invoke-WebRequest -Uri $ListURL).Content -split "`n" | Select-Fuzzy
 }
 
 # Replace spaces with + for the cheat.sh API
@@ -57,7 +63,7 @@ else {
 Write-Verbose "Invoke-WebRequest: $URL"
 
 # Invoke the cheat.sh API and get the response
-$Response = Invoke-WebRequest -Uri $URL -UseBasicParsing
+$Response = Invoke-WebRequest -Uri $URL
 
 # Write the response body to the console
 $Response.Content
