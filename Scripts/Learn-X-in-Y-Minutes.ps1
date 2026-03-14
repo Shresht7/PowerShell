@@ -27,15 +27,19 @@
     https://github.com/adambard/learnxinyminutes-docs
 #>
 
-[CmdletBinding()]
+[CmdletBinding(DefaultParameterSetName = "Show")]
 param (
     # The output format of the selected file.
     # Can be "Content" to display the content of the file,
     # "Pager" to display the content in `bat` with syntax highlighting,
     # or "Path" to display the path of the file.
-    [Parameter(Mandatory = $false, Position = 0)]
+    [Parameter(Mandatory = $false, Position = 0, ParameterSetName = "Show")]
     [ValidateSet("Content", "Pager", "Path")]
-    [string] $Output = "Pager"
+    [string] $Output = "Pager",
+
+    # If specified, lists all the markdown files in the learnxinyminutes-docs repository 
+    [Parameter(Mandatory = $false, ParameterSetName = "List")]
+    [switch] $List
 )
 
 # Path to the References folder
@@ -63,8 +67,17 @@ if (-not ([string]::IsNullOrEmpty( $(git -C $ReferenceGitFolder fetch --porcelai
     git -C $ReferenceGitFolder pull --ff-only
 }
 
-# Fuzzy select a markdown file from the root of the learnxinyminutes-docs repository
-$Selection = Get-ChildItem -Path $ReferenceGitFolder -File -Filter *.md |
+# Get the list of all markdown files in the root of the learnxinyminutes-docs repository
+$MarkdownFiles = Get-ChildItem -Path $ReferenceGitFolder -File -Filter *.md
+
+# If the -List switch is specified, output the list of markdown files and exit
+if ($List) {
+    $MarkdownFiles
+    exit
+}
+
+# Use Select-Fuzzy to select one or more markdown files from the list of markdown files with a preview of the content of the file in `bat` with syntax highlighting
+$Selection = $MarkdownFiles |
 Select-Fuzzy -Property BaseName -MultiSelect -Preview { bat $_.FullName --color=always --language $_.Extension.TrimStart('.') }
 
 # If no file is selected, exit the script
