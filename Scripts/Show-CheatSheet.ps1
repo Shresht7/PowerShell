@@ -39,8 +39,13 @@ else {
     $Language = $null
 }
 
-# URL encode the query
-$Query = [System.Web.HttpUtility]::UrlEncode($Query)
+# If query is empty, show a fuzzy selection interface of concepts to choose from
+if (-not $Query) {
+    $Query = (Invoke-WebRequest -Uri "https://cheat.sh/$Language/:list").Content -split "`n" | Select-Fuzzy
+}
+
+# Replace spaces with + for the cheat.sh API
+$Query = $Query -replace " ", "+"
 
 # Determine the cheat.sh url
 $URL = if ($Language) {
