@@ -14,16 +14,38 @@
 
 [CmdletBinding()]
 Param(
-    [string] $Query
+    # The query to search for in the cheat.sh API
+    [Parameter(ValueFromRemainingArguments = $true)]
+    [string] $Query = ":intro"
 )
 
-# Prompt the user for the $Query, if not specified
-if (-not $Query) {
-    $Query = Read-Host -Prompt "Query"
+$ProgrammingLanguages = @(
+    "javascript",
+    "typescript",
+    "go",
+    "rust",
+    "python",
+    "bash",
+    "powershell",
+    "sql"
+)
+
+# If the first argument is a programming language, extract it from the query
+$Language, $RemainingQuery = $Query -split " ", 2
+if ($ProgrammingLanguages -contains $Language) {
+    $Query = $RemainingQuery
+}
+else {
+    $Language = $null
 }
 
 # Invoke the cheat.sh API
-$Response = Invoke-WebRequest -Uri "https://cheat.sh/$Query" 
+$Response = if ($Language) {
+    Invoke-WebRequest -Uri "https://cheat.sh/$Language/$Query"
+}
+else {
+    Invoke-WebRequest -Uri "https://cheat.sh/$Query"
+}
 
 # Write the response body to the console
 $Response.Content
