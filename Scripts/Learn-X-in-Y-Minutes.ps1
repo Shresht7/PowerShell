@@ -92,7 +92,7 @@ $Selection = if ($Language) {
 else {
     # If the $Language parameter is not specified, use fuzzy search to select one or more markdown files from the list of markdown files
     $MarkdownFiles |
-    Select-Fuzzy -Property BaseName -MultiSelect -Preview { bat $_.FullName --color=always --language $_.Extension.TrimStart('.') }
+    Select-Fuzzy -Property BaseName -MultiSelect -Preview { bat $_.FullName --color=always --language markdown }
 }
 
 # If no file is selected, exit the script
@@ -107,8 +107,8 @@ switch ($Output) {
         Get-Content -Path $Selection.FullName -Raw
     }
     "Pager" {
-        # Display the content of the selected file in `bat` with syntax highlighting
-        bat $Selection.FullName --language $Selection.Extension.TrimStart('.')
+        # Display the content of the selected file in `bat`
+        bat $Selection.FullName --language markdown
     }
     "Path" {
         # Output the location of the selected files
