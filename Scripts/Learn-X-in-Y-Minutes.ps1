@@ -90,7 +90,7 @@ if ($List) {
 
 $Selection = if ($Language) {
     # If the $Language parameter is specified, filter the list of markdown files to only include files that match the specified language or topic
-    $MarkdownFiles | Where-Object { $_.BaseName -like "*$Language*" }
+    $MarkdownFiles | Where-Object { $_.BaseName -like "$Language*" }
 }
 else {
     # If the $Language parameter is not specified, use fuzzy search to select one or more markdown files from the list of markdown files
@@ -118,7 +118,10 @@ switch ($Output) {
         $Selection
     }
     "Web" {
-        # Open the selected markdown file in the web browser
-        $Selection | ForEach-Object { Start-Process "https://learnxinyminutes.com/$($_.BaseName)" }
+        # Open the selected language docs in the web browser
+        $Selection | ForEach-Object {
+            Start-Process "https://learnxinyminutes.com/$($_.BaseName)"
+            Start-Sleep -Seconds 0.5 # Add a small delay between opening each file in the web browser
+        }
     }
 }
