@@ -37,7 +37,7 @@
 param (
     # The programming language or topic to search for in the Learn X in Y Minutes documentation.
     # If not specified, all markdown files in the root of the repository will be listed for selection in the fuzzy search interface.
-    [Parameter(Position = 0, Mandatory, ValueFromPipeline, ParameterSetName = "Show")]
+    [Parameter(Position = 0, ValueFromPipeline, ParameterSetName = "Show")]
     [string] $Language,
         
     # The output format of the selected file.
@@ -45,12 +45,12 @@ param (
     # "Pager" to display the content in `bat` with syntax highlighting,
     # "Path" to display the path of the file,
     # or "Web" to open the file in the web browser.
-    [Parameter(Mandatory = $false, ParameterSetName = "Show")]
+    [Parameter(ParameterSetName = "Show")]
     [ValidateSet("Content", "Pager", "Path", "Web")]
     [string] $Output = "Pager",
 
     # If specified, lists all the markdown files in the learnxinyminutes-docs repository 
-    [Parameter(Mandatory = $false, ParameterSetName = "List")]
+    [Parameter(ParameterSetName = "List")]
     [switch] $List
 )
 
