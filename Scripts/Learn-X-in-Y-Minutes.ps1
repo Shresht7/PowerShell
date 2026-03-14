@@ -18,6 +18,9 @@
 .EXAMPLE
     .\learn-x-in-y-minutes.ps1 -Output Path
     This will output the location of the selected markdown files. Read to be used in combination with other tools or scripts.
+.EXAMPLE
+    .\learn-x-in-y-minutes.ps1 -Output Web
+    This will open the selected markdown file in the web browser.
 .NOTES
     Required Modules:
         Requires `git` for cloning the repository and updating it. (https://git-scm.com/)
@@ -34,7 +37,7 @@ param (
     # "Pager" to display the content in `bat` with syntax highlighting,
     # or "Path" to display the path of the file.
     [Parameter(Mandatory = $false, Position = 0, ParameterSetName = "Show")]
-    [ValidateSet("Content", "Pager", "Path")]
+    [ValidateSet("Content", "Pager", "Path", "Web")]
     [string] $Output = "Pager",
 
     # If specified, lists all the markdown files in the learnxinyminutes-docs repository 
@@ -98,5 +101,9 @@ switch ($Output) {
     "Path" {
         # Output the location of the selected files
         $Selection
+    }
+    "Web" {
+        # Open the selected markdown file in the web browser
+        Start-Process https://learnxinyminutes.com/$($Selection.BaseName)
     }
 }
