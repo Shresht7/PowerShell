@@ -31,7 +31,15 @@ $script:GoTopLevelCommands = @(
 
     @{ Name = 'fmt'; Tooltip = 'gofmt (reformat) package sources' }
     @{ Name = 'generate'; Tooltip = 'generate Go files by processing source' }
-    @{ Name = 'get'; Tooltip = 'add dependencies to current module and install them' }
+
+    @{ Name = 'get'; Tooltip = 'add dependencies to current module and install them'; Completions = @(
+            @{ Name = '-t'; Tooltip = 'consider modules needed to build tests of packages specified on the command line.' }
+            @{ Name = '-u'; Tooltip = 'update modules providing dependencies of packages named on the command line to use newer minor or patch releases when available.' }
+            @{ Name = '-tool'; Tooltip = 'add a matching tool line to go.mod for each listed package. If -tool is used with @none, the line will be removed.' }
+            @{ Name = '-x'; Tooltip = 'print commands as they are executed. This is useful for debugging version control commands when a module is downloaded directly from a repository.' }
+        ) 
+    }
+
     @{ Name = 'install'; Tooltip = 'compile and install packages and dependencies' }
     @{ Name = 'list'; Tooltip = 'list packages or modules' }
 
@@ -77,6 +85,10 @@ $script:GoHelpTopics = @(
     @{ Name = 'testfunc'; Tooltip = 'testing functions' }
     @{ Name = 'vcs'; Tooltip = 'controlling version control with GOVCS' }
 )
+
+# TODO: Add remaining completions as and when needed
+
+# TODO: Many of these commands have common "build flags". See `go help build` for details.
 
 # ===========================
 # REGISTER ARGUMENT COMPLETER
