@@ -16,7 +16,7 @@
     This script requires either elevated permissions (administrator mode) or developer-mode to create symbolic links on Windows.
 #>
 
-[CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = "High")]
+[CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = "Medium")]
 param ()
 
 # Paths
