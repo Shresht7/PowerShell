@@ -25,6 +25,24 @@ $script:FdOptions = @(
     @{ Name = "--version"; Short = "-V"; Tooltip = "Print version" }
 )
 
+$script:FdTypeValues = @(
+    @{ Name = "file"; Short = "f"; Tooltip = "Search for files" }
+    @{ Name = "directory"; Short = "d"; Tooltip = "Search for directories" }
+    @{ Name = "symlink"; Short = "l"; Tooltip = "Search for symbolic links" }
+    @{ Name = "executable"; Short = "x"; Tooltip = "Search for executable files" }
+    @{ Name = "empty"; Short = "e"; Tooltip = "Search for empty files and directories" }
+    @{ Name = "socket"; Short = "s"; Tooltip = "Search for sockets" }
+    @{ Name = "pipe"; Short = "p"; Tooltip = "Search for named pipes (FIFOs)" }
+    @{ Name = "char-device"; Short = "c"; Tooltip = "Search for character devices" }
+    @{ Name = "block-device"; Short = "b"; Tooltip = "Search for block devices" }
+)
+
+$script:FdColorValues = @(
+    @{ Name = "auto"; Tooltip = "Use colors if the output is a terminal" }
+    @{ Name = "always"; Tooltip = "Always use colors" }
+    @{ Name = "never"; Tooltip = "Never use colors" }
+)
+
 # ===========================
 # REGISTER ARGUMENT COMPLETER
 # ===========================
@@ -32,6 +50,33 @@ $script:FdOptions = @(
 Register-ArgumentCompleter -Native -CommandName fd -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
 
+    # Get the command elements as text (e.g. 'fd', '--type', 'file', etc.)
+    $elements = @($commandAst.CommandElements | ForEach-Object { $_.Extent.Text })
+
+    # Get the previous element (e.g. '--type' if the user has typed 'fd --type ')
+    $previous = if ($elements.Count -ge 2) { $elements[-1] } else { $null }
+
+    # --type
+    if ($previous -eq '--type' -or $previous -eq '-t') {
+        $script:FdTypeValues |
+        Where-Object { $_.Name -like "$wordToComplete*" -or $_.Short -like "$wordToComplete*" } |
+        ForEach-Object {
+            [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+        }
+        return
+    }
+
+    # --color
+    if ($previous -eq '--color' -or $previous -eq '-c') {
+        $script:FdColorValues |
+        Where-Object { $_.Name -like "$wordToComplete*" -or $_.Short -like "$wordToComplete*" } |
+        ForEach-Object {
+            [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+        }
+        return
+    }
+
+    # Options
     $script:FdOptions |
     Where-Object { $_.Name -like "$wordToComplete*" -or $_.Short -like "$wordToComplete*" } |
     ForEach-Object {
