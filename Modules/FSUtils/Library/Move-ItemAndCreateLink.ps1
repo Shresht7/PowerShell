@@ -19,11 +19,6 @@ function Move-ItemAndCreateLink(
     [Alias('Destination')]
     [string] $Target
 ) {
-    # Test for administrator privileges
-    if (-not (Test-IsElevated)) {
-        throw "Administrator privileges are required to move the item and create a symbolic link."
-    }
-
     # Move the item to the target
     Move-Item -Path $Item -Destination $Target
 
