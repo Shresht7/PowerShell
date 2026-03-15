@@ -3,14 +3,38 @@ $script:GoTopLevelCommands = @(
     @{ Name = 'bug'; Tooltip = 'start a bug report' }
     @{ Name = 'build'; Tooltip = 'compile packages and dependencies' }
     @{ Name = 'clean'; Tooltip = 'remove object files and cached files' }
-    @{ Name = 'doc'; Tooltip = 'show documentation for package or symbol' }
-    @{ Name = 'env'; Tooltip = 'print Go environment information' }
-    @{ Name = 'fix'; Tooltip = 'apply fixes suggested by static checkers' }
+
+    @{ Name = 'doc'; Tooltip = 'show documentation for package or symbol'; Completions = @(
+            @{ Name = '-all'; Tooltip = 'show all environment variables' }
+            @{ Name = '-c'; Tooltip = 'Respect case when matching symbols.' }
+            @{ Name = '-cmd'; Tooltip = 'Treat a command (package main) like a regular package. Otherwise package main''s exported symbols are hidden when showing the package''s top-level documentation.' }
+            @{ Name = '-http'; Tooltip = 'Serve HTML docs over HTTP.' }
+            @{ Name = '-short'; Tooltip = 'One-line representation for each symbol.' }
+            @{ Name = '-src'; Tooltip = 'Show the full source code for the symbol. This will display the full Go source of its declaration and definition, such as a function definition (including the body), type declaration or enclosing const block. The output may therefore include unexported details.' }
+            @{ Name = '-u'; Tooltip = 'Show documentation for unexported as well as exported symbols, methods, and fields.' }
+        )    
+    }
+
+    @{ Name = 'env'; Tooltip = 'print Go environment information'; Completions = @(
+            @{ Name = '-json'; Tooltip = 'The -json flag prints the environment in JSON format instead of as a shell script.' }
+            @{ Name = '-u'; Tooltip = "The -u flag requires one or more arguments and unsets the default setting for the named environment variables, if one has been set with 'go env -w'." }
+            @{ Name = '-w'; Tooltip = "The -w flag requires one or more arguments of the form NAME=VALUE and changes the default settings of the named environment variables to the given values." }    
+            @{ Name = '-changed'; Tooltip = "The -changed flag prints only those settings whose effective value differs from the default value that would be obtained in an empty environment with no prior uses of the -w flag." }
+        ) 
+    }
+
+    @{ Name = 'fix'; Tooltip = 'apply fixes suggested by static checkers'; Completions = @(
+            @{ Name = '-diff'; Tooltip = 'instead of applying each fix, print the patch as a unified diff' }
+            @{ Name = '-fixtool'; Tooltip = "select a different analysis tool with alternative or additional fixers; see the documentation for go vet's -vettool flag for details. The default fix tool is 'go tool fix' or cmd/fix. For help on its fixers and their flags, run 'go tool fix help'. For details of a specific fixer such as 'hostport', see 'go tool fix help hostport'." }
+        ) 
+    }
+
     @{ Name = 'fmt'; Tooltip = 'gofmt (reformat) package sources' }
     @{ Name = 'generate'; Tooltip = 'generate Go files by processing source' }
     @{ Name = 'get'; Tooltip = 'add dependencies to current module and install them' }
     @{ Name = 'install'; Tooltip = 'compile and install packages and dependencies' }
     @{ Name = 'list'; Tooltip = 'list packages or modules' }
+
     @{ Name = 'mod'; Tooltip = 'module maintenance'; Completions = @(
             @{ Name = 'download'; Tooltip = 'download modules to local cache' }
             @{ Name = 'edit'; Tooltip = 'edit go.mod from tools or scripts' }
@@ -22,6 +46,7 @@ $script:GoTopLevelCommands = @(
             @{ Name = 'why'; Tooltip = 'explain why packages or modules are needed' }
         )
     }
+
     @{ Name = 'work'; Tooltip = 'workspace maintenance' }
     @{ Name = 'run'; Tooltip = 'compile and run Go program' }
     @{ Name = 'telemetry'; Tooltip = 'manage telemetry data and settings' }
