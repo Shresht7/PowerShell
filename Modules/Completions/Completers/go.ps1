@@ -21,8 +21,43 @@ $script:GoTopLevelCommands = @(
     @{ Name = 'vet'; Tooltip = 'report likely mistakes in packages' }
 )
 
+$script:GoHelpTopics = @(
+    @{ Name = 'buildconstraint'; Tooltip = 'build constraints' }
+    @{ Name = 'buildjson'; Tooltip = 'build -json encoding' }
+    @{ Name = 'buildmode'; Tooltip = 'build modes' }
+    @{ Name = 'c'; Tooltip = 'calling between Go and C' }
+    @{ Name = 'cache'; Tooltip = 'build and test caching' }
+    @{ Name = 'environment'; Tooltip = 'environment variables' }
+    @{ Name = 'filetype'; Tooltip = 'file types' }
+    @{ Name = 'goauth'; Tooltip = 'GOAUTH environment variable' }
+    @{ Name = 'go.mod'; Tooltip = 'the go.mod file' }
+    @{ Name = 'gopath'; Tooltip = 'GOPATH environment variable' }
+    @{ Name = 'goproxy'; Tooltip = 'module proxy protocol' }
+    @{ Name = 'importpath'; Tooltip = 'import path syntax' }
+    @{ Name = 'modules'; Tooltip = 'modules, module versions, and more' }
+    @{ Name = 'module-auth'; Tooltip = 'module authentication using go.sum' }
+    @{ Name = 'packages'; Tooltip = 'package lists and patterns' }
+    @{ Name = 'private'; Tooltip = 'configuration for downloading non-public code' }
+    @{ Name = 'testflag'; Tooltip = 'testing flags' }
+    @{ Name = 'testfunc'; Tooltip = 'testing functions' }
+    @{ Name = 'vcs'; Tooltip = 'controlling version control with GOVCS' }
+)
+
 Register-ArgumentCompleter -Native -CommandName go -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
+
+    # Get the command elements as text (e.g. 'go', 'help', 'buildconstraint', etc.)
+    $elements = @($commandAst.CommandElements | ForEach-Object { $_.Extent.Text })
+
+    # HELP TOPICS
+    if ($elements.Count -ge 2 -and $elements[0] -eq 'go' -and $elements[1] -eq 'help') {
+        @($script:GoTopLevelCommands + $script:GoHelpTopics) |
+        Where-Object { $_.Name -like "$wordToComplete*" } |
+        ForEach-Object {
+            [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+        }
+        return
+    }
 
     # TOP LEVEL COMMANDS
     $script:GoTopLevelCommands |
