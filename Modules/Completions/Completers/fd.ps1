@@ -63,7 +63,7 @@ Register-ArgumentCompleter -Native -CommandName fd -ScriptBlock {
             if ($_.Short -like "$wordToComplete*") {
                 [CompletionResult]::new($_.Short, $_.Short, 'ParameterValue', $_.Tooltip)
             }
-            elseif ($_.Name -like "$wordToComplete*") {
+            if ($_.Name -like "$wordToComplete*") {
                 [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
             }
         }
@@ -77,7 +77,7 @@ Register-ArgumentCompleter -Native -CommandName fd -ScriptBlock {
             if ($_.Short -like "$wordToComplete*") {
                 [CompletionResult]::new($_.Short, $_.Short, 'ParameterValue', $_.Tooltip)
             }
-            elseif ($_.Name -like "$wordToComplete*") {
+            if ($_.Name -like "$wordToComplete*") {
                 [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
             }
         }
@@ -90,7 +90,7 @@ Register-ArgumentCompleter -Native -CommandName fd -ScriptBlock {
         if ($_.Short -like "$wordToComplete*") {
             [CompletionResult]::new($_.Short, $_.Short, 'ParameterValue', $_.Tooltip)
         }
-        elseif ($_.Name -like "$wordToComplete*") {
+        if ($_.Name -like "$wordToComplete*") {
             [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
         }
     }
