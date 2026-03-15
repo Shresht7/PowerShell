@@ -49,6 +49,28 @@ $script:CargoTopLevelCommands = @(
     @{ Name = "yank" ; Tooltip = "Remove a pushed crate from the index" }
 )
 
+$script:CargoOptions = @(
+    @{ Name = "--version" ; Short = "-V" ; Tooltip = "Print version info and exit" }
+    @{ Name = "--list" ; Tooltip = "List installed commands" }
+    @{ Name = "--explain" ; Tooltip = "Provide a detailed explanation of a rustc error message" }
+    @{ Name = "--verbose..." ; Short = "-v" ; Tooltip = "Use verbose output (-vv very verbose/build.rs output)" }
+    @{ Name = "--quiet" ; Short = "-q" ; Tooltip = "Do not print cargo log messages" }
+    @{ Name = "--color" ; Tooltip = "Coloring [possible values: auto, always, never]" }
+    @{ Name = "-C" ; Tooltip = "Change to DIRECTORY before doing anything (nightly-only)" }
+    @{ Name = "--locked" ; Tooltip = "Assert that `Cargo.lock` will remain unchanged" }
+    @{ Name = "--offline" ; Tooltip = "Run without accessing the network" }
+    @{ Name = "--frozen" ; Tooltip = "Equivalent to specifying both --locked and --offline" }
+    @{ Name = "--config" ; Tooltip = "Override a configuration value" }
+    @{ Name = "-Z" ; Tooltip = "Unstable (nightly-only) flags to Cargo, see 'cargo -Z help' for details" }
+    @{ Name = "--help" ; Short = "-h" ; Tooltip = "Print help" }
+)
+
+$script:CargoColorValues = @(
+    @{ Name = "auto"; Tooltip = "Use colors if the output is a terminal" }
+    @{ Name = "always"; Tooltip = "Always use colors" }
+    @{ Name = "never"; Tooltip = "Never use colors" }
+)
+
 # ===========================
 # REGISTER ARGUMENT COMPLETER
 # ===========================
@@ -57,9 +79,38 @@ Register-ArgumentCompleter -Native -CommandName cargo -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
 
     # Get the command elements as text (e.g. 'cargo', 'build', etc.)
-    # $elements = @($commandAst.CommandElements | ForEach-Object { $_.Extent.Text })
+    $elements = @($commandAst.CommandElements | ForEach-Object { $_.Extent.Text })
 
-    # TOP LEVEL COMMANDS
+    # Get the previous element (e.g. 'build' if the user has typed 'cargo build ')
+    $previous = if ($elements.Count -ge 2) { $elements[-1] } else { $null }
+
+    # --color
+    if ($previous -eq '--color') {
+        $script:CargoColorValues |
+        ForEach-Object {
+            if ($_.Name -like "$wordToComplete*") {
+                [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+            }
+        }
+        return
+    }
+
+    # Options
+    if ($wordToComplete -like "-*") {
+        $script:CargoOptions |
+        Where-Object { $_.Name -like "$wordToComplete*" -or $_.Short -like "$wordToComplete*" } |
+        ForEach-Object {
+            if ($_.Short -like "$wordToComplete*") {
+                [CompletionResult]::new($_.Short, $_.Short, 'ParameterValue', $_.Tooltip)
+            }
+            if ($_.Name -like "$wordToComplete*") {
+                [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+            }
+        }
+        return
+    }
+
+    # Top level commands
     $script:CargoTopLevelCommands |
     Where-Object { $_.Name -like "$wordToComplete*" } |
     ForEach-Object {
