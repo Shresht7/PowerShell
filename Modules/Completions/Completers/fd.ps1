@@ -59,9 +59,13 @@ Register-ArgumentCompleter -Native -CommandName fd -ScriptBlock {
     # --type
     if ($previous -eq '--type' -or $previous -eq '-t') {
         $script:FdTypeValues |
-        Where-Object { $_.Name -like "$wordToComplete*" -or $_.Short -like "$wordToComplete*" } |
         ForEach-Object {
-            [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+            if ($_.Short -like "$wordToComplete*") {
+                [CompletionResult]::new($_.Short, $_.Short, 'ParameterValue', $_.Tooltip)
+            }
+            elseif ($_.Name -like "$wordToComplete*") {
+                [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+            }
         }
         return
     }
@@ -69,17 +73,25 @@ Register-ArgumentCompleter -Native -CommandName fd -ScriptBlock {
     # --color
     if ($previous -eq '--color' -or $previous -eq '-c') {
         $script:FdColorValues |
-        Where-Object { $_.Name -like "$wordToComplete*" -or $_.Short -like "$wordToComplete*" } |
         ForEach-Object {
-            [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+            if ($_.Short -like "$wordToComplete*") {
+                [CompletionResult]::new($_.Short, $_.Short, 'ParameterValue', $_.Tooltip)
+            }
+            elseif ($_.Name -like "$wordToComplete*") {
+                [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+            }
         }
         return
     }
 
     # Options
     $script:FdOptions |
-    Where-Object { $_.Name -like "$wordToComplete*" -or $_.Short -like "$wordToComplete*" } |
     ForEach-Object {
-        [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+        if ($_.Short -like "$wordToComplete*") {
+            [CompletionResult]::new($_.Short, $_.Short, 'ParameterValue', $_.Tooltip)
+        }
+        elseif ($_.Name -like "$wordToComplete*") {
+            [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+        }
     }
 }
