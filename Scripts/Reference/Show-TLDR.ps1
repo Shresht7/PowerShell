@@ -1,12 +1,16 @@
-# ---------
-# Show-TLDR
-# ---------
+<#
+.SYNOPSIS
+    Show an interactive fuzzy selector for tldr pages
+.DESCRIPTION
+    This script allows you to fuzzy search through the available tldr pages and display the content.
+.EXAMPLE
+    .\Show-TLDR.ps1
+    This will open a fuzzy selection interface where you can select a tldr page.
+    The content of the selected page will be displayed in `bat` with syntax highlighting.
+.NOTES
+    Requires a `tldr` client (e.g. the official tldr clients or tealdeer).
+#>
 
-function Show-TLDR() {
-    tldr --list | fzf --preview 'tldr --color=always {}' --preview-window=right:70% | ForEach-Object { tldr $_ }
-}
-
-Set-Alias tldrf Show-TLDR
-
-Export-ModuleMember -Function Show-TLDR
-Export-ModuleMember -Alias tldrf
+tldr --list |
+Select-Fuzzy -Preview { tldr --color=always $_ } -PreviewSize 70% |
+ForEach-Object { tldr $_ }
