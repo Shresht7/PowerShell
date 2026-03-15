@@ -109,6 +109,16 @@ Register-ArgumentCompleter -Native -CommandName cargo -ScriptBlock {
         }
         return
     }
+    
+    # help
+    if ($elements.Count -ge 2 -and $elements[1] -eq 'help') {
+        $script:CargoTopLevelCommands |
+        Where-Object { $_.Name -like "$wordToComplete*" } |
+        ForEach-Object {
+            [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
+        }
+        return
+    }
 
     # Top level commands
     $script:CargoTopLevelCommands |
