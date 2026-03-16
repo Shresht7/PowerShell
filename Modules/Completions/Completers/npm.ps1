@@ -148,15 +148,7 @@ $script:NodeTopLevelCommands = @(
 
     @{ Name = 'root' ; Tooltip = 'Prints the effective `node_modules` folder to stdout' }
 
-    @{ Name = 'run' ; Tooltip = 'Run arbitrary script package' ; Script = {
-            $PackageJson = Get-Content "package.json" -ErrorAction SilentlyContinue | ConvertFrom-Json
-            if ($PackageJson -and $PackageJson.scripts) {
-                $PackageJson.scripts
-                | Get-Member -MemberType NoteProperty
-                | ForEach-Object { [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $PackageJson.scripts.$($_.Name)) }
-            }
-        }
-    }
+    @{ Name = 'run' ; Tooltip = 'Run arbitrary script package' }
 
     @{ Name = 'search' ; Tooltip = 'Search for packages' }
 
@@ -202,7 +194,32 @@ $script:NodeTopLevelCommands = @(
             @{ Name = '--registry' ; Tooltip = 'The base URL of the npm registry (Default: "https://registry.npmjs.org/")' }
         )
     }
-) 
+)
+
+$script:NpmScriptsCache = @{
+    LastWriteTime = $null
+    Scripts       = @()
+}
+
+function Get-NpmScriptCompletions {
+    $packageJsonPath = Join-Path -Path (Get-Location) -ChildPath 'package.json'
+    if (-not (Test-Path $packageJsonPath)) {
+        return $script:NpmScriptsCache.Scripts
+    }
+
+    $lastWriteTime = (Get-Item $packageJsonPath).LastWriteTime
+    if ($script:NpmScriptsCache.LastWriteTime -ne $lastWriteTime) { return $script:NpmScriptsCache.Scripts }
+
+    $packageJson = Get-Content $packageJsonPath -ErrorAction SilentlyContinue | ConvertFrom-Json
+    if ($packageJson -and $packageJson.scripts) {
+        $script:NpmScriptsCache.Scripts = $packageJson.scripts.GetEnumerator() | ForEach-Object {
+            @{ Name = $_.Name; Tooltip = $_.Value }
+        }
+        $script:NpmScriptsCache.LastWriteTime = $lastWriteTime
+    }
+
+    return $script:NpmScriptsCache.Scripts
+}
 
 # ===========================
 # REGISTER ARGUMENT COMPLETER
@@ -223,6 +240,14 @@ Register-ArgumentCompleter -Native -CommandName npm -ScriptBlock {
             | ForEach-Object { [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip) }
             return
         }
+    }
+
+    # npm run <script> completions
+    if ($elements.Count -eq 2 -and $elements[1] -eq 'run') {
+        Get-NpmScriptCompletions
+        | Where-Object { $_.Name -like "$wordToComplete*" }
+        | ForEach-Object { [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip) }
+        return
     }
 
     # Top level commands
