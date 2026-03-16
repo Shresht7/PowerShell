@@ -1,4 +1,4 @@
-$script:CargoTopLevelCommands = @(
+$script:CargoCommands = @(
     @{ Name = "add" ; Tooltip = "Add dependencies to a Cargo.toml manifest file" }
     @{ Name = "b" ; Tooltip = "alias: build" }
     @{ Name = "bench" ; Tooltip = "Execute all benchmarks of a local package" }
@@ -75,7 +75,7 @@ $script:CargoColorValues = @(
 # REGISTER ARGUMENT COMPLETER
 # ===========================
 
-Register-ArgumentCompleter -Native -CommandName cargo -ScriptBlock {
+Register-ArgumentCompleter -CommandName cargo -Native -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
 
     # Get the command elements as text (e.g. 'cargo', 'build', etc.)
@@ -112,7 +112,7 @@ Register-ArgumentCompleter -Native -CommandName cargo -ScriptBlock {
     
     # help
     if ($elements.Count -ge 2 -and $elements[1] -eq 'help') {
-        $script:CargoTopLevelCommands |
+        $script:CargoCommands |
         Where-Object { $_.Name -like "$wordToComplete*" } |
         ForEach-Object {
             [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
@@ -121,7 +121,7 @@ Register-ArgumentCompleter -Native -CommandName cargo -ScriptBlock {
     }
 
     # Top level commands
-    $script:CargoTopLevelCommands |
+    $script:CargoCommands |
     Where-Object { $_.Name -like "$wordToComplete*" } |
     ForEach-Object {
         [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
