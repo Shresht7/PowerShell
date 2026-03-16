@@ -211,6 +211,20 @@ $script:NodeTopLevelCommands = @(
 Register-ArgumentCompleter -Native -CommandName npm -ScriptBlock {
     param ($wordToComplete, $commandAst, $cursorPosition)
 
+    # Get the command elements as text (e.g. 'go', 'help', 'buildconstraint', etc.)
+    $elements = @($commandAst.CommandElements | ForEach-Object { $_.Extent.Text })
+
+    # Subcommands
+    if ($elements.Count -ge 2) {
+        $parent = $script:NodeTopLevelCommands | Where-Object { $_.Name -eq $elements[1] } | Select-Object -First 1
+        if ($null -ne $parent -and $null -ne $parent.Completions) {
+            $parent.Completions
+            | Where-Object { $_.Name -like "$wordToComplete*" }
+            | ForEach-Object { [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip) }
+            return
+        }
+    }
+
     # Top level commands
     $script:NodeTopLevelCommands
     | Where-Object { $_.Name -like "$wordToComplete*" }
