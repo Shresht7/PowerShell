@@ -1,4 +1,4 @@
-$script:NodeTopLevelCommands = @(
+$script:NpmCommands = @(
     @{ Name = 'access'; Tooltip = "Used to set access controls on private packages" ; Completions = @(
             @{ Name = 'list' }
             @{ Name = 'get' }
@@ -248,7 +248,7 @@ Register-ArgumentCompleter -CommandName npm -Native -ScriptBlock {
 
     # Subcommands
     if ($elements.Count -ge 2) {
-        $parent = $script:NodeTopLevelCommands | Where-Object { $_.Name -eq $elements[1] } | Select-Object -First 1
+        $parent = $script:NpmCommands | Where-Object { $_.Name -eq $elements[1] } | Select-Object -First 1
         if ($null -ne $parent -and $null -ne $parent.Completions) {
             $parent.Completions
             | Where-Object { $_.Name -like "$wordToComplete*" }
@@ -258,7 +258,7 @@ Register-ArgumentCompleter -CommandName npm -Native -ScriptBlock {
     }
 
     # Top level commands
-    $script:NodeTopLevelCommands
+    $script:NpmCommands
     | Where-Object { $_.Name -like "$wordToComplete*" }
     | ForEach-Object { [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip) }
 }
