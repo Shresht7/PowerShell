@@ -1,4 +1,4 @@
-$script:GoTopLevelCommands = @(
+$script:GoCommands = @(
     @{ Name = 'help'; Tooltip = 'show help' }
     @{ Name = 'bug'; Tooltip = 'start a bug report' }
     @{ Name = 'build'; Tooltip = 'compile packages and dependencies' }
@@ -102,7 +102,7 @@ Register-ArgumentCompleter -Native -CommandName go -ScriptBlock {
 
     # HELP TOPICS
     if ($elements.Count -ge 2 -and $elements[1] -eq 'help') {
-        @($script:GoTopLevelCommands + $script:GoHelpTopics) |
+        @($script:GoCommands + $script:GoHelpTopics) |
         Where-Object { $_.Name -like "$wordToComplete*" } |
         ForEach-Object {
             [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
@@ -112,7 +112,7 @@ Register-ArgumentCompleter -Native -CommandName go -ScriptBlock {
 
     # SUBCOMMANDS
     if ($elements.Count -ge 2) {
-        $parent = $script:GoTopLevelCommands | Where-Object { $_.Name -eq $elements[1] } | Select-Object -First 1
+        $parent = $script:GoCommands | Where-Object { $_.Name -eq $elements[1] } | Select-Object -First 1
         if ($null -ne $parent -and $null -ne $parent.Completions) {
             $parent.Completions |
             Where-Object { $_.Name -like "$wordToComplete*" } |
@@ -124,7 +124,7 @@ Register-ArgumentCompleter -Native -CommandName go -ScriptBlock {
     }
 
     # TOP LEVEL COMMANDS
-    $script:GoTopLevelCommands |
+    $script:GoCommands |
     Where-Object { $_.Name -like "$wordToComplete*" } |
     ForEach-Object {
         [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip)
