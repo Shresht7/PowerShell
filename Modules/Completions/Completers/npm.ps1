@@ -204,18 +204,24 @@ $script:NpmScriptsCache = @{
 function Get-NpmScriptCompletions {
     $packageJsonPath = Join-Path -Path (Get-Location) -ChildPath 'package.json'
     if (-not (Test-Path $packageJsonPath)) {
+        $script:NpmScriptsCache.Scripts = @() # Clear the cache if package.json doesn't exist
+        $script:NpmScriptsCache.LastWriteTime = $null
         return $script:NpmScriptsCache.Scripts
     }
 
     $lastWriteTime = (Get-Item $packageJsonPath).LastWriteTime
-    if ($script:NpmScriptsCache.LastWriteTime -ne $lastWriteTime) { return $script:NpmScriptsCache.Scripts }
-
-    $packageJson = Get-Content $packageJsonPath -ErrorAction SilentlyContinue | ConvertFrom-Json
-    if ($packageJson -and $packageJson.scripts) {
-        $script:NpmScriptsCache.Scripts = $packageJson.scripts.GetEnumerator() | ForEach-Object {
-            @{ Name = $_.Name; Tooltip = $_.Value }
+    if ($script:NpmScriptsCache.LastWriteTime -ne $lastWriteTime) {
+        $packageJson = Get-Content $packageJsonPath -Raw -Encoding UTF8 -ErrorAction SilentlyContinue | ConvertFrom-Json -ErrorAction SilentlyContinue
+        if ($packageJson -and $packageJson.scripts) {
+            $script:NpmScriptsCache.Scripts = @() # Clear the cache before repopulating
+            foreach ($prop in $packageJson.scripts.PSObject.Properties) {
+                $script:NpmScriptsCache.Scripts += @{
+                    Name    = $prop.Name
+                    Tooltip = $prop.Value
+                }                
+            }
+            $script:NpmScriptsCache.LastWriteTime = $lastWriteTime
         }
-        $script:NpmScriptsCache.LastWriteTime = $lastWriteTime
     }
 
     return $script:NpmScriptsCache.Scripts
@@ -225,11 +231,20 @@ function Get-NpmScriptCompletions {
 # REGISTER ARGUMENT COMPLETER
 # ===========================
 
-Register-ArgumentCompleter -Native -CommandName npm -ScriptBlock {
-    param ($wordToComplete, $commandAst, $cursorPosition)
+Register-ArgumentCompleter -CommandName npm -Native -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
 
     # Get the command elements as text (e.g. 'go', 'help', 'buildconstraint', etc.)
     $elements = @($commandAst.CommandElements | ForEach-Object { $_.Extent.Text })
+
+    # npm run <script> completions
+    if ($elements.Count -ge 2 -and $elements[1] -eq 'run') {
+        # Get-NpmScriptCompletions
+        # | Where-Object { $_.Name -like "$wordToComplete*" }
+        # | ForEach-Object { [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip) }
+        Get-NpmScriptCompletions | Select-Fuzzy -Property Name -Details | Select-Object -ExpandProperty Name
+        return
+    }
 
     # Subcommands
     if ($elements.Count -ge 2) {
@@ -242,17 +257,8 @@ Register-ArgumentCompleter -Native -CommandName npm -ScriptBlock {
         }
     }
 
-    # npm run <script> completions
-    if ($elements.Count -eq 2 -and $elements[1] -eq 'run') {
-        Get-NpmScriptCompletions
-        | Where-Object { $_.Name -like "$wordToComplete*" }
-        | ForEach-Object { [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip) }
-        return
-    }
-
     # Top level commands
     $script:NodeTopLevelCommands
     | Where-Object { $_.Name -like "$wordToComplete*" }
     | ForEach-Object { [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip) }
 }
-
