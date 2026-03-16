@@ -239,10 +239,9 @@ Register-ArgumentCompleter -CommandName npm -Native -ScriptBlock {
 
     # npm run <script> completions
     if ($elements.Count -ge 2 -and $elements[1] -eq 'run') {
-        # Get-NpmScriptCompletions
-        # | Where-Object { $_.Name -like "$wordToComplete*" }
-        # | ForEach-Object { [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip) }
-        Get-NpmScriptCompletions | Select-Fuzzy -Property Name -Details | Select-Object -ExpandProperty Name
+        Get-NpmScriptCompletions
+        | Where-Object { $_.Name -like "$wordToComplete*" }
+        | ForEach-Object { [CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Tooltip) }
         return
     }
 
