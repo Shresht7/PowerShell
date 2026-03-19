@@ -8,6 +8,10 @@ This module provides a set of utilities for working with `node.js` projects.
 
 Returns a list of scripts defined in the `package.json` file.
 
+### `Get-NodeProject`
+
+Returns a list of Node.js projects (directories containing a `package.json` file).
+
 ### `Get-PackageJson`
 
 Returns the `package.json` file as a `PSCustomObject`.
