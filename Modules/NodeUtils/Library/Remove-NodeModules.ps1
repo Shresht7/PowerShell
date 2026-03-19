@@ -1,33 +1,27 @@
 <#
 .SYNOPSIS
     Remove one or more node_modules folders.
-
 .DESCRIPTION
     Removes the `node_modules` folder from one or more target directories.
     If called without `-Path`, interactively selects folders under the current
     working directory that contain a `node_modules` folder. Supports pipeline
     input and `-WhatIf`/`-Confirm` via `SupportsShouldProcess`.
-
 .PARAMETER Path
     One or more paths. Each value may be a folder that contains a `node_modules`
     directory or the `node_modules` directory itself.
-
 .EXAMPLE
     Remove-NodeModules
     Interactively select folders under the current directory to remove
     their `node_modules` folders.
-
 .EXAMPLE
     Remove-NodeModules -Path C:\Projects\MyProject
     Removes C:\Projects\MyProject\node_modules if it exists.
-
 .EXAMPLE
     Get-ChildItem -Directory C:\Projects | Where-Object { Test-Path (Join-Path $_.FullName 'node_modules') } |
     ForEach-Object { $_.FullName } | Remove-NodeModules -WhatIf
     Demonstrates pipeline input and `-WhatIf` support.
-
 .NOTES
-    - Falls back to `Out-GridView` selection if `Invoke-Fzf` is not available.
+    - Falls back to `Out-GridView` selection if `Select-Fuzzy` is not available.
     - Uses `Remove-Item -LiteralPath` and reports failures per path.
 #>
 function Remove-NodeModules {
@@ -40,7 +34,7 @@ function Remove-NodeModules {
 
     begin {
         $selections = @()
-        $hasFzf = (Get-Command Invoke-Fzf -ErrorAction SilentlyContinue) -ne $null
+        $hasSelectFuzzy = (Get-Command Select-Fuzzy -ErrorAction SilentlyContinue) -ne $null
     }
 
     process {
@@ -55,8 +49,8 @@ function Remove-NodeModules {
                 return
             }
 
-            if ($hasFzf) {
-                $selected = $candidates | Invoke-Fzf -Multi -Preview "pwsh -NoProfile -Command Get-Size -Path {}\\node_modules" -Header "Select folders to remove node_modules from"
+            if ($hasSelectFuzzy) {
+                $selected = $candidates | Select-Fuzzy -MultiSelect -Preview { Get-Size -Path "{}\\node_modules" }
             }
             else {
                 $selected = $candidates | Out-GridView -Title "Select folders to remove node_modules from" -PassThru
