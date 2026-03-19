@@ -23,8 +23,8 @@ function Get-NpmScript(
     # Get the package.json contents
     $Package = Get-PackageJson -Path $Path
 
-    # Exit if the package is not found
-    if (-Not $Package) { return }
+    # Exit if the package or scripts are not found
+    if (-not $Package -or -not $Package.scripts) { return }
 
     # Get the npm scripts from the package.json file
     $Scripts = $Package.scripts
