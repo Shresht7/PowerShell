@@ -4,10 +4,6 @@ This module provides a set of utilities for working with `node.js` projects.
 
 ## Cmdlets
 
-### `Get-NpmGlobalPath`
-
-Returns the path to the global `nodejs` folder.
-
 ### `Get-NpmScript`
 
 Returns a list of scripts defined in the `package.json` file.
