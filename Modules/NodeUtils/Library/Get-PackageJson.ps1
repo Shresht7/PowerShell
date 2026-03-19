@@ -44,7 +44,7 @@ function Get-PackageJson {
         Write-Warning "The package.json file was not found at the path '$Path'."
         return
     }
-    
+
     # Get the contents of the package.json file
     return Get-Content $Path -ErrorAction SilentlyContinue | ConvertFrom-Json
 }
