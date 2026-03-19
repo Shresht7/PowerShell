@@ -21,17 +21,30 @@ function Get-PackageJson {
         # The path to the package.json file
         [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
         [ValidateScript({ Test-Path -Path $_ })]
-        [string]$Path = (Join-Path -Path $PWD.Path -ChildPath "package.json")
+        [Alias("PackagePath", "PackageJsonPath", "FilePath")]
+        [string]$Path = (Get-Location).Path
     )
-    
-    # Get the item at the given path
-    $Item = Get-Item -Path $Path
+     
+    # Check if the path is valid and points to a package.json file
+    if (-Not (Test-Path -Path $Path)) {
+        Write-Warning "The path '$Path' does not exist."
+        return
+    }
 
     # If the path is a directory, then append the package.json file name
-    if ($Item.PSIsContainer) {
+    if (Test-Path -Path $Path -PathType Container) {
         $Path = Join-Path -Path $Path -ChildPath "package.json"
     }
 
+    # Resolve the path to the package.json file
+    $Path = Resolve-Path -Path $Path -ErrorAction SilentlyContinue
+
+    # Check if the package.json file exists
+    if (-Not (Test-Path -Path $Path)) {
+        Write-Warning "The package.json file was not found at the path '$Path'."
+        return
+    }
+    
     # Get the contents of the package.json file
     return Get-Content $Path -ErrorAction SilentlyContinue | ConvertFrom-Json
 }
