@@ -12,10 +12,6 @@ Returns a list of scripts defined in the `package.json` file.
 
 Returns the `package.json` file as a `PSCustomObject`.
 
-### `Invoke-NpmScript`
-
-Invokes a script defined in the `package.json` file. If no script is specified, use fzf to select one.
-
 ### `Remove-NodeModules`
 
 Removes the selected `node_modules` folder. If no folder is specified, use fzf to select one.
