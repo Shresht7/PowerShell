@@ -17,9 +17,11 @@
     Remove-NodeModules -Path C:\Projects\MyProject
     Removes C:\Projects\MyProject\node_modules if it exists.
 .EXAMPLE
-    Get-ChildItem -Directory C:\Projects | Where-Object { Test-Path (Join-Path $_.FullName 'node_modules') } |
-    ForEach-Object { $_.FullName } | Remove-NodeModules -WhatIf
-    Demonstrates pipeline input and `-WhatIf` support.
+    Get-ChildItem -Directory -Recurse | 
+    Where-Object { Test-Path (Join-Path $_.FullName 'node_modules') } |
+    Where-Object { (Get-Item (Join-Path $_.FullName 'node_modules')).LastWriteTime -lt (Get-Date).AddDays(-7) } |
+    Remove-NodeModules -WhatIf
+    Finds all Node.js projects not touched in over a week and removes their node_modules.
 .NOTES
     - Falls back to `Out-GridView` selection if `Select-Fuzzy` is not available.
     - Uses `Remove-Item -LiteralPath` and reports failures per path.
@@ -34,7 +36,7 @@ function Remove-NodeModules {
 
     begin {
         $selections = @()
-        $hasSelectFuzzy = (Get-Command Select-Fuzzy -ErrorAction SilentlyContinue) -ne $null
+        $hasSelectFuzzy = $null -ne (Get-Command Select-Fuzzy -ErrorAction SilentlyContinue)
     }
 
     process {
