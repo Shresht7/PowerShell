@@ -13,12 +13,17 @@
     Get-PackageJson -Path "C:\Projects\MyProject\package.json"
     Get the contents of the package.json file in the given path
 #>
-function Get-PackageJson(
-    # The path to the package.json file
-    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
-    [ValidateScript({ Test-Path -Path $_ })]
-    [string]$Path = (Join-Path -Path $PWD.Path -ChildPath "package.json")
-) {
+function Get-PackageJson {
+
+    [CmdletBinding()]
+    [OutputType([psobject])]
+    param (
+        # The path to the package.json file
+        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
+        [ValidateScript({ Test-Path -Path $_ })]
+        [string]$Path = (Join-Path -Path $PWD.Path -ChildPath "package.json")
+    )
+    
     # Get the item at the given path
     $Item = Get-Item -Path $Path
 
