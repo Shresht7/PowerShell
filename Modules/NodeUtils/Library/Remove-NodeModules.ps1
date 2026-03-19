@@ -1,54 +1,110 @@
 <#
 .SYNOPSIS
-    Remove the node_modules folder from the given path
+    Remove one or more node_modules folders.
+
 .DESCRIPTION
-    Remove the node_modules folder from the given path
+    Removes the `node_modules` folder from one or more target directories.
+    If called without `-Path`, interactively selects folders under the current
+    working directory that contain a `node_modules` folder. Supports pipeline
+    input and `-WhatIf`/`-Confirm` via `SupportsShouldProcess`.
+
+.PARAMETER Path
+    One or more paths. Each value may be a folder that contains a `node_modules`
+    directory or the `node_modules` directory itself.
+
 .EXAMPLE
     Remove-NodeModules
-    Interactively select a folder to remove the node_modules folder from
+    Interactively select folders under the current directory to remove
+    their `node_modules` folders.
+
 .EXAMPLE
-    Remove-NodeModules -Path "C:\Projects\MyProject"
-    Remove the node_modules folder from the given directory
+    Remove-NodeModules -Path C:\Projects\MyProject
+    Removes C:\Projects\MyProject\node_modules if it exists.
+
 .EXAMPLE
-    Remove-NodeModules -Path "C:\Projects\MyProject\node_modules"
-    Remove the node_modules folder from the given path
+    Get-ChildItem -Directory C:\Projects | Where-Object { Test-Path (Join-Path $_.FullName 'node_modules') } |
+    ForEach-Object { $_.FullName } | Remove-NodeModules -WhatIf
+    Demonstrates pipeline input and `-WhatIf` support.
+
+.NOTES
+    - Falls back to `Out-GridView` selection if `Invoke-Fzf` is not available.
+    - Uses `Remove-Item -LiteralPath` and reports failures per path.
 #>
 function Remove-NodeModules {
-    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = "High")]
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
     param (
-        # The path to the folder containing the node_modules folder to remove.
-        [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
-        [ValidateScript({ Test-Path -Path $_ })]
-        [string] $Path = (
-            Get-ChildItem -Directory -Path $PWD.Path |
-            Where-Object { Test-Path -Path (Join-Path -Path $_.FullName -ChildPath "node_modules") } |
-            Invoke-Fzf -Multi `
-                -Preview "pwsh -NoProfile -Command Get-Size -Path {}\node_modules" `
-                -Header "Select a folder to remove the node_modules folder from"
-        )
+        [Parameter(ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, Position = 0)]
+        [Alias('Directory')]
+        [string[]] $Path
     )
 
-    begin {}
+    begin {
+        $selections = @()
+        $hasFzf = (Get-Command Invoke-Fzf -ErrorAction SilentlyContinue) -ne $null
+    }
 
     process {
-        # If the path is not node_modules
-        if (-Not (Split-Path -Path $Path -Leaf) -eq "node_modules") {
-            # Get the path to the node_modules folder
-            $NodeModulesPath = Join-Path -Path $Path -ChildPath "node_modules"
+        if (-not $Path -or $Path.Count -eq 0) {
+            # Discover candidate folders under current directory
+            $candidates = Get-ChildItem -Directory -Path $PWD -ErrorAction SilentlyContinue |
+            Where-Object { Test-Path -LiteralPath (Join-Path -Path $_.FullName -ChildPath 'node_modules') } |
+            Select-Object -ExpandProperty FullName
+
+            if (-not $candidates) {
+                Write-Warning "No folders containing 'node_modules' found under $PWD"
+                return
+            }
+
+            if ($hasFzf) {
+                $selected = $candidates | Invoke-Fzf -Multi -Preview "pwsh -NoProfile -Command Get-Size -Path {}\\node_modules" -Header "Select folders to remove node_modules from"
+            }
+            else {
+                $selected = $candidates | Out-GridView -Title "Select folders to remove node_modules from" -PassThru
+            }
+
+            if ($selected) {
+                $selections += $selected
+            }
         }
         else {
-            # Set the path to the node_modules folder
-            $NodeModulesPath = $Path
-        }
-        
-        # Remove the node_modules folder
-        if (Test-Path -Path $NodeModulesPath) {
-            if ($PSCmdlet.ShouldProcess($NodeModulesPath, "Remove node_modules folder")) {
-                Remove-Item -Path $NodeModulesPath -Recurse -Force
-            }
+            $selections += $Path
         }
     }
 
-    end {}
+    end {
+        foreach ($p in $selections) {
+            if (-not $p) { continue }
 
+            $resolved = $null
+            try { $resolved = Resolve-Path -LiteralPath $p -ErrorAction Stop } catch { }
+            if (-not $resolved) {
+                Write-Warning "Path not found or inaccessible: $p"
+                continue
+            }
+
+            $target = $resolved.ProviderPath
+            $leaf = Split-Path -Path $target -Leaf
+            if ($leaf -ieq 'node_modules') {
+                $nodePath = $target
+            }
+            else {
+                $nodePath = Join-Path -Path $target -ChildPath 'node_modules'
+            }
+
+            if (-not (Test-Path -LiteralPath $nodePath)) {
+                Write-Verbose "No node_modules found at: $nodePath"
+                continue
+            }
+
+            if ($PSCmdlet.ShouldProcess($nodePath, 'Remove node_modules')) {
+                try {
+                    Remove-Item -LiteralPath $nodePath -Recurse -Force -ErrorAction Stop
+                    Write-Verbose "Removed: $nodePath"
+                }
+                catch {
+                    Write-Warning "Failed to remove '$nodePath': $($_.Exception.Message)"
+                }
+            }
+        }
+    }
 }
