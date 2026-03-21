@@ -10,5 +10,5 @@
 function Get-Voice {
     Add-Type -AssemblyName System.Speech
     $Synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
-    $Synthesizer.GetInstalledVoices().VoiceInfo | Format-Table
+    $Synthesizer.GetInstalledVoices().VoiceInfo
 }
