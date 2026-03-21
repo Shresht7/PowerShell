@@ -7,5 +7,5 @@
     Get-Baseboard
 #>
 function Get-Baseboard() {
-    Get-WmiObject -Class Win32_BaseBoard
+    Get-CimInstance -ClassName Win32_BaseBoard
 }
