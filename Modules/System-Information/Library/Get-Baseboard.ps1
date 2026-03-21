@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-    Get baseboard information
+    Get baseboard information.
 .DESCRIPTION
-    Get baseboard information
+    Retrieves motherboard information from the system.
 .EXAMPLE
     Get-Baseboard
 #>
-function Get-Baseboard() {
+function Get-Baseboard {
     Get-CimInstance -ClassName Win32_BaseBoard
 }

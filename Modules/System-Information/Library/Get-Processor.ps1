@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-    Get information about the processor
+    Get information about the processor.
 .DESCRIPTION
-    Get information about the processor
+    Retrieves processor information from the system.
 .EXAMPLE
     Get-Processor
 #>
-function Get-Processor() {
+function Get-Processor {
     Get-CimInstance -ClassName Win32_Processor
 }

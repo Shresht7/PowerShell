@@ -1,84 +1,41 @@
-# `System-Information`
+# System-Information
 
-PowerShell module to show system information
+A PowerShell module that retrieves hardware and system information using the Common Information Model (CIM).
 
----
-
-## 📕 Reference
-
-### `Get-Baseboard`
-
-Get baseboard information
-
-#### Examples
-
-```powershell
-Get-Baseboard
-```
-
-### `Get-BatteryStatus`
-
-Get the status of the battery (like battery percentage and time remaining)
-
-#### Examples
-
-```powershell
-Get-BatteryStatus
-```
+## Functions
 
 ### `Get-BIOS`
+Retrieves information about the system's BIOS.
 
-Get information about the BIOS
+### `Get-Baseboard`
+Retrieves information about the motherboard.
 
-#### Examples
+### `Get-BatteryStatus`
+Retrieves current battery charging status and estimated run time.
 
-```powershell
-Get-BIOS
-```
+### `Get-DiskDrive`
+Retrieves information about physical disk drives.
 
-### `Get-LastBootupTime`
+### `Get-LogicalDisk`
+Retrieves information about logical drives (partitions).
 
-Returns the last boot-up time for this computer
-
-#### Parameters
-
-- `ComputerName`: Name of the computer
-
-#### Examples
-
-```powershell
-Get-LastBootupTime
-```
+### `Get-NetworkAdapter`
+Retrieves information about installed network adapters.
 
 ### `Get-OperatingSystem`
-
-Returns information about the operating system
-
-#### Examples
-
-```powershell
-Get-OperatingSystem
-```
+Retrieves detailed OS information (caption, version, architecture).
 
 ### `Get-PhysicalMemory`
-
-Returns information about the physical memory (RAM)
-
-#### Examples
-
-```powershell
-Get-PhysicalMemory
-```
+Retrieves information about installed RAM modules and calculates capacity in GB.
 
 ### `Get-Processor`
+Retrieves CPU information.
 
-Get information about the processor
+### `Get-VideoController`
+Retrieves information about the GPU/video controller.
 
-#### Examples
-
-```powershell
-Get-Processor
-```
+### `Get-LastBootupTime`
+Retrieves the last system boot-up time and calculates system uptime duration.
 
 ---
 
