@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-    Lists installed text-to-speech voices
+    Lists installed text-to-speech voices.
 .DESCRIPTION
-    Returns a list of installed text-to-speech (TTS) voices
+    Returns a list of installed text-to-speech (TTS) voices.
 .EXAMPLE
     Get-Voice
-    Lists all installed text-to-speech voices
+    Lists all installed text-to-speech voices.
 #>
 function Get-Voice {
     Add-Type -AssemblyName System.Speech
