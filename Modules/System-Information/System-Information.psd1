@@ -76,6 +76,7 @@
         "Get-LastBootupTime",
         "Get-OperatingSystem",
         "Get-PhysicalMemory",
+        "Get-LogicalDisk",
         "Get-DiskDrive",
         "Get-VideoController",
         "Get-Processor",
