@@ -31,20 +31,25 @@ function Write-Separator(
     [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 1)]
     [Alias('Length')]
     [ValidateRange(1, [int]::MaxValue)]
-    [UInt32] $Width = $Host.UI.RawUI.WindowSize.Width,
+    [UInt32] $Width = (Get-Host).UI.RawUI.WindowSize.Width,
 
     # The ansi color/style of the separator. Accepts an array of strings
     [Parameter(Position = 2)]
     [Alias('Color')]
     [string[]] $Style
 ) {
+    # If the width is not valid, default to 80
+    if ($Width -le 0) {
+        $Width = 80
+    }
+
     # Create the separator
     $Separator = ($Character * $Width)
 
     # If a color/style has been passed, wrap it around the separator text
     if ($Style -and $Style.Length -gt 0) {
         $Style = $Style -join ""
-        $Separator = $Style + ($Character * ($Width - 3)) + $PSStyle.Reset
+        $Separator = "$Style$Separator$($PSStyle.Reset)"
     }
 
     # Draw the separator to the console
