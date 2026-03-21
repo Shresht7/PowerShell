@@ -16,10 +16,10 @@ function Out-Voice(
     [string] $Text,
 
     # The ID of the voice to use
-    [string] $VoiceId = "*TTS_MS_EN-US_ZIRA_11.0"
+    [string] $VoiceId = "MSTTS_V110_enUS_ZiraM"
 ) {
-    $TTS = New-Object -ComObject SAPI.SPVoice
-    $TTS.Voice = $TTS.GetVoices() | Where-Object { $_.Id -like $VoiceId }
-    $null = $TTS.Speak($Text)
-    return $Text
+    Add-Type -AssemblyName System.Speech
+    $Synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
+    $Synthesizer.SelectVoice($VoiceId)
+    $Synthesizer.Speak($Text)
 }
