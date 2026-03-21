@@ -19,10 +19,6 @@ function New-RandomString(
     [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [string] $Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 ) {
-    $Random = New-Object System.Random
-    $Result = ""
-    for ($i = 0; $i -lt $Length; $i++) {
-        $Result += $Characters[$Random.Next(0, $Characters.Length)]
-    }
-    return $Result
+    # Select random characters and join them
+    -join (Get-Random -Count $Length -InputObject ($Characters.ToCharArray()))
 }
