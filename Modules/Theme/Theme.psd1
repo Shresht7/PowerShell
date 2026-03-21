@@ -24,13 +24,13 @@
     Author            = 'Shresht7'
 
     # Company or vendor of this module
-    CompanyName       = 'Unknown'
+    CompanyName       = 'Shresht7'
 
     # Copyright statement for this module
     Copyright         = '(c) Shresht7. All rights reserved.'
 
     # Description of the functionality provided by this module
-    # Description = ''
+    Description       = 'PowerShell cmdlets for managing Windows Light/Dark theme.'
 
     # Minimum version of the PowerShell engine required by this module
     # PowerShellVersion = ''
@@ -95,13 +95,13 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            # Tags = @()
+            Tags = @('Theme', 'Windows', 'Personalization', 'Dark Mode', 'Light Mode')
 
             # A URL to the license for this module.
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/Shresht7/PowerShell/blob/main/LICENSE'
 
             # A URL to the main website for this project.
-            # ProjectUri = ''
+            ProjectUri = 'https://github.com/Shresht7/PowerShell'
 
             # A URL to an icon representing this module.
             # IconUri = ''
