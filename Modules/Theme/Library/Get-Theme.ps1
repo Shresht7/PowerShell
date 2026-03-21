@@ -2,27 +2,27 @@
 .SYNOPSIS
     Get the current Windows Color Theme (Light or Dark Mode).
 .DESCRIPTION
-    This function retrieves the current Windows Color Theme for System and/or Apps.
+    This function retrieves the current Windows  Color Theme, which can be either Light or Dark.
 .EXAMPLE
     Get-Theme
-    Returns a custom object with System and App theme status.
-.EXAMPLE
-    Get-Theme -Target System -AsString
-    Returns "Light" or "Dark" for the System theme.
+    Retrieves the current Windows Color Theme as a string ("Light" or "Dark").
 .EXAMPLE
     Get-Theme -AsValue
-    Returns 1 (Light) or 0 (Dark) for both System and App themes.
+    Retrieves the current Windows Color Theme as a numeric value (1 for Light, 0 for Dark).
+.EXAMPLE
+    Get-Theme -AsBoolean
+    Retrieves the current Windows Color Theme as a numeric value (1 for Light, 0 for Dark).
+.EXAMPLE
+    Get-Theme -AsString
+    Retrieves the current Windows Color Theme as a string ("Light" or "Dark").
 .NOTES
     Author: Shresht Srivastav
-    Version: 1.1
+    Version: 1.0
+    Date: 18th October 2023
 #>
 function Get-Theme {
-    [CmdletBinding(DefaultParameterSetName = "Default")]
+    [CmdletBinding(DefaultParameterSetName = "AsString")]
     param(
-        # Specify which theme to get (Both, System, App).
-        [ValidateSet("Both", "System", "App")]
-        [string] $Target = "Both",
-
         # If specified, returns the theme as a numeric value (1 for Light, 0 for Dark)
         [Parameter(ParameterSetName = "AsValue")]
         [switch] $AsValue,
@@ -36,41 +36,20 @@ function Get-Theme {
         [switch] $AsString
     )
 
-    process {
-        $RegPath = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize'
-        
-        try {
-            $SystemTheme = Get-ItemPropertyValue -Path $RegPath -Name SystemUsesLightTheme -ErrorAction Stop
-            $AppTheme = Get-ItemPropertyValue -Path $RegPath -Name AppsUseLightTheme -ErrorAction Stop
-        }
-        catch {
-            Write-Error "Failed to retrieve theme settings: $_"
-            return
-        }
+    # Path to the Registry Entry for Windows theme
+    $RegPath = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize'
 
-        # Helper to format the value based on switches
-        $Formatter = {
-            param($Val)
-            if ($AsValue) { return $Val }
-            if ($AsBoolean) { return [bool]$Val }
-            if ($AsString) { return if ($Val) { "Light" } else { "Dark" } }
-            # Default format: Return formatted string if single target, or object if 'Both' default
-            return if ($Val) { "Light" } else { "Dark" }
-        }
+    # Get the current theme value from the registry
+    $currentTheme = Get-ItemPropertyValue -Path $RegPath -Name SystemUsesLightTheme
 
-        if ($Target -eq "System") {
-            return & $Formatter $SystemTheme
-        }
-        elseif ($Target -eq "App") {
-            return & $Formatter $AppTheme
-        }
-        else {
-            # Both
-            $Result = [PSCustomObject]@{
-                System = (& $Formatter $SystemTheme)
-                App    = (& $Formatter $AppTheme)
-            }
-            return $Result
-        }
+    # Return the theme based on the specified parameter set
+    if ($AsValue) {
+        return $currentTheme
+    }
+    elseif ($AsBoolean) {
+        return [bool]$currentTheme
+    }
+    else {
+        return $currentTheme ? "Light" : "Dark"
     }
 }
