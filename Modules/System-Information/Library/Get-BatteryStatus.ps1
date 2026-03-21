@@ -1,27 +1,29 @@
 <#
 .SYNOPSIS
-    Get status of the battery
+    Get status of the battery.
 .DESCRIPTION
-    Get status of the battery like the battery percentage and time remaining
+    Retrieves information about the battery status, including percentage and estimated run time.
 .EXAMPLE
     Get-BatteryStatus
-    Shows information about the battery
+    Shows information about the battery.
 .OUTPUTS
-    System.Windows.Forms.PowerStatus
+    CimInstance#Win32_Battery
 #>
-function Get-BatteryStatus() {
-    Add-Type -AssemblyName System.Windows.Forms
+function Get-BatteryStatus {
+    $Battery = Get-CimInstance -ClassName Win32_Battery -ErrorAction SilentlyContinue
 
-    $PowerStatus = [System.Windows.Forms.SystemInformation]::PowerStatus
+    if (-not $Battery) {
+        Write-Warning "No battery detected or unable to retrieve battery status."
+        return
+    }
 
-    # Add custom properties for battery life percentage and time remaining to the existing properties of PowerStatus
-    $PowerStatus | Select-Object -Property *,
+    $Battery | Select-Object -Property *,
     @{
         Name       = "BatteryLifePercentage"
-        Expression = { [int]($_.BatteryLifePercent * 100) }
+        Expression = { $_.EstimatedChargeRemaining }
     },
     @{
         Name       = "Time Remaining (Minutes)"
-        Expression = { if ($_.BatteryLifeRemaining -ne -1) { $_.BatteryLifeRemaining / 60 } else { $null } }
+        Expression = { if ($_.EstimatedRunTime -ne 71582788) { $_.EstimatedRunTime } else { $null } }
     }
 }
