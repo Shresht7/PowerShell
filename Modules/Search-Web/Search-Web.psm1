@@ -16,12 +16,7 @@ else {
 }
 
 # Source Private Functions
-Get-ChildItem -Path "$PSScriptRoot\Private" -Filter "*.ps1" | ForEach-Object {
-    . $_.FullName -Force -Verbose
-}
+Get-ChildItem -Path "$PSScriptRoot\Private" -Filter "*.ps1" | ForEach-Object { . $_.FullName -Force }
 
 # Source and Export Public Functions
-Get-ChildItem -Path "$PSScriptRoot\Public" -Filter "*.ps1" | ForEach-Object {
-    . $_.FullName -Force -Verbose
-    Export-ModuleMember -Function $_.BaseName
-}
+Get-ChildItem -Path "$PSScriptRoot\Public" -Filter "*.ps1" | ForEach-Object { . $_.FullName -Force }
