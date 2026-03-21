@@ -25,15 +25,13 @@
 function Get-ReversedString(
     # The string to reverse
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, ValueFromRemainingArguments)]
-    [Alias("String", "Input", "InputObject", "InputString")]
+    [Alias("String", "Input", "InputString")]
     [string] $Text
 ) {
-    $ReversedString = "" # Variable to store the results
-    # Convert to character array and iterate over it backwards collecting each character
-    $InputArray = $Text.ToCharArray()
-    for ($i = $InputArray.Length; $i -ge 0; $i--) {
-        $ReversedString += $InputArray[$i]
-    }
-    # Return the results
-    return $ReversedString
+    # Convert to character array
+    $CharArray = $Text.ToCharArray()
+    # Reverse the array
+    [Array]::Reverse($CharArray)
+    # Join the array back into a string and return
+    -join $CharArray
 }
