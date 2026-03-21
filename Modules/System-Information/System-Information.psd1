@@ -73,7 +73,7 @@
         "Get-BaseBoard",
         "Get-BatteryStatus",
         "Get-BIOS",
-        "Get-LastBootTime",
+        "Get-LastBootupTime",
         "Get-OperatingSystem",
         "Get-PhysicalMemory",
         "Get-Processor"
