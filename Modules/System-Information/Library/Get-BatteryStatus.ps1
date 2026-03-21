@@ -22,6 +22,6 @@ function Get-BatteryStatus() {
     },
     @{
         Name       = "Time Remaining (Minutes)"
-        Expression = { $_.BatteryLifeRemaining / 60 }
+        Expression = { if ($_.BatteryLifeRemaining -ne -1) { $_.BatteryLifeRemaining / 60 } else { $null } }
     }
 }
