@@ -12,7 +12,7 @@
     RootModule        = 'Speech.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.1.0'
+    ModuleVersion     = '0.2.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -30,7 +30,7 @@
     Copyright         = '(c) Shresht7. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description       = 'PowerShell module to utilize speech synthesis'
+    Description       = 'A PowerShell module to utilize speech synthesis.'
 
     # Minimum version of the PowerShell engine required by this module
     # PowerShellVersion = ''
@@ -95,13 +95,13 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            # Tags = @()
+            Tags       = @('Speech', 'TTS', 'Synthesis', 'Voice')
 
             # A URL to the license for this module.
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/Shresht7/PowerShell/blob/main/LICENSE'
 
             # A URL to the main website for this project.
-            # ProjectUri = ''
+            ProjectUri = 'https://github.com/Shresht7/PowerShell'
 
             # A URL to an icon representing this module.
             # IconUri = ''
@@ -129,4 +129,3 @@
     # DefaultCommandPrefix = ''
 
 }
-

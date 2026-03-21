@@ -1,6 +1,6 @@
-# `Speech`
+# Speech
 
-PowerShell Module to utilize speech synthesis.
+PowerShell module to utilize speech synthesis using the .NET `System.Speech` library.
 
 ---
 
@@ -8,11 +8,9 @@ PowerShell Module to utilize speech synthesis.
 
 ### `Get-Voice`
 
-List installed text-to-speech (TTS) voices
+Lists all installed text-to-speech (TTS) voices.
 
-### Examples
-
-List all installed text-to-speech voices
+#### Examples
 
 ```powershell
 Get-Voice
@@ -20,28 +18,34 @@ Get-Voice
 
 ### `Out-Voice`
 
-Use text-to-speech to speak out the provided text
+Uses text-to-speech to speak out the provided text.
 
 #### Parameters
 
-- `Text`: The text to speak out
+- `Text`: The text to speak out.
+- `VoiceId`: (Optional) The ID of the voice to use. Defaults to the system default voice.
+- `Rate`: (Optional) The speed of the speech (Range: -10 to 10, Default: 0).
+- `Volume`: (Optional) The volume of the speech (Range: 0 to 100, Default: 100).
 
 #### Examples
 
-Speaks "Good Morning!"
-
+Speaks "Good Morning!" using the default voice.
 ```powershell
 Out-Voice -Text "Good Morning!"
 ```
 
-Can accept input from the pipeline. Speaks the current date
-
+Speaks text at a higher speed and specific volume.
 ```powershell
-Get-Date | Out-Voice
+Out-Voice -Text "Fast and loud" -Rate 5 -Volume 80
+```
+
+Pipe text directly to the speaker.
+```powershell
+"System update complete" | Out-Voice
 ```
 
 ---
 
 ## 📄 License
 
-This project is licensed under the [MIT License](.\LICENSE).
+This project is licensed under the [MIT License](./LICENSE).
