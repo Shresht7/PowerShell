@@ -1,17 +1,28 @@
 <#
 .SYNOPSIS
-    Retrieves search engine information from the Edge Web Data SQLite database.
+    Retrieves search engine information from a Chromium browser's Web Data SQLite database.
 .DESCRIPTION
-    This function reads search engine information from the specified Edge Web Data SQLite database and returns the results.
+    This function reads search engine information from the specified browser's SQLite database and returns the results.
 .PARAMETER Path
-    Path to the folder containing the Edge Web Data SQLite database. Defaults to the Edge default path.
+    Path to the folder containing the Web Data SQLite database.
+.PARAMETER Browser
+    The name of the browser to retrieve search engines for (Edge, Chrome, Brave, Vivaldi).
 .EXAMPLE
-    Get-SearchEngines -Path "C:\Path\To\Edge\Profile"
+    Get-SearchEngines
+.EXAMPLE
+    Get-SearchEngines -Browser "Chrome"
 #>
 function Get-SearchEngines {
+    [CmdletBinding(DefaultParameterSetName = "Browser")]
     param(
         # Path to the folder the Web Data Sqlite Database resides in
-        [string] $Path = "$Env:LOCALAPPDATA\Microsoft\Edge\User Data\Default"
+        [Parameter(ParameterSetName = "Path")]
+        [string] $Path,
+
+        # Name of the browser to retrieve search engines for
+        [Parameter(ParameterSetName = "Browser")]
+        [ValidateSet("Edge", "Chrome")]
+        [string] $Browser = "Edge"
     )
 
     process {
@@ -20,19 +31,27 @@ function Get-SearchEngines {
             return
         }
 
+        # Determine the final database path
+        $ProfilePath = if ($PSCmdlet.ParameterSetName -eq "Path") { 
+            $Path 
+        }
+        else { 
+            Get-BrowserPath -Browser $Browser -Type Profile
+        }
+
         # Create a copy of the Sqlite database to avoid lock issues
-        $Source = Join-Path $Path "Web Data"
+        $Source = Join-Path $ProfilePath "Web Data"
         if (-not (Test-Path $Source)) {
-            Write-Error "Edge 'Web Data' database not found at $Source"
+            Write-Error "Web Data database not found at $Source"
             return
         }
 
-        $Destination = Join-Path $Env:TEMP "Edge_Web_Data_Copy"
+        $Destination = Join-Path $Env:TEMP "Browser_Web_Data_Copy"
         try {
             Copy-Item -Path $Source -Destination $Destination -Force -ErrorAction Stop
         }
         catch {
-            Write-Error "Failed to copy Edge database: $_"
+            Write-Error "Failed to copy browser database: $_"
             return
         }
 
@@ -69,7 +88,7 @@ function Get-SearchEngines {
             return sqlite3.exe $Destination "SELECT * FROM keywords;" | ConvertFrom-Csv -Delimiter "|" -Header $Headers
         }
         catch {
-            Write-Error "Failed to query the Edge database using sqlite3. Error: $_"
+            Write-Error "Failed to query the database using sqlite3. Error: $_"
         }
         finally {
             if (Test-Path $Destination) { Remove-Item $Destination -Force }
