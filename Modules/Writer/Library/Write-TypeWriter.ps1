@@ -35,14 +35,10 @@ function Write-TypeWriter {
         [string[]] $PauseAt = @(" ", "`n"),
     
         # The the multiplier to apply when pausing
-        [ValidatePattern("[0-9]+")]
         [uint32] $PauseMultiplier = 3
     )
 
     begin {
-        # Instantiate the Random Object
-        $Random = New-Object -TypeName System.Random
-
         # Calculate the speed based on the given CPM (Characters-Per-Minute) if specified
         if ($PSCmdlet.ParameterSetName -eq "CPM") {
             $Speed = (60 * 1000) / $CPM
@@ -50,9 +46,9 @@ function Write-TypeWriter {
     }
 
     process {    
-        $Text -split '' | ForEach-Object {
+        [char[]]$Text | ForEach-Object {
             # Determine the duration to pause for
-            $PauseFor = $MinSpeed + $Random.Next($Speed)
+            $PauseFor = $MinSpeed + (Get-Random -Maximum $Speed)
             # Apply pause multiplier if the character belongs to the $PauseAt set
             if ($PauseAt -contains $_) {
                 $PauseFor *= $PauseMultiplier
@@ -64,11 +60,6 @@ function Write-TypeWriter {
             # Pause for the duration
             Start-Sleep -Milliseconds $PauseFor
         }
-        Write-Host ""
-    }
-
-    end {
-        # Write empty newline at the end
         Write-Host ""
     }
 
