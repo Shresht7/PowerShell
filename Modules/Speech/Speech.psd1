@@ -9,28 +9,28 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule    = 'Speech.psm1'
+    RootModule        = 'Speech.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.1.0'
+    ModuleVersion     = '0.1.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
 
     # ID used to uniquely identify this module
-    GUID          = 'e9be3774-e2dd-4bca-a2b1-b1e8482e8967'
+    GUID              = 'e9be3774-e2dd-4bca-a2b1-b1e8482e8967'
 
     # Author of this module
-    Author        = 'Shresht7'
+    Author            = 'Shresht7'
 
     # Company or vendor of this module
-    CompanyName   = 'Shresht7'
+    CompanyName       = 'Shresht7'
 
     # Copyright statement for this module
-    Copyright     = '(c) Shresht7. All rights reserved.'
+    Copyright         = '(c) Shresht7. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description   = 'PowerShell module to utilize speech synthesis'
+    Description       = 'PowerShell module to utilize speech synthesis'
 
     # Minimum version of the PowerShell engine required by this module
     # PowerShellVersion = ''
@@ -69,7 +69,7 @@
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    # FunctionsToExport = @()
+    FunctionsToExport = @("Get-Voice", "Out-Voice")
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     # CmdletsToExport   = @()
@@ -90,7 +90,7 @@
     # FileList = @()
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-    PrivateData   = @{
+    PrivateData       = @{
 
         PSData = @{
 
