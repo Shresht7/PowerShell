@@ -21,8 +21,12 @@ function Get-BrokenSymlink(
     [string]$Path = ".",
 
     # Specifies whether to search for broken symlinks recursively within subdirectories. By default, only the specified path is searched.
-    [switch]$Recurse
+    [switch]$Recurse,
+
+    # The maximum depth to recurse when searching for broken symlinks. Only applicable if -Recurse is specified. Default is 10.
+    [int]$Depth = 10
 ) {
     # Recursively get all children and filter out links. Then filter the links again to those who do not have a valid link target
-    Get-ChildItem -Path $Path -Recurse:$Recurse | Where-Object { $null -ne $_.LinkTarget -And -Not (Test-Path -Path $_.LinkTarget) }
+    Get-ChildItem -Path $Path -Recurse:$Recurse -Depth $Depth
+    | Where-Object { $null -ne $_.LinkTarget -And -Not (Test-Path -Path $_.LinkTarget) }
 }
