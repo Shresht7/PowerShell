@@ -7,21 +7,26 @@
     Move-ItemAndCreateLink -Path "./.config" -Target "~/dotfiles/.config"
     Moves the item at the specified path to the target location and creates a symbolic link in its place.
 #>
-function Move-ItemAndCreateLink(
-    # The path of the item to be moved. It can be provided as a string or piped from the pipeline.
-    [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
-    [Alias('Path', 'Source')]
-    [ValidateScript({ Test-Path -Path $_ })]
-    [string] $Item,
+function Move-ItemAndCreateLink {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        # The path of the item to be moved. It can be provided as a string or piped from the pipeline.
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
+        [Alias('Path', 'Source')]
+        [ValidateScript({ Test-Path -Path $_ })]
+        [string] $Item,
 
-    # The destination path where the item should be moved.
-    [Parameter(Mandatory, Position = 1)]
-    [Alias('Destination')]
-    [string] $Target
-) {
-    # Move the item to the target
-    Move-Item -Path $Item -Destination $Target
+        # The destination path where the item should be moved.
+        [Parameter(Mandatory, Position = 1)]
+        [Alias('Destination')]
+        [string] $Target
+    )
 
-    # Create a symbolic link in its place
-    New-Item -ItemType SymbolicLink -Path $Item -Value $Target
+    if ($PSCmdlet.ShouldProcess($Item, "Move to '$Target' and create symbolic link")) {
+        # Move the item to the target
+        Move-Item -Path $Item -Destination $Target
+
+        # Create a symbolic link in its place
+        New-Item -ItemType SymbolicLink -Path $Item -Value $Target
+    }
 }
