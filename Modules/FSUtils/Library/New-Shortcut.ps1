@@ -13,50 +13,63 @@
     This example creates a new URL shortcut with the name "MyURLShortcut" that points to the specified target URL. 
     The shortcut will include the specified arguments when it is run.
 #>
-function New-Shortcut(
-    # The name for the shortcut
-    [Parameter(Mandatory)]
-    [Alias("Source", "SourcePath", "Path", "FullName", "FilePath")]
-    [string] $Name,
+function New-Shortcut {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        # The name for the shortcut
+        [Parameter(Mandatory)]
+        [Alias("Source", "SourcePath", "Path", "FullName", "FilePath")]
+        [string] $Name,
 
-    # The target path for the shortcut
-    [Parameter(Mandatory)]
-    [Alias("Target", "Destination", "DestinationPath")]
-    [string] $TargetPath,
+        # The target path for the shortcut
+        [Parameter(Mandatory)]
+        [Alias("Target", "Destination", "DestinationPath")]
+        [string] $TargetPath,
 
-    # The type of shortcut to create. Can be either "FileSystem" or "URL"
-    [Parameter(Mandatory)]
-    [ValidateSet("FileSystem", "URL")]
-    [string] $Type,
+        # The type of shortcut to create. Can be either "FileSystem" or "URL"
+        [Parameter(Mandatory)]
+        [ValidateSet("FileSystem", "URL")]
+        [string] $Type,
 
-    # (Optional) Arguments to pass to the shortcut target
-    [string] $Arguments,
+        # (Optional) Arguments to pass to the shortcut target
+        [string] $Arguments,
 
-    # (Optional) A description for the shortcut
-    [string] $Description
-) {
-    # Instantiate the shell object to create the shortcut
-    $Shell = New-Object -ComObject WScript.Shell
+        # (Optional) A description for the shortcut
+        [string] $Description
+    )
 
-    # Create the Shortcut
-    $Name = switch ($Type) {
-        "FileSystem" { Join-Path $PWD.Path "$Name.lnk" }
-        "URL" { Join-Path $PWD.Path "$Name.url" }
-    }
-    $Shortcut = $Shell.CreateShortcut($Name)
+    try {
+        # Instantiate the shell object to create the shortcut
+        $Shell = New-Object -ComObject WScript.Shell -ErrorAction Stop
 
-    # Set shortcut properties
-    switch ($Type) {
-        "FileSystem" {
-            $Shortcut.TargetPath = $TargetPath
-            $Shortcut.Description = $Description
-            $Shortcut.Arguments = $Arguments
+        # Create the Shortcut
+        $Name = switch ($Type) {
+            "FileSystem" { Join-Path $PWD.Path "$Name.lnk" }
+            "URL" { Join-Path $PWD.Path "$Name.url" }
         }
-        "URL" {
-            $Shortcut.TargetPath = $TargetPath
-        }
-    }
 
-    # Save the Shortcut
-    $Shortcut.Save()
+        if (-not $PSCmdlet.ShouldProcess($Name, "Create shortcut")) {
+            return
+        }
+
+        $Shortcut = $Shell.CreateShortcut($Name)
+
+        # Set shortcut properties
+        switch ($Type) {
+            "FileSystem" {
+                $Shortcut.TargetPath = $TargetPath
+                $Shortcut.Description = $Description
+                $Shortcut.Arguments = $Arguments
+            }
+            "URL" {
+                $Shortcut.TargetPath = $TargetPath
+            }
+        }
+
+        # Save the Shortcut
+        $Shortcut.Save()
+    }
+    catch {
+        throw "Failed to create shortcut '$Name': $($_.Exception.Message)"
+    }
 }
