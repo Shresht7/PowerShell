@@ -17,9 +17,10 @@ function Get-SpecialFolders() {
     $SpecialFolders = [System.Enum]::GetNames('System.Environment+SpecialFolder')
 
     foreach ($folder in $SpecialFolders) {
+        $Path = [System.Environment]::GetFolderPath($folder)
         [PSCustomObject]@{
-            Name = $_
-            Path = [System.Environment]::GetFolderPath($folder)
+            Name = $folder
+            Path = $Path
         }
     }
 }
