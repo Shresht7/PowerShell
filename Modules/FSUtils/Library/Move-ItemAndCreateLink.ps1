@@ -13,7 +13,7 @@ function Move-ItemAndCreateLink {
         # The path of the item to be moved. It can be provided as a string or piped from the pipeline.
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
         [Alias('Path', 'Source')]
-        [ValidateScript({ Test-Path -Path $_ })]
+        [ValidateScript({ Test-Path -LiteralPath $_ })]
         [string] $Item,
 
         # The destination path where the item should be moved.
@@ -22,11 +22,14 @@ function Move-ItemAndCreateLink {
         [string] $Target
     )
 
-    if ($PSCmdlet.ShouldProcess($Item, "Move to '$Target' and create symbolic link")) {
+    $resolvedItem = (Resolve-Path -LiteralPath $Item).ProviderPath
+    $resolvedTarget = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Target)
+
+    if ($PSCmdlet.ShouldProcess($resolvedItem, "Move to '$resolvedTarget' and create symbolic link")) {
         # Move the item to the target
-        Move-Item -Path $Item -Destination $Target
+        Move-Item -LiteralPath $resolvedItem -Destination $resolvedTarget
 
         # Create a symbolic link in its place
-        New-Item -ItemType SymbolicLink -Path $Item -Value $Target
+        New-Item -ItemType SymbolicLink -Path $resolvedItem -Value $resolvedTarget
     }
 }
