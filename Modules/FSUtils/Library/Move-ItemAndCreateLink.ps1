@@ -24,12 +24,21 @@ function Move-ItemAndCreateLink {
 
     $resolvedItem = (Resolve-Path -LiteralPath $Item).ProviderPath
     $resolvedTarget = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Target)
+    $itemName = Split-Path -Path $resolvedItem -Leaf
 
-    if ($PSCmdlet.ShouldProcess($resolvedItem, "Move to '$resolvedTarget' and create symbolic link")) {
+    # If destination is an existing directory, Move-Item places the source inside it.
+    if (Test-Path -LiteralPath $resolvedTarget -PathType Container) {
+        $movedItemPath = Join-Path -Path $resolvedTarget -ChildPath $itemName
+    }
+    else {
+        $movedItemPath = $resolvedTarget
+    }
+
+    if ($PSCmdlet.ShouldProcess($resolvedItem, "Move to '$movedItemPath' and create symbolic link")) {
         # Move the item to the target
         Move-Item -LiteralPath $resolvedItem -Destination $resolvedTarget
 
         # Create a symbolic link in its place
-        New-Item -ItemType SymbolicLink -Path $resolvedItem -Value $resolvedTarget
+        New-Item -ItemType SymbolicLink -Path $resolvedItem -Value $movedItemPath
     }
 }
