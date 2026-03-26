@@ -12,6 +12,12 @@
     New-Shortcut -Name "MyURLShortcut" -TargetPath "https://www.example.com" -Type "URL"
     This example creates a new URL shortcut with the name "MyURLShortcut" that points to the specified target URL. 
     The shortcut will include the specified arguments when it is run.
+    .EXAMPLE
+        "https://github.com", "C:\Windows\notepad.exe", "pwsh" | New-Shortcut
+        Creates shortcuts in bulk from pipeline input. URLs become .url shortcuts and filesystem paths or command names become .lnk shortcuts.
+    .EXAMPLE
+        Get-Command pwsh, git | New-Shortcut -OutputDirectory "$HOME\Desktop" -PassThru
+        Creates shortcuts for command targets on the desktop and returns shortcut metadata objects.
 #>
 function New-Shortcut {
     [CmdletBinding(SupportsShouldProcess)]
@@ -38,7 +44,10 @@ function New-Shortcut {
 
         # Output directory for created shortcuts.
         [Alias("Output", "Directory", "DestinationDirectory")]
-        [string] $OutputDirectory = $PWD.Path
+        [string] $OutputDirectory = $PWD.Path,
+
+        # Return metadata for each created shortcut.
+        [switch] $PassThru
     )
 
     begin {
@@ -128,8 +137,12 @@ function New-Shortcut {
             switch ($ResolvedType) {
                 "FileSystem" {
                     $Shortcut.TargetPath = $ResolvedTargetPath
-                    $Shortcut.Description = $Description
-                    $Shortcut.Arguments = $Arguments
+                    if ($PSBoundParameters.ContainsKey('Description')) {
+                        $Shortcut.Description = $Description
+                    }
+                    if ($PSBoundParameters.ContainsKey('Arguments')) {
+                        $Shortcut.Arguments = $Arguments
+                    }
                 }
                 "URL" {
                     $Shortcut.TargetPath = $ResolvedTargetPath
@@ -138,6 +151,15 @@ function New-Shortcut {
 
             # Save the Shortcut
             $Shortcut.Save()
+
+            if ($PassThru) {
+                [PSCustomObject]@{
+                    Name       = $SafeName
+                    Path       = $ShortcutPath
+                    TargetPath = $ResolvedTargetPath
+                    Type       = $ResolvedType
+                }
+            }
         }
         catch {
             Write-Error "Failed to create shortcut '$ShortcutPath': $($_.Exception.Message)"
