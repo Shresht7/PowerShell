@@ -83,6 +83,7 @@
         "Get-Library",
         "Invoke-Library",
         "Get-DesktopIconVisibility",
+        "Get-FileVisibility",
         "Switch-FileVisibility"
     )
 

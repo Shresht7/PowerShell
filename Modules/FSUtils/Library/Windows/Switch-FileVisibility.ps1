@@ -14,14 +14,15 @@
 #>
 function Switch-FileVisibility {
     $RegistryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-    $Current = Get-ItemProperty -Path $RegistryPath -Name Hidden
+    $RegistryKey = "Hidden"
+    $Current = Get-ItemProperty -Path $RegistryPath -Name $RegistryKey
 
-    if ($Current.Hidden -eq 1) {
-        Set-ItemProperty -Path $RegistryPath -Name Hidden -Value 2
+    if ($Current.$RegistryKey -eq 1) {
+        Set-ItemProperty -Path $RegistryPath -Name $RegistryKey -Value 2
         Write-Output "Hidden files are now hidden!"
     }
     else {
-        Set-ItemProperty -Path $RegistryPath -Name Hidden -Value 1
+        Set-ItemProperty -Path $RegistryPath -Name $RegistryKey -Value 1
         Write-Output "Hidden files are now visible!"
     }
 
