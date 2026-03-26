@@ -82,6 +82,7 @@
         "Test-IsSymbolicLink",
         "Get-Library",
         "Invoke-Library",
+        "Get-DesktopIconVisibility",
         "Switch-FileVisibility"
     )
 
