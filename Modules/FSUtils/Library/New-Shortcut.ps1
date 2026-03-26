@@ -6,10 +6,10 @@
     The shortcut can be either a file system shortcut or a URL shortcut. 
     Optional arguments and a description can be provided as well.
     .EXAMPLE
-    New-Shortcut -Name "MyShortcut" -Target "C:\Program Files\MyApplication" -Type "FileSystem"
+    New-Shortcut -Name "MyShortcut" -TargetPath "C:\Program Files\MyApplication" -Type "FileSystem"
     This example creates a new file system shortcut with the name "MyShortcut" that points to the specified target path.
     .EXAMPLE
-    New-Shortcut -Name "MyURLShortcut" -Target "https://www.example.com" -Type "URL"
+    New-Shortcut -Name "MyURLShortcut" -TargetPath "https://www.example.com" -Type "URL"
     This example creates a new URL shortcut with the name "MyURLShortcut" that points to the specified target URL. 
     The shortcut will include the specified arguments when it is run.
 #>
@@ -43,16 +43,16 @@ function New-Shortcut {
         $Shell = New-Object -ComObject WScript.Shell -ErrorAction Stop
 
         # Create the Shortcut
-        $Name = switch ($Type) {
+        $ShortcutPath = switch ($Type) {
             "FileSystem" { Join-Path $PWD.Path "$Name.lnk" }
             "URL" { Join-Path $PWD.Path "$Name.url" }
         }
 
-        if (-not $PSCmdlet.ShouldProcess($Name, "Create shortcut")) {
+        if (-not $PSCmdlet.ShouldProcess($ShortcutPath, "Create shortcut")) {
             return
         }
 
-        $Shortcut = $Shell.CreateShortcut($Name)
+        $Shortcut = $Shell.CreateShortcut($ShortcutPath)
 
         # Set shortcut properties
         switch ($Type) {
