@@ -4,6 +4,6 @@ Get-ChildItem -Path "$PSScriptRoot\Private" -Filter "*.ps1" -Recurse | ForEach-O
 }
 
 # Import Library
-Get-ChildItem -Path "$PSScriptRoot\Library" -Filter "*.ps1" -Recurse | ForEach-Object {
+Get-ChildItem -Path "$PSScriptRoot\Public" -Filter "*.ps1" -Recurse | ForEach-Object {
     . $_.FullName
 }
