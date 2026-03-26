@@ -35,10 +35,25 @@ function Move-ItemAndCreateLink {
     }
 
     if ($PSCmdlet.ShouldProcess($resolvedItem, "Move to '$movedItemPath' and create symbolic link")) {
-        # Move the item to the target
-        Move-Item -LiteralPath $resolvedItem -Destination $resolvedTarget
+        try {
+            # Move the item to the target
+            Move-Item -LiteralPath $resolvedItem -Destination $resolvedTarget -ErrorAction Stop
 
-        # Create a symbolic link in its place
-        New-Item -ItemType SymbolicLink -Path $resolvedItem -Value $movedItemPath
+            # Create a symbolic link in its place
+            New-Item -ItemType SymbolicLink -Path $resolvedItem -Value $movedItemPath -ErrorAction Stop
+        }
+        catch {
+            # Best-effort rollback if move succeeded but link creation failed.
+            if (-not (Test-Path -LiteralPath $resolvedItem) -and (Test-Path -LiteralPath $movedItemPath)) {
+                try {
+                    Move-Item -LiteralPath $movedItemPath -Destination $resolvedItem -ErrorAction Stop
+                }
+                catch {
+                    throw "Move-ItemAndCreateLink failed and rollback also failed. Original error: $($_.Exception.Message)"
+                }
+            }
+
+            throw
+        }
     }
 }
