@@ -17,59 +17,128 @@ function New-Shortcut {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         # The name for the shortcut
-        [Parameter(Mandatory)]
-        [Alias("Source", "SourcePath", "Path", "FullName", "FilePath")]
+        [Parameter(ValueFromPipelineByPropertyName, Position = 1)]
+        [Alias("Source", "SourcePath", "FilePath")]
         [string] $Name,
 
         # The target path for the shortcut
-        [Parameter(Mandatory)]
-        [Alias("Target", "Destination", "DestinationPath")]
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
+        [Alias("Target", "Destination", "DestinationPath", "Path", "FullName", "Url", "Uri", "Definition")]
         [string] $TargetPath,
 
-        # The type of shortcut to create. Can be either "FileSystem" or "URL"
-        [Parameter(Mandatory)]
-        [ValidateSet("FileSystem", "URL")]
-        [string] $Type,
+        # The type of shortcut to create. Use Auto to infer from input.
+        [ValidateSet("Auto", "FileSystem", "URL")]
+        [string] $Type = "Auto",
 
         # (Optional) Arguments to pass to the shortcut target
         [string] $Arguments,
 
         # (Optional) A description for the shortcut
-        [string] $Description
+        [string] $Description,
+
+        # Output directory for created shortcuts.
+        [Alias("Output", "Directory", "DestinationDirectory")]
+        [string] $OutputDirectory = $PWD.Path
     )
 
-    try {
-        # Instantiate the shell object to create the shortcut
-        $Shell = New-Object -ComObject WScript.Shell -ErrorAction Stop
+    begin {
+        try {
+            # Instantiate the shell object once for pipeline scenarios.
+            $Shell = New-Object -ComObject WScript.Shell -ErrorAction Stop
 
-        # Create the Shortcut
-        $ShortcutPath = switch ($Type) {
-            "FileSystem" { Join-Path $PWD.Path "$Name.lnk" }
-            "URL" { Join-Path $PWD.Path "$Name.url" }
+            $ResolvedOutputDirectory = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutputDirectory)
+            if (-not (Test-Path -LiteralPath $ResolvedOutputDirectory -PathType Container)) {
+                $null = New-Item -ItemType Directory -Path $ResolvedOutputDirectory -Force -ErrorAction Stop
+            }
+        }
+        catch {
+            throw "Failed to initialize New-Shortcut: $($_.Exception.Message)"
+        }
+    }
+
+    process {
+        $ResolvedType = $Type
+        $ResolvedTargetPath = $TargetPath
+        $ResolvedName = $Name
+
+        $Uri = $null
+        $IsUrl = [uri]::TryCreate($ResolvedTargetPath, [UriKind]::Absolute, [ref]$Uri)
+
+        if ($ResolvedType -eq "Auto") {
+            $ResolvedType = if ($IsUrl) { "URL" } else { "FileSystem" }
         }
 
-        if (-not $PSCmdlet.ShouldProcess($ShortcutPath, "Create shortcut")) {
+        if ($ResolvedType -eq "FileSystem") {
+            if (-not (Test-Path -LiteralPath $ResolvedTargetPath)) {
+                $Command = Get-Command -Name $ResolvedTargetPath -ErrorAction SilentlyContinue | Select-Object -First 1
+                if ($Command) {
+                    if ($Command.Source -and (Test-Path -LiteralPath $Command.Source)) {
+                        $ResolvedTargetPath = $Command.Source
+                        if (-not $ResolvedName) { $ResolvedName = $Command.Name }
+                    }
+                    elseif ($Command.Definition -and (Test-Path -LiteralPath $Command.Definition)) {
+                        $ResolvedTargetPath = $Command.Definition
+                        if (-not $ResolvedName) { $ResolvedName = $Command.Name }
+                    }
+                }
+            }
+
+            if (-not (Test-Path -LiteralPath $ResolvedTargetPath)) {
+                Write-Error "Could not resolve a valid filesystem target from '$TargetPath'."
+                return
+            }
+
+            $ResolvedTargetPath = (Resolve-Path -LiteralPath $ResolvedTargetPath).ProviderPath
+            if (-not $ResolvedName) {
+                $ResolvedName = Split-Path -Path $ResolvedTargetPath -Leaf
+            }
+        }
+        else {
+            if (-not $IsUrl) {
+                Write-Error "Target '$TargetPath' is not a valid absolute URL."
+                return
+            }
+
+            $ResolvedTargetPath = $Uri.AbsoluteUri
+            if (-not $ResolvedName) {
+                $ResolvedName = if ($Uri.Host) { $Uri.Host } else { "URLShortcut" }
+            }
+        }
+
+        $SafeName = [System.IO.Path]::GetFileNameWithoutExtension($ResolvedName)
+        if (-not $SafeName) {
+            $SafeName = "Shortcut_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+        }
+
+        $ShortcutPath = switch ($ResolvedType) {
+            "FileSystem" { Join-Path $ResolvedOutputDirectory "$SafeName.lnk" }
+            "URL" { Join-Path $ResolvedOutputDirectory "$SafeName.url" }
+        }
+
+        if (-not $PSCmdlet.ShouldProcess($ShortcutPath, "Create $ResolvedType shortcut")) {
             return
         }
 
-        $Shortcut = $Shell.CreateShortcut($ShortcutPath)
+        try {
+            $Shortcut = $Shell.CreateShortcut($ShortcutPath)
 
-        # Set shortcut properties
-        switch ($Type) {
-            "FileSystem" {
-                $Shortcut.TargetPath = $TargetPath
-                $Shortcut.Description = $Description
-                $Shortcut.Arguments = $Arguments
+            # Set shortcut properties
+            switch ($ResolvedType) {
+                "FileSystem" {
+                    $Shortcut.TargetPath = $ResolvedTargetPath
+                    $Shortcut.Description = $Description
+                    $Shortcut.Arguments = $Arguments
+                }
+                "URL" {
+                    $Shortcut.TargetPath = $ResolvedTargetPath
+                }
             }
-            "URL" {
-                $Shortcut.TargetPath = $TargetPath
-            }
+
+            # Save the Shortcut
+            $Shortcut.Save()
         }
-
-        # Save the Shortcut
-        $Shortcut.Save()
-    }
-    catch {
-        throw "Failed to create shortcut '$Name': $($_.Exception.Message)"
+        catch {
+            Write-Error "Failed to create shortcut '$ShortcutPath': $($_.Exception.Message)"
+        }
     }
 }
