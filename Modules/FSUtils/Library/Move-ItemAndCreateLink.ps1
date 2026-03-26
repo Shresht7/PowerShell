@@ -15,7 +15,7 @@ function Move-ItemAndCreateLink(
     [string] $Item,
 
     # The destination path where the item should be moved.
-    [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 1)]
+    [Parameter(Mandatory, Position = 1)]
     [Alias('Destination')]
     [string] $Target
 ) {
