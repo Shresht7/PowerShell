@@ -14,6 +14,11 @@
 function Invoke-Library(
     # Name of the library to open
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [ArgumentCompleter({
+            Get-Library | ForEach-Object {
+                [CompletionResult]::new($_.BaseName, $_.BaseName, 'ParameterValue', $_.FullName)
+            }
+        })]
     [string] $Name
 ) {
     # Select the library to open
