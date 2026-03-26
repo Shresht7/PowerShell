@@ -62,7 +62,9 @@ function New-Shortcut {
         $ResolvedName = $Name
 
         $Uri = $null
-        $IsUrl = [uri]::TryCreate($ResolvedTargetPath, [UriKind]::Absolute, [ref]$Uri)
+        $IsDriveQualifiedPath = $ResolvedTargetPath -match '^[a-zA-Z]:[\\/]'
+        $HasAbsoluteUri = [uri]::TryCreate($ResolvedTargetPath, [UriKind]::Absolute, [ref]$Uri)
+        $IsUrl = $HasAbsoluteUri -and -not $IsDriveQualifiedPath -and $Uri.Scheme -ne 'file'
 
         if ($ResolvedType -eq "Auto") {
             $ResolvedType = if ($IsUrl) { "URL" } else { "FileSystem" }
