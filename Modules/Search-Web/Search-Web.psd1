@@ -69,7 +69,7 @@
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @("Get-Bookmarks", "Get-BookmarksPath", "Get-SearchEngines", "Search-Web")
+    FunctionsToExport = @("Get-Bookmarks", "Get-BookmarksPath", "Get-BrowserPath", "Get-SearchEngines", "Search-Web")
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     # CmdletsToExport   = @()
