@@ -21,7 +21,7 @@
 function Get-Reminder(
     # Specifies a pattern to filter the tasks. Only tasks with names matching the pattern will be returned.
     [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [Alias("Pattern")]
+    [Alias("Pattern", "Name", "FullName")]
     [string] $Like
 ) {
 
