@@ -6,7 +6,7 @@
 .PARAMETER Path
     The file path to the Bookmarks JSON file.
 .PARAMETER Browser
-    The name of the browser to retrieve bookmarks for (Edge, Chrome, Brave, Vivaldi).
+    The name of the browser to retrieve bookmarks for (Edge, Chrome, etc.).
 .EXAMPLE
     Get-Bookmarks
 .EXAMPLE
@@ -24,7 +24,7 @@ function Get-Bookmarks {
         # Name of the browser to retrieve bookmarks for
         [Parameter(ParameterSetName = "Browser")]
         [ValidateSet("Edge", "Chrome")]
-        [string] $Browser = "Edge"
+        [string] $Browser = (Get-DefaultBrowser)
     )
 
     process {
