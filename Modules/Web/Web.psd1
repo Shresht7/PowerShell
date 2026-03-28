@@ -9,16 +9,16 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule        = 'Search-Web'
+    RootModule        = 'Web.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '1.0.0'
+    ModuleVersion     = '1.1.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
 
     # ID used to uniquely identify this module
-    GUID              = '5515a5c2-35d9-4383-a803-8d78136a1e45'
+    GUID              = '3E35a5c2-35d9-4383-a803-8d78136a1e45'
 
     # Author of this module
     Author            = 'Shresht7'
