@@ -12,13 +12,13 @@
     RootModule        = 'Theme.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.0.1'
+    ModuleVersion     = '0.1.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
 
     # ID used to uniquely identify this module
-    GUID              = '72f85a51-dd80-4437-bdaf-cb0ceb3f0363'
+    GUID              = '74E3Ea51-dd80-4437-bdaf-cb0ceb3f0363'
 
     # Author of this module
     Author            = 'Shresht7'
@@ -95,7 +95,7 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags = @('Theme', 'Windows', 'Personalization', 'Dark Mode', 'Light Mode')
+            Tags       = @('Theme', 'Windows', 'Personalization', 'Dark Mode', 'Light Mode')
 
             # A URL to the license for this module.
             LicenseUri = 'https://github.com/Shresht7/PowerShell/blob/main/LICENSE'
