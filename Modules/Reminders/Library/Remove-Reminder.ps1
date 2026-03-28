@@ -32,7 +32,7 @@ function Remove-Reminder {
         $task = Get-ScheduledTask -TaskPath $Script:TaskPath -TaskName $Name
         if ($task) {
             # If the task exists, then proceed to remove (unregister) it
-            if ($PSCmdlet.ShouldProcess('Remove')) {
+            if ($PSCmdlet.ShouldProcess("Remove Reminder: $Name")) {
                 $task | Unregister-ScheduledTask
             }
         }
