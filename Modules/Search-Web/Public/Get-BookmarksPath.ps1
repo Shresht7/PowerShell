@@ -15,5 +15,5 @@ function Get-BookmarksPath {
         [string] $Browser = "Edge"
     )
 
-    Get-BrowserPath -Browser $Browser -Type Bookmarks
+    Get-BrowserDataPath -Browser $Browser -Type Bookmarks
 }

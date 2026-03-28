@@ -36,7 +36,7 @@ function Get-SearchEngines {
             $Path 
         }
         else { 
-            Get-BrowserPath -Browser $Browser -Type Profile
+            Get-BrowserDataPath -Browser $Browser -Type Profile
         }
 
         # Create a copy of the Sqlite database to avoid lock issues
