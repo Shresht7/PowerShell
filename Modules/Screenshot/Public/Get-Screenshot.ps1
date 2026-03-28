@@ -2,10 +2,16 @@
 .SYNOPSIS
     Returns a list of all screenshots
 .DESCRIPTION
-    Returns a list of all screenshots
+    Returns a list of all screenshots in the screenshot folder. The list can be filtered using the parameters of this function.
 .EXAMPLE
     Get-Screenshot
     Returns the list of all screenshots
+.EXAMPLE
+    Get-Screenshot -Filter "*.png"
+    Returns the list of all screenshots with the .png extension
+.EXAMPLE
+    Get-Screenshot -Last 5
+    Returns the list of the last 5 screenshots
 .EXAMPLE
     Get-Screenshot | Invoke-Fzf | Invoke-Item
     Returns the list of all screenshots and opens the selected one
@@ -30,6 +36,11 @@ function Get-Screenshot {
         [Parameter(ParameterSetName = "All")]
         [string] $Filter,
 
+        # Last n screenshots to return
+        [Parameter(ParameterSetName = "All")]
+        [Alias("Last", "Tail", "Take")]
+        [int] $First,
+
         # Switch to get the latest screenshot
         [Parameter(ParameterSetName = "Latest")]
         [Alias("Newest", "MostRecent")]
@@ -42,6 +53,12 @@ function Get-Screenshot {
         return Get-ChildItem -Path $Path -Filter:$Filter -Recurse | Sort-Object -Property LastWriteTime | Select-Object -First 1
     }
 
+    # Get the list of screenshots based on the specified parameters
+    $Screenshots = Get-ChildItem -Path $Path -Filter:$Filter -Recurse
+    if ($Last) {
+        $Screenshots = $Screenshots | Sort-Object -Property LastWriteTime -Descending | Select-Object -First $Last
+    }
+    
     # Return the list of screenshots
-    Get-ChildItem -Path $Path -Filter:$Filter -Recurse
+    return $Screenshots
 }
