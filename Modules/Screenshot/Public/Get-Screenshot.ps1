@@ -16,20 +16,25 @@
     Get-Screenshot -Latest | Invoke-Item
     Opens the latest screenshot with the default application
 #>
-function Get-Screenshot(
-    # The folder where the screenshots are stored
-    [ValidateScript({ Test-Path -Path $_ })]
-    [Alias("Folder", "Source", "FolderPath")]
-    [string] $Path = $Script:ScreenshotFolder,
+function Get-Screenshot {
 
-    # Filter the list of screenshots
-    [string] $Filter,
+    [CmdletBinding(DefaultParameterSetName = "All")]
+    param (
+        # The folder where the screenshots are stored
+        [Parameter(ParameterSetName = "All")]
+        [ValidateScript({ Test-Path -Path $_ })]
+        [Alias("Folder", "Source", "FolderPath")]
+        [string] $Path = $Script:ScreenshotFolder,
 
-    # Switch to get the latest screenshot
-    [Parameter(ParameterSetName = "Latest")]
-    [Alias("Newest", "MostRecent")]
-    [switch] $Latest
-) {
+        # Filter the list of screenshots
+        [Parameter(ParameterSetName = "All")]
+        [string] $Filter,
+
+        # Switch to get the latest screenshot
+        [Parameter(ParameterSetName = "Latest")]
+        [Alias("Newest", "MostRecent")]
+        [switch] $Latest
+    )
 
     # If the Latest parameter is specified, return the most recent screenshot
     if ($PSCmdlet.ParameterSetName -eq "Latest") {
