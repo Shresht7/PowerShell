@@ -9,28 +9,28 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule    = 'PSReadLineUtils.psm1'
+    RootModule        = 'PSReadLineUtils.psm1'
 
     # Version number of this module.
-    ModuleVersion = '1.0.0'
+    ModuleVersion     = '1.0.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
 
     # ID used to uniquely identify this module
-    GUID          = '11029271-0b99-4730-85d4-4352b5a6d53d'
+    GUID              = '11029271-0b99-4730-85d4-4352b5a6d53d'
 
     # Author of this module
-    Author        = 'Shresht7'
+    Author            = 'Shresht7'
 
     # Company or vendor of this module
-    CompanyName   = 'Shresht7'
+    CompanyName       = 'Shresht7'
 
     # Copyright statement for this module
-    Copyright     = '(c) Shresht7. All rights reserved.'
+    Copyright         = '(c) Shresht7. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description   = 'Utilities for PSReadLine'
+    Description       = 'Utilities for PSReadLine'
 
     # Minimum version of the PowerShell engine required by this module
     # PowerShellVersion = ''
@@ -69,7 +69,14 @@
     # NestedModules     = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    # FunctionsToExport = @()
+    FunctionsToExport = @(
+        "Get-PSReadLineHistory",
+        "Get-PSReadLineHistoryFrequency",
+        "Get-PSReadLineHistoryPath",
+        "Optimize-PSReadLineHistory",
+        "Remove-PSReadLineHistoryItem",
+        "Set-PSReadLineHistory"
+    )
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     # CmdletsToExport   = @()
@@ -90,7 +97,7 @@
     # FileList = @()
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-    PrivateData   = @{
+    PrivateData       = @{
 
         PSData = @{
 
