@@ -25,7 +25,7 @@
 function Get-ReversedString(
     # The string to reverse
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, ValueFromRemainingArguments)]
-    [Alias("String", "Input", "InputString")]
+    [Alias("String", "Input", "InputObject", "Name", "FullName", "InputString")]
     [string] $Text
 ) {
     # Convert to character array
