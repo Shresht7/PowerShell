@@ -6,7 +6,7 @@
 .PARAMETER Browser
     The name of the browser (Edge, Chrome, etc).
 .PARAMETER Type
-    The type of path to retrieve (Profile, Bookmarks, WebData).
+    (Optional) The type of path to retrieve (Profile, Bookmarks, WebData).
 .EXAMPLE
     Get-BrowserPath -Browser Edge -Type Bookmarks
 .EXAMPLE
@@ -14,11 +14,13 @@
 #>
 function Get-BrowserPath {
     param(
+        # The name of the browser (Edge, Chrome, etc).
         [Parameter(Mandatory)]
         [ValidateSet("Edge", "Chrome")]
         [string] $Browser,
 
-        [Parameter(Mandatory)]
+        # (Optional) The type of path to retrieve (Profile, Bookmarks, WebData).
+        [Parameter(Mandatory = $false)]
         [ValidateSet("Profile", "Bookmarks", "WebData")]
         [string] $Type
     )
@@ -32,5 +34,6 @@ function Get-BrowserPath {
         "Profile" { return $BasePath }
         "Bookmarks" { return Join-Path $BasePath "Bookmarks" }
         "WebData" { return Join-Path $BasePath "Web Data" }
+        default { return $BasePath }
     }
 }
