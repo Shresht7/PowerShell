@@ -17,9 +17,8 @@
 function Get-BrowserDataPath {
     param(
         # Name of the browser (Edge, Chrome, etc)
-        [Parameter(Mandatory)]
         [ValidateSet("Edge", "Chrome")]
-        [string] $Browser,
+        [string] $Browser = (Get-DefaultBrowser),
 
         # The type of path to retrieve (Profile, Bookmarks, WebData)
         [Parameter(Mandatory = $false)]
