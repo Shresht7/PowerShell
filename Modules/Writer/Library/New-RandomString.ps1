@@ -12,13 +12,18 @@
 #>
 function New-RandomString(
     # The length of the random string
-    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [Parameter(ValueFromPipelineByPropertyName)]
     [UInt32] $Length = 10,
 
     # The characters to use for the random string
-    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [Parameter(ValueFromPipeline)]
     [string] $Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 ) {
-    # Select random characters and join them
-    -join (Get-Random -Count $Length -InputObject ($Characters.ToCharArray()))
+    $charArray = $Characters.ToCharArray()
+    $randomChars = ""
+    for ($i = 0; $i -lt $Length; $i++) {
+        $randomChar = Get-Random -InputObject $charArray
+        $randomChars += $randomChar
+    }
+    return $randomChars
 }
