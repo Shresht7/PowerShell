@@ -20,6 +20,7 @@ function Remove-Reminder {
     param (
         # The reminder to remove
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [ValidateNotNullOrEmpty()]
         [Alias('ID')]
         [string] $Name
     )
