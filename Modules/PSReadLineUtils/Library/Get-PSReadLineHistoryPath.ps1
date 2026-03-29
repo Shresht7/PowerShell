@@ -27,11 +27,21 @@ function Get-PSReadLineHistoryPath {
         [string] $Type = 'File'
     )
 
-    # Get the history path from PSReadLine options
-    $historyPath = (Get-PSReadLineOption).HistorySavePath
+    # Get the history path from PSReadLine options, or use env override for testing
+    if ($env:PSREADLINE_HISTORY_PATH) {
+        $historyPath = $env:PSREADLINE_HISTORY_PATH
+    }
+    else {
+        $option = Get-PSReadLineOption -ErrorAction SilentlyContinue
+        $historyPath = $option.HistorySavePath
 
-    # Validate the history path. It should be a valid file path.
-    if (-not $historyPath -or (Test-Path $historyPath -PathType Leaf) -eq $false) {
+        if (-not $historyPath) {
+            $historyPath = Join-Path $env:USERPROFILE "PSReadLine_history.txt"
+        }
+    }
+
+    # Validate the history path if it exists
+    if ((Test-Path $historyPath -PathType Leaf) -eq $false -and -not $env:PSREADLINE_HISTORY_PATH) {
         throw "PSReadLine history path is not set or invalid. Please check the HistorySavePath option in PSReadLine."
     }
 
