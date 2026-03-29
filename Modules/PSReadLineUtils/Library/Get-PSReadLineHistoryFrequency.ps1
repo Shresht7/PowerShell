@@ -19,9 +19,15 @@ function Get-PSReadLineHistoryFrequency {
         [string] $SortBy = 'Count'
     )
 
-    $Result = Get-PSReadLineHistory | Group-Object | Sort-Object -Property $SortBy -Descending
+    $Result = Get-PSReadLineHistory | Group-Object | ForEach-Object {
+        [PSCustomObject]@{
+            Command = $_.Name
+            Count   = $_.Count
+        }
+    } | Sort-Object -Property $SortBy -Descending
+
     if ($First) {
-        $Result = $Result | Select-Object -Property Count, Name -First $First
+        $Result = $Result | Select-Object -First $First
     }
-    $Result | Select-Object -Property Count, Name
+    $Result
 }
