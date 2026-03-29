@@ -11,11 +11,22 @@
 function Get-EnvPath {
     [CmdletBinding()]
     [OutputType([string])]
-    param ()
+    param (
+        # The scope of the environment variable to retrieve. Can be 'Process', 'User', or 'Machine'. Defaults to 'Process'.
+        [ValidateSet("Process", "User", "Machine")]
+        [string]$Scope = "Process"
+    )
 
     # Determine the appropriate delimiter for splitting the PATH variable based on the operating system
     $Delimiter = if ($IsWindows) { ';' } else { ':' }
 
+    # Get PATH based on the specified scope
+    $Path = switch ($Scope) {
+        "Process" { $Env:Path }
+        "User" { if ($IsWindows) { [Environment]::GetEnvironmentVariable("Path", "User") } else { $Env:Path } }
+        "Machine" { if ($IsWindows) { [Environment]::GetEnvironmentVariable("Path", "Machine") } else { $Env:Path } }
+    }
+
     # Split the PATH environment variable using the determined delimiter, trim whitespace, and filter out any empty entries
-    $Env:Path -split $Delimiter | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' }
+    $Path -split $Delimiter | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" }
 }
