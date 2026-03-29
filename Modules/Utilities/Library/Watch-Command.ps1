@@ -31,12 +31,17 @@ function Watch-Command {
         [int32] $Interval = 1,
 
         # Switch to clear the host screen on each tick (default: $false)
-        [switch] $ClearHost
+        [switch] $ClearHost,
+
+        # Max iterations to run before stopping. Default is 0, which means run indefinitely.
+        [int32] $MaxIterations = 0
     )
 
-    while ($True) {
+    $iteration = 0
+    while ($MaxIterations -eq 0 -or $iteration -lt $MaxIterations) {
         if ($ClearHost) { Clear-Host }
         $ScriptBlock.Invoke()
         Start-Sleep $Interval
+        $iteration++
     }
 }
