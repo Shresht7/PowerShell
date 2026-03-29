@@ -4,7 +4,8 @@
 .DESCRIPTION
     The Optimize-PSReadLineHistory function removes duplicate items from
     the PSReadLine history and trims the history to a specified number of lines.
-    This function is useful for keeping the history file small and efficient. 
+    Keeps the last (most recent) occurrence of each command while preserving execution order.
+    This function is useful for keeping the history file small and efficient.
     By default, the history file is limited to 10,000 lines.
 .EXAMPLE
     Optimize-PSReadLineHistory
@@ -25,11 +26,17 @@ function Optimize-PSReadLineHistory {
         [uint] $MaxLineCount = 10000
     )
 
-    # Get the PSReadLine history and remove duplicates
+    # Get the PSReadLine history and remove duplicates (keeping last occurrence)
     $History = Get-PSReadLineHistory
     $StartingCount = $History.Count
-    $History = $History | Select-Object -Unique
-    $DuplicateCount = $StartingCount - $History.Count
+    $lastIndex = @{}
+    for ($i = 0; $i -lt $History.Count; $i++) {
+        $lastIndex[$History[$i]] = $i
+    }
+    $History = for ($i = 0; $i -lt $StartingCount; $i++) {
+        if ($lastIndex[$History[$i]] -eq $i) { $History[$i] }
+    }
+    $DuplicateCount = $StartingCount - @($History).Count
     if ($DuplicateCount -gt 0) {
         Write-Verbose -Message "Removed $DuplicateCount duplicate items from the PSReadLine history"
     }
