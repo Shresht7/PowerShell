@@ -8,21 +8,20 @@
     Returns a hash-table containing commands from the PSReadLine history and their usage frequency
 #>
 function Get-PSReadLineHistoryFrequency {
-    # Variable to track the frequency of each command
-    $frequency = @{}
+    [CmdletBinding()]
+    [OutputType([PSCustomObject])]
+    param (
+        # If specified, only returns the top N most frequently used commands. Can also be specified using the alias -Top.
+        [Alias('Top')]
+        [int] $First,
 
-    # Iterate over the history
-    foreach ($line in Get-PSReadLineHistory) {
-        # If the command is already in the hash-table, increment the count
-        if (!$frequency[$line]) {
-            $frequency.Add($line, 1) | Out-Null
-        }
-        # Otherwise, add the command to the hash-table
-        else {
-            $frequency[$line]++
-        }
+        # The property to sort the results by. Can be either 'Count' or 'Name'. Defaults to 'Count'.
+        [string] $SortBy = 'Count'
+    )
+
+    $Result = Get-PSReadLineHistory | Group-Object | Sort-Object -Property $SortBy -Descending
+    if ($First) {
+        $Result = $Result | Select-Object -Property Count, Name -First $First
     }
-
-    # Return the hash-table
-    $frequency.GetEnumerator() | Sort-Object -Property Value
+    $Result | Select-Object -Property Count, Name
 }
