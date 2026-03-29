@@ -20,21 +20,29 @@ function Set-PSReadLineHistory {
     param (
         # The new contents of the PSReadLine history file
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [string] $Content
+        [string] $Content,
+
+        # If specified, appends to the history file instead of overwriting
+        [switch] $Append
     )
 
     $Path = Get-PSReadLineHistoryPath
-    $Temp = "$Path.temp"
 
     try {
-        $Content | Out-File -FilePath $Temp
-        Move-Item -Path $Temp -Destination $Path -Force
+        if ($Append) {
+            $Content | Add-Content -Path $Path
+        }
+        else {
+            $Temp = "$Path.temp"
+            $Content | Out-File -FilePath $Temp
+            Move-Item -Path $Temp -Destination $Path -Force
+        }
     }
     catch {
         throw "Failed to write PSReadLine history file: $_"
     }
     finally {
-        if (Test-Path $Temp) {
+        if (-not $Append -and (Test-Path $Temp)) {
             Remove-Item $Temp -Force
         }
     }
