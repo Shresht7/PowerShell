@@ -2,10 +2,10 @@
 .SYNOPSIS
     Gets the frequency of the commands in the history
 .DESCRIPTION
-    Returns a hash-table containing commands from the PSReadLine history and the number of times they've been used
+    Returns objects containing commands from the PSReadLine history and their usage count
 .EXAMPLE
     Get-PSReadLineHistoryFrequency
-    Returns a hash-table containing commands from the PSReadLine history and their usage frequency
+    Returns objects containing commands from the PSReadLine history and their usage count
 #>
 function Get-PSReadLineHistoryFrequency {
     [CmdletBinding()]
