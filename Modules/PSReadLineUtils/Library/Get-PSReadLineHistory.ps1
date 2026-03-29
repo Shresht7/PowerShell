@@ -75,22 +75,16 @@ function Test-CommandComplete([string] $Command) {
 
     # If there are no parsing errors, we can check the last token to see if it's an incomplete token.
     $lastToken = $tokens[-1]
-    if (-not $lastToken) { return $true } # No tokens means no command, so we can consider it complete (or at least not incomplete)
+    if (-not $lastToken) { return $true }
 
-    # Check for common tokens that indicate an incomplete command, such as a pipe, a redirection operator, or an open parenthesis.
-    $incompleteTokenKinds = @(
-        [System.Management.Automation.PsTokenKind]::Pipe,
-        [System.Management.Automation.PsTokenKind]::RedirectOut,
-        [System.Management.Automation.PsTokenKind]::RedirectOutAppend,
-        [System.Management.Automation.PsTokenKind]::RedirectIn,
-        [System.Management.Automation.PsTokenKind]::RedirectInOut,
-        [System.Management.Automation.PsTokenKind]::RedirectHereString,
-        [System.Management.Automation.PsTokenKind]::RedirectHereStringIndented,
-        [System.Management.Automation.PsTokenKind]::OpenParen
+    $incompleteTypes = @(
+        [System.Management.Automation.PSTokenType]::Operator
+        [System.Management.Automation.PSTokenType]::GroupStart
+        [System.Management.Automation.PSTokenType]::String
+        [System.Management.Automation.PSTokenType]::Variable
     )
 
-    # If the last token is one of the incomplete token kinds, then we can consider the command incomplete.
-    if ($incompleteTokenKinds -contains $lastToken.Kind) {
+    if ($incompleteTypes -contains $lastToken.Type) {
         return $false
     }
 
