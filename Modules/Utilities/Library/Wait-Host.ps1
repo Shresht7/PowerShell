@@ -7,7 +7,7 @@
     Wait-Host
     Waits for the user to press a key
 #>
-function Wait-Host {
-    Write-Output "Press Any Key To Continue ..."
+function Wait-Host([string] $Message = "Press Any Key To Continue ...") {
+    if ($Message -ne "") { Write-Host $Message }
     $null = $Host.Ui.RawUI.ReadKey("Noecho,Includekeydown")
 }
