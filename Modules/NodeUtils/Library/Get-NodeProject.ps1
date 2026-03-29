@@ -26,18 +26,30 @@ function Get-NodeProject {
     )
 
     process {
+        if (-not $Path) { return }
+
+        $resolvedPath = $null
+        try {
+            $resolvedPath = Resolve-Path -LiteralPath $Path -ErrorAction Stop
+        }
+        catch {
+            Write-Warning "Path not found: $Path"
+            return
+        }
+
+        if (-not (Test-Path -LiteralPath $resolvedPath -PathType Container)) {
+            Write-Warning "Path is not a directory: $Path"
+            return
+        }
+
         if ($Recurse) {
-            # Recursively find directories, excluding node_modules to keep it fast
-            Get-ChildItem -Path $Path -Directory -Recurse -ErrorAction SilentlyContinue |
-            Where-Object { $_.FullName -notmatch '[\\/]node_modules([\\/]|$)' } |
+            Get-ChildItem -LiteralPath $resolvedPath -Directory -Recurse -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -notmatch '[\\/]node_modules$' } |
             Where-Object { Test-Path -LiteralPath (Join-Path -Path $_.FullName -ChildPath 'package.json') }
         }
         else {
-            # Just check the current path and its immediate children
-            $items = Get-ChildItem -Path $Path -Directory -ErrorAction SilentlyContinue
-            # Also check the path itself if it's a project
-            $targets = @(Get-Item -LiteralPath $Path -ErrorAction SilentlyContinue) + $items
-            # Filter to those that contain a package.json file
+            $items = Get-ChildItem -LiteralPath $resolvedPath -Directory -ErrorAction SilentlyContinue
+            $targets = @($resolvedPath) + @($items)
             $targets | Where-Object { Test-Path -LiteralPath (Join-Path -Path $_.FullName -ChildPath 'package.json') }
         }
     }
