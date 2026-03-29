@@ -26,6 +26,7 @@
 #>
 function Remove-PSReadLineHistoryItem {
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = "Count")]
+    [OutputType([void])]
     param (
         # Specifies the items that you want to remove from the history.
         # This parameter supports wildcards, and you can specify multiple items by using a comma-separated list or by using the pipeline.
