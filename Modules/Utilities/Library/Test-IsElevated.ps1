@@ -31,8 +31,3 @@ function Test-IsElevated {
         return $True # TODO: See if this cmdlet can be made useful on Linux
     }
 }
-
-Set-Alias isAdmin Test-IsElevated
-
-Export-ModuleMember -Function Test-IsElevated
-Export-ModuleMember -Alias isAdmin
