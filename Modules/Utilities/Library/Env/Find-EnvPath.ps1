@@ -15,6 +15,7 @@ function Find-EnvPath {
     param (
         # The path to check if it is in the PATH environment variable.
         [Parameter(ParameterSetName = "Path", ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
+        [ValidateNotNullOrWhiteSpace()]
         [Alias("Name", "FullName", "Path")]
         [string] $Like,
 
