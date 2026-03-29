@@ -15,7 +15,10 @@ function Get-PSReadLineHistory {
     [OutputType([string[]])]
     param (
         # If specified, returns the raw contents of the history file as an array of lines, without any processing or filtering.
-        [switch] $Raw
+        [switch] $Raw,
+
+        # If specified, only returns unique commands from the history file, removing any duplicates.
+        [switch] $Unique
     )
 
     # If the -Raw switch is specified, return the raw contents of the history file as an array of lines
@@ -23,6 +26,10 @@ function Get-PSReadLineHistory {
         return Get-Content -Path (Get-PSReadLineHistoryPath)
     }
 
+    # Holds the unique commands we've seen so far, to filter out duplicates if -Unique is specified
+    $seenCommands = [System.Collections.Generic.HashSet[string]]::new()
+
+    # Buffer to accumulate lines of a command until we determine that the command is complete
     $commandBuffer = [System.Collections.ArrayList]@()
 
     # Read the history file line-by-line...
@@ -34,7 +41,16 @@ function Get-PSReadLineHistory {
         # If the command is complete, then output it and clear the buffer for the next command
         if (Test-CommandComplete $command) {
             $commandBuffer.Clear()
-            $command
+
+            # If the -Unique switch is specified, only return the command if we haven't seen it before. Otherwise, return all commands.
+            if ($Unique) {
+                if ($seenCommands.Add($command)) {
+                    $command
+                }
+            }
+            else {
+                $command
+            }
         }
 
         # If the command is not complete, then continue accumulating
