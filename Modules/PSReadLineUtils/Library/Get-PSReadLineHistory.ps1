@@ -72,10 +72,8 @@ function Get-PSReadLineHistory {
 }
 
 function Test-CommandComplete([string] $Command) {
-    $tokens = $errors = $null
-
-    # Tokenize the command and check for any parsing errors. If there are no errors, then the command is complete.
-    [System.Management.Automation.PSParser]::Tokenize($Command, [ref] $tokens, [ref] $errors) | Out-Null
+    $errors = [System.Collections.ObjectModel.Collection[System.Management.Automation.PSParseError]]::new()
+    $tokens = [System.Management.Automation.PSParser]::Tokenize($Command, [ref]$errors)
 
     if ($errors.Count -gt 0) {
         # has parsing errors, so might be incomplete OR just invalid.
