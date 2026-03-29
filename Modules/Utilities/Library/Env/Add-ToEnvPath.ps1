@@ -8,7 +8,7 @@
     Add-ToPath -Path "C:\Program Files\Git\bin"
     Adds the Git bin directory to the PATH environment variable.
 #>
-function Add-ToPath(
+function Add-ToEnvPath(
     # The path to add to the PATH environment variable.
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [Alias("Name", "Source", "SourcePath", "From")]
