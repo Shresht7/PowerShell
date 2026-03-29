@@ -7,6 +7,11 @@ if (-not (Get-Module -Name PSReadLine)) {
     throw "PSReadLine is required but not loaded. Please import PSReadLine before importing this module."
 }
 
+# Import Private functions
+Get-ChildItem -Path "$PSScriptRoot\Private" -Filter "*.ps1" | ForEach-Object {
+    . $_.FullName
+}
+
 # Import Library
 Get-ChildItem -Path "$PSScriptRoot\Library" -Filter "*.ps1" | ForEach-Object {
     . $_.FullName
