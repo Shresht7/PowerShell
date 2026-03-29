@@ -23,7 +23,10 @@ function Optimize-PSReadLineHistory {
         [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateRange(1, 100000)]
         [Alias("MaxLines", "MaxCount", "MaxHistoryCount", "Count")]
-        [uint] $MaxLineCount = 10000
+        [uint] $MaxLineCount = 10000,
+
+        # Skips creating a backup before making changes
+        [switch] $NoBackup
     )
 
     # Get the PSReadLine history and remove duplicates (keeping last occurrence)
@@ -50,7 +53,7 @@ function Optimize-PSReadLineHistory {
 
     # Write the history back to the history file
     if ($PSCmdlet.ShouldProcess("Optimize PSReadLine History")) {
-        $History -join "`n" | Set-PSReadLineHistory
+        $History -join "`n" | Set-PSReadLineHistory -NoBackup:$NoBackup
         Write-Verbose -Message "Optimized PSReadLine history file!"
     }
 

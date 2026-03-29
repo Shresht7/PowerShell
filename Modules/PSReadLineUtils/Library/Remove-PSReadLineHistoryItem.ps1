@@ -46,7 +46,10 @@ function Remove-PSReadLineHistoryItem {
 
         # Removes duplicate items
         [Parameter(ParameterSetName = "Duplicate")]
-        [switch] $Duplicate
+        [switch] $Duplicate,
+
+        # Skips creating a backup before making changes
+        [switch] $NoBackup
     )
 
     process {
@@ -65,7 +68,7 @@ function Remove-PSReadLineHistoryItem {
         }
 
         if ($PSCmdlet.ShouldProcess((Get-PSReadLineHistoryPath))) {
-            $history -join "`n" | Set-PSReadLineHistory
+            $history -join "`n" | Set-PSReadLineHistory -NoBackup:$NoBackup
         }
     }
 }
