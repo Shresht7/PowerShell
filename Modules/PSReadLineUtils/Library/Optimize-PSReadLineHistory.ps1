@@ -16,6 +16,7 @@
 function Optimize-PSReadLineHistory {
     
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([void])]
     param (
         # The maximum number of lines to keep in the history file
         [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
@@ -24,13 +25,12 @@ function Optimize-PSReadLineHistory {
         [uint] $MaxLineCount = 10000
     )
 
-    # Get the PSReadLine history 
-    $History = Get-PSReadLineHistory
-    
-    # Remove duplicate items from the history
-    $InitialCount = $History.Count
-    $History = $History | Select-Object -Unique
-    $DuplicateCount = $InitialCount - $History.Count
+    # Get the PSReadLine history
+    $History = Get-PSReadLineHistory -Unique
+
+    # Remove duplicate items from the history and count how many were removed
+    $StartingCount = (Get-PSReadLineHistory).Count
+    $DuplicateCount = $StartingCount - $History.Count
     if ($DuplicateCount -gt 0) {
         Write-Verbose -Message "Removed $DuplicateCount duplicate items from the PSReadLine history"
     }
