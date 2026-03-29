@@ -25,6 +25,17 @@ function Set-PSReadLineHistory {
 
     $Path = Get-PSReadLineHistoryPath
     $Temp = "$Path.temp"
-    $Content | Out-File -FilePath $Temp
-    Move-Item -Path $Temp -Destination $Path -Force
+
+    try {
+        $Content | Out-File -FilePath $Temp
+        Move-Item -Path $Temp -Destination $Path -Force
+    }
+    catch {
+        throw "Failed to write PSReadLine history file: $_"
+    }
+    finally {
+        if (Test-Path $Temp) {
+            Remove-Item $Temp -Force
+        }
+    }
 }
