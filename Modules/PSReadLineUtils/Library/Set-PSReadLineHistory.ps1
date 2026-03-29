@@ -18,7 +18,7 @@
     Keeps the top 500 most frequently used commands in the history.
 #>
 function Set-PSReadLineHistory {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     [OutputType([void])]
     param (
         # The new contents of the PSReadLine history file. Accepts strings or objects with a Command property.
@@ -42,22 +42,24 @@ function Set-PSReadLineHistory {
 
         $Path = Get-PSReadLineHistoryPath
 
-        try {
-            if ($Append) {
-                $command | Add-Content -Path $Path
+        if ($PSCmdlet.ShouldProcess($Path)) {
+            try {
+                if ($Append) {
+                    $command | Add-Content -Path $Path
+                }
+                else {
+                    $Temp = "$Path.temp"
+                    $command | Out-File -FilePath $Temp
+                    Move-Item -Path $Temp -Destination $Path -Force
+                }
             }
-            else {
-                $Temp = "$Path.temp"
-                $command | Out-File -FilePath $Temp
-                Move-Item -Path $Temp -Destination $Path -Force
+            catch {
+                throw "Failed to write PSReadLine history file: $_"
             }
-        }
-        catch {
-            throw "Failed to write PSReadLine history file: $_"
-        }
-        finally {
-            if (-not $Append -and (Test-Path $Temp)) {
-                Remove-Item $Temp -Force
+            finally {
+                if (-not $Append -and (Test-Path $Temp)) {
+                    Remove-Item $Temp -Force
+                }
             }
         }
     }
