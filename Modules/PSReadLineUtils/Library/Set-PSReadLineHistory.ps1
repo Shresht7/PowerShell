@@ -26,7 +26,10 @@ function Set-PSReadLineHistory {
         $Content,
 
         # If specified, appends to the history file instead of overwriting
-        [switch] $Append
+        [switch] $Append,
+
+        # If specified, skips creating a backup before making changes
+        [switch] $NoBackup
     )
 
     process {
@@ -43,6 +46,10 @@ function Set-PSReadLineHistory {
         $Path = Get-PSReadLineHistoryPath
 
         if ($PSCmdlet.ShouldProcess($Path)) {
+            if (-not $NoBackup -and -not $Append) {
+                Backup-PSReadLineHistory
+            }
+
             try {
                 if ($Append) {
                     $command | Add-Content -Path $Path

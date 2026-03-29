@@ -68,14 +68,29 @@ Get-PSReadLineHistoryFrequency -Top 10
 
 ### Set-PSReadLineHistory
 
-Sets (overwrites) the contents of the PSReadLine history file.
+Sets (overwrites) the contents of the PSReadLine history file. Creates a backup by default before overwriting.
 
 ```powershell
-# Set history contents
+# Set history contents (auto-backs up first)
 $History | Set-PSReadLineHistory
 
 # Append to history
 Set-PSReadLineHistory -Content "new command" -Append
+
+# Skip backup
+Set-PSReadLineHistory -Content $History -NoBackup
+```
+
+### Clear-PSReadLineHistoryBackups
+
+Clears old backup files, keeping only the most recent ones.
+
+```powershell
+# Clear old backups, keeping latest 10
+Clear-PSReadLineHistoryBackups
+
+# Keep only the 5 most recent backups
+Clear-PSReadLineHistoryBackups -Keep 5
 ```
 
 ### Remove-PSReadLineHistoryItem
