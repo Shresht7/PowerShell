@@ -23,10 +23,10 @@ function Get-PSReadLineHistory {
         # If specified, only returns unique commands from the history file, removing any duplicates.
         [switch] $Unique
     )
-
+    
     # If the -Raw switch is specified, return the raw contents of the history file as an array of lines
     if ($Raw) {
-        return Get-Content -Path (Get-PSReadLineHistoryPath)
+        return Get-Content -Path (Get-PSReadLineHistoryPath) -Raw
     }
 
     # Holds the unique commands we've seen so far, to filter out duplicates if -Unique is specified
@@ -36,33 +36,38 @@ function Get-PSReadLineHistory {
     $commandBuffer = [System.Collections.ArrayList]@()
 
     # Read the history file line-by-line...
-    foreach ($line in [System.IO.File]::ReadLines((Get-PSReadLineHistoryPath))) {
-        # Add the line to the buffer
-        $commandBuffer.Add($line) | Out-Null
-        $command = $commandBuffer -join "`n"
-
-        # If the command is complete, then output it and clear the buffer for the next command
-        if (Test-CommandComplete $command) {
-            $commandBuffer.Clear()
-
-            $shouldOutput = $true
-
-            # If a filter is specified, check if the command contains the filter string. If it doesn't, then we shouldn't output it.
-            if ($Filter -and $command -notlike "*$Filter*") {
-                $shouldOutput = $false
+    try {
+        foreach ($line in [System.IO.File]::ReadLines((Get-PSReadLineHistoryPath))) {
+            # Add the line to the buffer
+            $commandBuffer.Add($line) | Out-Null
+            $command = $commandBuffer -join "`n"
+    
+            # If the command is complete, then output it and clear the buffer for the next command
+            if (Test-CommandComplete $command) {
+                $commandBuffer.Clear()
+    
+                $shouldOutput = $true
+    
+                # If a filter is specified, check if the command contains the filter string. If it doesn't, then we shouldn't output it.
+                if ($Filter -and $command -notlike "*$Filter*") {
+                    $shouldOutput = $false
+                }
+    
+                # If -Unique is specified, check if we've already seen this command before. If we have, then we shouldn't output it again.
+                if ($Unique -and -not $seenCommands.Add($command)) {
+                    $shouldOutput = $false
+                }
+    
+                if ($shouldOutput) {
+                    $command
+                }
             }
-
-            # If -Unique is specified, check if we've already seen this command before. If we have, then we shouldn't output it again.
-            if ($Unique -and -not $seenCommands.Add($command)) {
-                $shouldOutput = $false
-            }
-
-            if ($shouldOutput) {
-                $command
-            }
+    
+            # If the command is not complete, then continue accumulating
         }
-
-        # If the command is not complete, then continue accumulating
+    }
+    catch {
+        throw "Failed to process PSReadLine history file. $_"
     }
 }
 
