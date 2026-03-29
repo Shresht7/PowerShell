@@ -6,11 +6,22 @@
 .EXAMPLE
     Get-PSReadLineHistory
     Returns the contents of the PSReadLine history file.
+.EXAMPLE
+    Get-PSReadLineHistory -Raw
+    Returns the raw contents of the PSReadLine history file as an array of lines, without any processing or filtering.
 #>
 function Get-PSReadLineHistory {
     [CmdletBinding()]
     [OutputType([string[]])]
-    param ()
+    param (
+        # If specified, returns the raw contents of the history file as an array of lines, without any processing or filtering.
+        [switch] $Raw
+    )
+
+    # If the -Raw switch is specified, return the raw contents of the history file as an array of lines
+    if ($Raw) {
+        return Get-Content -Path (Get-PSReadLineHistoryPath)
+    }
 
     $last = ''
     $lineBlock = [System.Collections.ArrayList]@()
@@ -41,6 +52,4 @@ function Get-PSReadLineHistory {
             $line
         }
     }    
-
-    return $History
 }
