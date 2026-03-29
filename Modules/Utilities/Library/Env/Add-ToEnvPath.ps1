@@ -15,5 +15,7 @@ function Add-ToEnvPath(
     [string] $Path
 ) {
     $Path = Get-Item -Path $Path
-    $Env:Path += ";$($Path.DirectoryName)"
+    $DirectoryPath = if ($Path.PSIsContainer) { $Path.FullName } else { $Path.DirectoryName }
+    $Delimiter = if ($IsWindows) { ';' } else { ':' }
+    $Env:Path += "$Delimiter" + "$DirectoryPath"
 }
