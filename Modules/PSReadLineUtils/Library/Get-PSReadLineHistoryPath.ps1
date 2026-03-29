@@ -13,4 +13,10 @@
     Set-Location (Split-Path (Get-PSReadLineHistoryPath))
     Set-Location to parent folder of the PSReadLine history file
 #>
-function Get-PSReadLineHistoryPath { (Get-PSReadLineOption).HistorySavePath }
+function Get-PSReadLineHistoryPath {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param ()
+
+    return (Get-PSReadLineOption).HistorySavePath
+}
