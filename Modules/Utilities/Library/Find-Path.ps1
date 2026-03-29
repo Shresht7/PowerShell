@@ -15,7 +15,4 @@ function Find-Path(
     Get-Command -Name $Command -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
 
-Set-Alias which Find-Path
-
-Export-ModuleMember -Function Find-Path
-Export-ModuleMember -Alias which
+Set-Alias -Name which -Value Find-Path -Scope Global
