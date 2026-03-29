@@ -18,18 +18,22 @@ Will execute `Get-Date` every second
 Watch-Command { Get-Date } -Interval 60
 Will execute `Get-Date` every 60 seconds
 #>
-function Watch-Command(
-    # The Script-Block to execute repeatedly
-    [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [scriptblock] $ScriptBlock,
+function Watch-Command {
 
-    # The update interval timespan (in seconds)
-    [ValidateRange(1, 3600)]
-    [int32] $Interval = 1,
+    [CmdletBinding()]
+    param (
+        # The Script-Block to execute repeatedly
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [scriptblock] $ScriptBlock,
 
-    # Switch to clear the host screen on each tick (default: $false)
-    [switch] $ClearHost
-) {
+        # The update interval timespan (in seconds)
+        [ValidateRange(1, 3600)]
+        [int32] $Interval = 1,
+
+        # Switch to clear the host screen on each tick (default: $false)
+        [switch] $ClearHost
+    )
+
     while ($True) {
         if ($ClearHost) { Clear-Host }
         $ScriptBlock.Invoke()
