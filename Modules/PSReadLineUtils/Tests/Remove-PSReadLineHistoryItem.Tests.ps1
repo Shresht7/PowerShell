@@ -50,3 +50,26 @@ Describe 'Remove-PSReadLineHistoryItem' {
         }
     }
 }
+
+Describe 'Remove-PSReadLineHistoryItem - pipeline support' {
+    BeforeAll {
+        $moduleRoot = Split-Path -Parent $PSScriptRoot
+        . (Join-Path $moduleRoot 'Private\Test-CommandComplete.ps1')
+        Get-ChildItem -Path (Join-Path $moduleRoot 'Library') -Filter '*.ps1' | ForEach-Object { . $_.FullName }
+    }
+
+    It 'accepts piped command names to remove them from history' {
+        $temp = Join-Path $env:TEMP 'psrl_history_pipe.txt'
+        @('A', 'B', 'C') | Out-File -FilePath $temp -Encoding UTF8
+        $env:PSREADLINE_HISTORY_PATH = $temp
+
+        try {
+            'B' | Remove-PSReadLineHistoryItem -NoBackup
+            (Get-Content -Path $temp) | Should -BeExactly @('A', 'C')
+        }
+        finally {
+            Remove-Item -Path $temp -ErrorAction SilentlyContinue
+            Remove-Item Env:PSREADLINE_HISTORY_PATH -ErrorAction SilentlyContinue
+        }
+    }
+}
