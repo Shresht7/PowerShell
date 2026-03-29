@@ -49,7 +49,7 @@ function Remove-PSReadLineHistoryItem {
         [switch] $Duplicate
     )
 
-process {
+    process {
         $history = Get-PSReadLineHistory
 
         switch ($PSCmdlet.ParameterSetName) {
@@ -68,28 +68,4 @@ process {
             $history -join "`n" | Set-PSReadLineHistory
         }
     }
-}
-
-# Removes the currently selected command from the PSReadLineHistory
-Set-PSReadLineKeyHandler -Key Ctrl+Shift+K `
-    -BriefDescription "Removes the item from the console and the PSReadLineHistory" `
-    -ScriptBlock {
-    param ($Key, $Arg)
-
-    $Line = $null
-    $Cursor = $null
-    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$Line, [ref]$Cursor)
-
-    # Remove the item from the PSReadLineHistory
-    Remove-PSReadLineHistoryItem -Command $Line
-
-    # Remove the item from the prompt
-    [Microsoft.PowerShell.PSConsoleReadLine]::DeleteLine()
-
-    # Accept the empty line and move the prompt forward
-    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-
-    # Write to the console that the item was removed
-    Write-Host -ForegroundColor Red "Removed '$Line' from the PSReadLineHistory"
-
 }
