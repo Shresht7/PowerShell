@@ -25,11 +25,10 @@ function Optimize-PSReadLineHistory {
         [uint] $MaxLineCount = 10000
     )
 
-    # Get the PSReadLine history
-    $History = Get-PSReadLineHistory -Unique
-
-    # Remove duplicate items from the history and count how many were removed
-    $StartingCount = (Get-PSReadLineHistory).Count
+    # Get the PSReadLine history and remove duplicates
+    $History = Get-PSReadLineHistory
+    $StartingCount = $History.Count
+    $History = $History | Select-Object -Unique
     $DuplicateCount = $StartingCount - $History.Count
     if ($DuplicateCount -gt 0) {
         Write-Verbose -Message "Removed $DuplicateCount duplicate items from the PSReadLine history"
