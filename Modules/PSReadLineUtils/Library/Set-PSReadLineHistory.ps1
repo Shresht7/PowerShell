@@ -13,37 +13,52 @@
 .EXAMPLE
     Set-PSReadLineHistory -Content (Get-PSReadLineHistory | Where-Object { $_ -notmatch "Get-Service" })
     Removes all instances of the "Get-Service" command from the PSReadLine history.
+.EXAMPLE
+    Get-PSReadLineHistoryFrequency -Top 500 | Set-PSReadLineHistory
+    Keeps the top 500 most frequently used commands in the history.
 #>
 function Set-PSReadLineHistory {
     [CmdletBinding()]
     [OutputType([void])]
     param (
-        # The new contents of the PSReadLine history file
+        # The new contents of the PSReadLine history file. Accepts strings or objects with a Command property.
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [string] $Content,
+        $Content,
 
         # If specified, appends to the history file instead of overwriting
         [switch] $Append
     )
 
-    $Path = Get-PSReadLineHistoryPath
-
-    try {
-        if ($Append) {
-            $Content | Add-Content -Path $Path
+    process {
+        if ($Content -is [string]) {
+            $command = $Content
+        }
+        elseif ($Content.PSObject.Properties.Name -contains 'Command') {
+            $command = $Content.Command
         }
         else {
-            $Temp = "$Path.temp"
-            $Content | Out-File -FilePath $Temp
-            Move-Item -Path $Temp -Destination $Path -Force
+            $command = $Content.ToString()
         }
-    }
-    catch {
-        throw "Failed to write PSReadLine history file: $_"
-    }
-    finally {
-        if (-not $Append -and (Test-Path $Temp)) {
-            Remove-Item $Temp -Force
+
+        $Path = Get-PSReadLineHistoryPath
+
+        try {
+            if ($Append) {
+                $command | Add-Content -Path $Path
+            }
+            else {
+                $Temp = "$Path.temp"
+                $command | Out-File -FilePath $Temp
+                Move-Item -Path $Temp -Destination $Path -Force
+            }
+        }
+        catch {
+            throw "Failed to write PSReadLine history file: $_"
+        }
+        finally {
+            if (-not $Append -and (Test-Path $Temp)) {
+                Remove-Item $Temp -Force
+            }
         }
     }
 }
