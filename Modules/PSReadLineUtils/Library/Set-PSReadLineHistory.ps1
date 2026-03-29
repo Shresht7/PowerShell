@@ -14,11 +14,15 @@
     Set-PSReadLineHistory -Content (Get-PSReadLineHistory | Where-Object { $_ -notmatch "Get-Service" })
     Removes all instances of the "Get-Service" command from the PSReadLine history.
 #>
-function Set-PSReadLineHistory(
-    # The new contents of the PSReadLine history file
-    [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [string] $Content
-) {
+function Set-PSReadLineHistory {
+    [CmdletBinding()]
+    [OutputType([void])]
+    param (
+        # The new contents of the PSReadLine history file
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [string] $Content
+    )
+
     $Path = Get-PSReadLineHistoryPath
     $Temp = "$Path.temp"
     $Content | Out-File -FilePath $Temp
