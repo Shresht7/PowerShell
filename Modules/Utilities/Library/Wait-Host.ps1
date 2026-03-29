@@ -7,9 +7,7 @@
     Wait-Host
     Waits for the user to press a key
 #>
-function Wait-Host() {
+function Wait-Host {
     Write-Output "Press Any Key To Continue ..."
     $null = $Host.Ui.RawUI.ReadKey("Noecho,Includekeydown")
 }
-
-Export-ModuleMember -Function Wait-Host
