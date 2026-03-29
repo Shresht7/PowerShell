@@ -12,6 +12,18 @@ Import-Module PSReadLineUtils
 
 ## Functions
 
+### Backup-PSReadLineHistory
+
+Creates a backup of the PSReadLine history file.
+
+```powershell
+# Create a backup with timestamp
+Backup-PSReadLineHistory
+
+# Backup to custom location
+Backup-PSReadLineHistory -Destination "C:\Backups\my-history.txt"
+```
+
 ### Get-PSReadLineHistory
 
 Returns the contents of the PSReadLine history file.
