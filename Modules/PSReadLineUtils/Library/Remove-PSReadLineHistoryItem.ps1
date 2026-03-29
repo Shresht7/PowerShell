@@ -49,44 +49,23 @@ function Remove-PSReadLineHistoryItem {
         [switch] $Duplicate
     )
 
-    begin {
-        # Get the PSReadLineHistory
-        $PSReadLineHistory = Get-PSReadLineHistory
-    }
-	
-    process {
+process {
+        $history = Get-PSReadLineHistory
+
         switch ($PSCmdlet.ParameterSetName) {
             "Command" {
-                # Iterate over all items that are marked-for-removal and filter the ReadLineHistory
-                $PSReadLineHistory = $PSReadLineHistory | Where-Object { $_ -cne $Command }
-                Write-Verbose "$($Command.Count) commands removed!"
-                break
+                $history = $history | Where-Object { $_ -ne $Command }
             }
             "Count" {
-                $Length = $PSReadLineHistory.Length
-                $Mark = $Length - $Count
-                # Get everything but the last $Count items (accounting for off-by-one and the current command itself)
-                $PSReadLineHistory = $PSReadLineHistory[0..($Mark - 1)]
-                Write-Verbose "$Mark commands removed!"
-                break
+                $history = $history | Select-Object -SkipLast $Count
             }
             "Duplicate" {
-                $originalCount = ($PSReadLineHistory | Measure-Object -Line).Lines
-                $PSReadLineHistory = $PSReadLineHistory | Select-Object -Unique
-                $finalCount = ($PSReadLineHistory | Measure-Object -Line).Lines
-                $diffCount = $originalCount - $finalCount
-                Write-Verbose "$diffCount duplicate commands removed!"
-                break
+                $history = $history | Select-Object -Unique
             }
         }
-    }
 
-    end {
-        # Join the PSReadLineHistory back into a single string
-        $PSReadLineHistory = $PSReadLineHistory -join "`n"
-        # Set Content of the PSReadLineHistory
         if ($PSCmdlet.ShouldProcess((Get-PSReadLineHistoryPath))) {
-            Set-PSReadLineHistory -Content $PSReadLineHistory
+            $history -join "`n" | Set-PSReadLineHistory
         }
     }
 }
