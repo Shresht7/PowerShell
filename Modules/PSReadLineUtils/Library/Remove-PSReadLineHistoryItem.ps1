@@ -57,7 +57,7 @@ function Remove-PSReadLineHistoryItem {
         switch ($PSCmdlet.ParameterSetName) {
             "Command" {
                 # Iterate over all items that are marked-for-removal and filter the ReadLineHistory
-                $PSReadLineHistory = $PSReadLineHistory | Where-Object { $_ -cne $filter }
+                $PSReadLineHistory = $PSReadLineHistory | Where-Object { $_ -cne $Command }
                 Write-Verbose "$($Command.Count) commands removed!"
                 break
             }
