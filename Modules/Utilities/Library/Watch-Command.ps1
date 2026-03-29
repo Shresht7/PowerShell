@@ -1,22 +1,28 @@
 <#
 .SYNOPSIS
-Execute a script-block periodically
+    Execute a script-block periodically
 .DESCRIPTION
-Periodically execute a script-block on a given time interval.
-This allows to see the program output change over time. By default the interval is set to 1 second.
-This script-block runs until explicitly stopped.
+    Periodically execute a script-block on a given time interval.
+    This allows to see the program output change over time. By default the interval is set to 1 second.
+    This script-block runs until explicitly stopped.
 .PARAMETER $ScriptBlock
 The Script-Block to execute repeatedly
 .PARAMETER $Interval
-The update interval timespan
+    The update interval timespan (in seconds). Default is 1 second. Must be between 1 and 3600 seconds.
 .PARAMETER $ClearHost
-Switch to clear the host screen on each tick
+    Switch to clear the host screen on each tick (default: $false)
 .EXAMPLE
-Watch-Command { Get-Date }
-Will execute `Get-Date` every second
+    Watch-Command { Get-Date }
+    Will execute `Get-Date` every second
 .EXAMPLE
-Watch-Command { Get-Date } -Interval 60
-Will execute `Get-Date` every 60 seconds
+    Watch-Command { Get-Date } -Interval 60
+    Will execute `Get-Date` every 60 seconds
+.EXAMPLE
+    Watch-Command { Get-Process } -ClearHost
+    Will execute `Get-Process` every second and clear the host before each execution, so that only the latest output is visible
+.EXAMPLE
+    Watch-Command { Get-Process } -MaxIterations 10
+    Will execute `Get-Process` every second, but only for 10 iterations, then it will stop
 #>
 function Watch-Command {
 
