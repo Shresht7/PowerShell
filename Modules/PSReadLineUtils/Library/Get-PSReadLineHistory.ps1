@@ -17,6 +17,9 @@ function Get-PSReadLineHistory {
         # If specified, returns the raw contents of the history file as an array of lines, without any processing or filtering.
         [switch] $Raw,
 
+        # If specified, only returns commands that contain the given filter string. 
+        [string] $Filter,
+
         # If specified, only returns unique commands from the history file, removing any duplicates.
         [switch] $Unique
     )
@@ -42,13 +45,19 @@ function Get-PSReadLineHistory {
         if (Test-CommandComplete $command) {
             $commandBuffer.Clear()
 
-            # If the -Unique switch is specified, only return the command if we haven't seen it before. Otherwise, return all commands.
-            if ($Unique) {
-                if ($seenCommands.Add($command)) {
-                    $command
-                }
+            $shouldOutput = $true
+
+            # If a filter is specified, check if the command contains the filter string. If it doesn't, then we shouldn't output it.
+            if ($Filter -and $command -notlike "*$Filter*") {
+                $shouldOutput = $false
             }
-            else {
+
+            # If -Unique is specified, check if we've already seen this command before. If we have, then we shouldn't output it again.
+            if ($Unique -and -not $seenCommands.Add($command)) {
+                $shouldOutput = $false
+            }
+
+            if ($shouldOutput) {
                 $command
             }
         }
