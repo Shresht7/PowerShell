@@ -61,5 +61,4 @@ function Split-String(
     }
 }
 
-Set-Alias cut Split-String
-Export-ModuleMember -Alias cut
+Set-Alias -Name cut -Value Split-String -Scope Global

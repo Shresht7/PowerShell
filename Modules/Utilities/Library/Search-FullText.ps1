@@ -28,7 +28,4 @@ function Search-FullText(
     Invoke-PsFzfRipgrep -SearchString $SearchString -NoEditor:$NoEditor
 }
 
-Set-Alias fts Search-FullText
-
-Export-ModuleMember -Function Search-FullText
-Export-ModuleMember -Alias fts
+Set-Alias -Name fts -Value Search-FullText -Scope Global

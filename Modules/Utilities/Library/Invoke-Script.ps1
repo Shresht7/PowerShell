@@ -81,7 +81,4 @@ function Invoke-Script(
     
 }
 
-Set-Alias script Invoke-Script
-
-Export-ModuleMember -Function Invoke-Script
-Export-ModuleMember -Alias script
+Set-Alias -Name script -Value Invoke-Script -Scope Global

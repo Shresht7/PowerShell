@@ -22,4 +22,4 @@ function Limit-String(
     $Text | Where-Object { $_ -like "*$Keyword*" }
 }
 
-Set-Alias Limit-String grep
+Set-Alias -Name grep -Value Limit-String -Scope Global
