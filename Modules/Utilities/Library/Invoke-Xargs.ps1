@@ -1,9 +1,16 @@
+<#
+.SYNOPSIS
+    A native PowerShell drop-in for the classic `xargs` command, allowing you to execute a command with arguments passed from the pipeline.
+.DESCRIPTION
+    `Invoke-Xargs` takes a command and a list of input objects,
+    constructs a command string by combining the command with the input objects as arguments, and executes it.
+#>
 function Invoke-Xargs {
 
     [CmdletBinding()]
     param (
         # The command to execute, followed by any additional arguments
-        [Parameter(Position = 0, ValueFromRemainingArguments)]
+        [Parameter(Position = 0, Mandatory, ValueFromRemainingArguments)]
         [string]$Command,
 
         # The input objects to be passed as arguments to the command. 
