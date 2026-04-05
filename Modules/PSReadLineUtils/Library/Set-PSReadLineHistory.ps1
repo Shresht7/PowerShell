@@ -2,8 +2,9 @@
 .SYNOPSIS
     Set the PSReadLine history contents
 .DESCRIPTION
-    Sets (overwrites) the contents of the PSReadLine history file. Useful after performing
-    some manipulation on the existing history (using Get-PSReadLineHistory)
+    Sets (overwrites) the contents of the PSReadLine history file. Multi-line commands
+    are properly encoded using PSReadLine's backtick continuation format.
+    Accepts pipeline input — all items are collected and written at once.
 .EXAMPLE
     $History | Set-PSReadLineHistory
     Updates the PSReadLineHistory Contents with $History
@@ -32,17 +33,23 @@ function Set-PSReadLineHistory {
         [switch] $NoBackup
     )
 
+    begin {
+        $commands = [System.Collections.Generic.List[string]]::new()
+    }
+
     process {
         if ($Content -is [string]) {
-            $command = $Content
+            $commands.Add($Content)
         }
         elseif ($Content.PSObject.Properties.Name -contains 'Command') {
-            $command = $Content.Command
+            $commands.Add($Content.Command)
         }
         else {
-            $command = $Content.ToString()
+            $commands.Add($Content.ToString())
         }
+    }
 
+    end {
         $Path = Get-PSReadLineHistoryPath
 
         if ($PSCmdlet.ShouldProcess($Path)) {
@@ -50,13 +57,19 @@ function Set-PSReadLineHistory {
                 Backup-PSReadLineHistory
             }
 
+            # Encode multi-line commands using PSReadLine's backtick continuation format:
+            # internal newlines are replaced with (backtick + newline)
+            $encodedLines = foreach ($cmd in $commands) {
+                $cmd.Replace("`n", "``" + "`n")
+            }
+
             try {
                 if ($Append) {
-                    $command | Add-Content -Path $Path
+                    $encodedLines | Add-Content -Path $Path
                 }
                 else {
                     $Temp = "$Path.temp"
-                    $command | Out-File -FilePath $Temp
+                    $encodedLines | Out-File -FilePath $Temp
                     Move-Item -Path $Temp -Destination $Path -Force
                 }
             }
