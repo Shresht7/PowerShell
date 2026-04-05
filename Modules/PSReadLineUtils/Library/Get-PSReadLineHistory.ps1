@@ -15,6 +15,9 @@
     Get-PSReadLineHistory -Unique
     Returns only unique commands from the history file.
 .EXAMPLE
+    Get-PSReadLineHistory -Invalid
+    Returns only commands that fail validation in Test-CommandValidity.
+.EXAMPLE
     Get-PSReadLineHistory | fzf
     Pipe history into fzf for fuzzy selection (multi-line commands display correctly).
 #>
@@ -29,11 +32,18 @@ function Get-PSReadLineHistory {
         [string] $Filter,
 
         # If specified, only returns unique commands from the history file, removing any duplicates.
-        [switch] $Unique
+        [switch] $Unique,
+
+        # If specified, only returns commands that fail validation in Test-CommandValidity.
+        [switch] $Invalid
     )
     
     # If the -Raw switch is specified, return the raw contents of the history file as a single string
     if ($Raw) {
+        if ($Invalid) {
+            throw "-Raw and -Invalid cannot be used together."
+        }
+
         return Get-Content -Path (Get-PSReadLineHistoryPath) -Raw
     }
 
@@ -73,6 +83,11 @@ function Get-PSReadLineHistory {
                 $shouldOutput = $false
             }
 
+            # If -Invalid is specified, only keep commands that fail command validation.
+            if ($Invalid -and (Test-CommandValidity -Script $command).Count -eq 0) {
+                $shouldOutput = $false
+            }
+
             if ($shouldOutput) {
                 $command
             }
@@ -84,6 +99,7 @@ function Get-PSReadLineHistory {
             $shouldOutput = $true
             if ($Filter -and $command -notlike "*$Filter*") { $shouldOutput = $false }
             if ($Unique -and -not $seenCommands.Add($command)) { $shouldOutput = $false }
+            if ($Invalid -and (Test-CommandValidity -Script $command).Count -eq 0) { $shouldOutput = $false }
             if ($shouldOutput) { $command }
         }
     }

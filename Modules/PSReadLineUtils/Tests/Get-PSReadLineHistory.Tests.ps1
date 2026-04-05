@@ -65,6 +65,44 @@ Describe 'Get-PSReadLineHistory' {
             Remove-Item Env:PSREADLINE_HISTORY_PATH -ErrorAction SilentlyContinue
         }
     }
+
+    It 'supports -Invalid to return only commands that fail validation' {
+        $temp = Join-Path $env:TEMP 'psrl_history_invalid.txt'
+        @(
+            'Get-Process'
+            'Get-Process -NotARealParameter'
+            'Definitely-NotARealCommand'
+            'Write-Output Hello'
+        ) | Out-File -FilePath $temp -Encoding UTF8
+
+        $env:PSREADLINE_HISTORY_PATH = $temp
+        try {
+            $invalid = Get-PSReadLineHistory -Invalid
+            $invalid | Should -BeExactly @('Get-Process -NotARealParameter', 'Definitely-NotARealCommand')
+        }
+        finally {
+            Remove-Item -Path $temp -ErrorAction SilentlyContinue
+            Remove-Item Env:PSREADLINE_HISTORY_PATH -ErrorAction SilentlyContinue
+        }
+    }
+
+    It 'supports combining -Invalid with -Filter' {
+        $temp = Join-Path $env:TEMP 'psrl_history_invalid_filter.txt'
+        @(
+            'Get-Process -NotARealParameter'
+            'Definitely-NotARealCommand'
+            'Get-Service'
+        ) | Out-File -FilePath $temp -Encoding UTF8
+
+        $env:PSREADLINE_HISTORY_PATH = $temp
+        try {
+            (Get-PSReadLineHistory -Invalid -Filter 'Get') | Should -BeExactly @('Get-Process -NotARealParameter')
+        }
+        finally {
+            Remove-Item -Path $temp -ErrorAction SilentlyContinue
+            Remove-Item Env:PSREADLINE_HISTORY_PATH -ErrorAction SilentlyContinue
+        }
+    }
 }
 
 Describe 'Get-PSReadLineHistory -Raw and multiline handling' {
