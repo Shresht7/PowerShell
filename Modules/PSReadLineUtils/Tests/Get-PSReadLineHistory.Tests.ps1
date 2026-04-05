@@ -87,14 +87,83 @@ Describe 'Get-PSReadLineHistory -Raw and multiline handling' {
         }
     }
 
-    It 'returns file lines as history entries (parser-dependent behavior)' {
+    It 'reassembles multi-line commands from backtick continuations' {
         $temp = Join-Path $env:TEMP 'psrl_multiline.txt'
+        # Write file in PSReadLine's backtick continuation format
+        @(
+            'Get-Process'
+            'if ($true) {`'
+            '    Write-Host "yes"`'
+            '}'
+            'Get-Service'
+        ) | Out-File -FilePath $temp -Encoding UTF8
+        $env:PSREADLINE_HISTORY_PATH = $temp
+        try {
+            $history = Get-PSReadLineHistory
+            $history | Should -HaveCount 3
+            $history[0] | Should -Be 'Get-Process'
+            $history[1] | Should -Be "if (`$true) {`n    Write-Host ""yes""`n}"
+            $history[2] | Should -Be 'Get-Service'
+        }
+        finally {
+            Remove-Item -Path $temp -ErrorAction SilentlyContinue
+            Remove-Item Env:PSREADLINE_HISTORY_PATH -ErrorAction SilentlyContinue
+        }
+    }
+
+    It 'treats lines without trailing backtick as separate commands' {
+        $temp = Join-Path $env:TEMP 'psrl_no_continuation.txt'
         @('Write-Output "hello', 'world"', 'Get-Process') | Out-File -FilePath $temp -Encoding UTF8
         $env:PSREADLINE_HISTORY_PATH = $temp
         try {
             $history = Get-PSReadLineHistory
-            # Parser behavior can vary by PowerShell version; assert the function returns the raw lines as entries
+            # No backtick continuations, so each line is a separate command
             $history | Should -BeExactly @('Write-Output "hello', 'world"', 'Get-Process')
+        }
+        finally {
+            Remove-Item -Path $temp -ErrorAction SilentlyContinue
+            Remove-Item Env:PSREADLINE_HISTORY_PATH -ErrorAction SilentlyContinue
+        }
+    }
+
+    It 'handles commands with PowerShell line continuation backticks (double backtick in file)' {
+        $temp = Join-Path $env:TEMP 'psrl_double_backtick.txt'
+        # A command like: Get-Process `\n  -Name "code"
+        # In the file, the original backtick + continuation backtick = double backtick
+        @(
+            'Get-Process ``'
+            '  -Name "code"'
+        ) | Out-File -FilePath $temp -Encoding UTF8
+        $env:PSREADLINE_HISTORY_PATH = $temp
+        try {
+            $history = @(Get-PSReadLineHistory)
+            $history | Should -HaveCount 1
+            # First line had trailing backtick (continuation marker) stripped,
+            # leaving the original backtick from the PowerShell line continuation
+            $expected = 'Get-Process `' + "`n" + '  -Name "code"'
+            $history[0] | Should -Be $expected
+        }
+        finally {
+            Remove-Item -Path $temp -ErrorAction SilentlyContinue
+            Remove-Item Env:PSREADLINE_HISTORY_PATH -ErrorAction SilentlyContinue
+        }
+    }
+
+    It 'roundtrips multi-line commands through Set and Get' {
+        $temp = Join-Path $env:TEMP 'psrl_roundtrip.txt'
+        $env:PSREADLINE_HISTORY_PATH = $temp
+        try {
+            $original = @(
+                'simple-command'
+                "foreach (`$item in `$list) {`n    Write-Host `$item`n}"
+                "Get-Process ```n  | Where-Object { `$_.CPU -gt 100 }"
+            )
+            $original | Set-PSReadLineHistory -NoBackup
+            $read = Get-PSReadLineHistory
+            $read | Should -HaveCount $original.Count
+            for ($i = 0; $i -lt $original.Count; $i++) {
+                $read[$i] | Should -Be $original[$i]
+            }
         }
         finally {
             Remove-Item -Path $temp -ErrorAction SilentlyContinue

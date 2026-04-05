@@ -12,7 +12,7 @@ Describe 'Remove-PSReadLineHistoryItem' {
 
         try {
             Remove-PSReadLineHistoryItem -Command 'A' -NoBackup
-            (Get-Content -Path $temp) | Should -BeExactly @('B', 'C')
+            (Get-PSReadLineHistory) | Should -BeExactly @('B', 'C')
         }
         finally {
             Remove-Item -Path $temp -ErrorAction SilentlyContinue
@@ -27,7 +27,7 @@ Describe 'Remove-PSReadLineHistoryItem' {
 
         try {
             Remove-PSReadLineHistoryItem -Count 2 -NoBackup
-            (Get-Content -Path $temp) | Should -BeExactly @('1', '2')
+            (Get-PSReadLineHistory) | Should -BeExactly @('1', '2')
         }
         finally {
             Remove-Item -Path $temp -ErrorAction SilentlyContinue
@@ -42,7 +42,7 @@ Describe 'Remove-PSReadLineHistoryItem' {
 
         try {
             Remove-PSReadLineHistoryItem -Duplicate -NoBackup
-            (Get-Content -Path $temp) | Should -BeExactly @('A', 'B')
+            (Get-PSReadLineHistory) | Should -BeExactly @('A', 'B')
         }
         finally {
             Remove-Item -Path $temp -ErrorAction SilentlyContinue
@@ -65,7 +65,38 @@ Describe 'Remove-PSReadLineHistoryItem - pipeline support' {
 
         try {
             'B' | Remove-PSReadLineHistoryItem -NoBackup
-            (Get-Content -Path $temp) | Should -BeExactly @('A', 'C')
+            (Get-PSReadLineHistory) | Should -BeExactly @('A', 'C')
+        }
+        finally {
+            Remove-Item -Path $temp -ErrorAction SilentlyContinue
+            Remove-Item Env:PSREADLINE_HISTORY_PATH -ErrorAction SilentlyContinue
+        }
+    }
+
+    It 'removes multiple piped commands in a single operation' {
+        $temp = Join-Path $env:TEMP 'psrl_history_pipe_multi.txt'
+        @('A', 'B', 'C', 'D') | Out-File -FilePath $temp -Encoding UTF8
+        $env:PSREADLINE_HISTORY_PATH = $temp
+
+        try {
+            @('B', 'D') | Remove-PSReadLineHistoryItem -NoBackup
+            (Get-PSReadLineHistory) | Should -BeExactly @('A', 'C')
+        }
+        finally {
+            Remove-Item -Path $temp -ErrorAction SilentlyContinue
+            Remove-Item Env:PSREADLINE_HISTORY_PATH -ErrorAction SilentlyContinue
+        }
+    }
+
+    It 'removes multi-line commands from history' {
+        $temp = Join-Path $env:TEMP 'psrl_history_remove_ml.txt'
+        $env:PSREADLINE_HISTORY_PATH = $temp
+
+        try {
+            $multiline = "if (`$true) {`n    Write-Host 'yes'`n}"
+            @('A', $multiline, 'B') | Set-PSReadLineHistory -NoBackup
+            Remove-PSReadLineHistoryItem -Command $multiline -NoBackup
+            (Get-PSReadLineHistory) | Should -BeExactly @('A', 'B')
         }
         finally {
             Remove-Item -Path $temp -ErrorAction SilentlyContinue
