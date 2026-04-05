@@ -10,7 +10,9 @@ function Test-CommandValidity {
         # The command or script to validate
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [Alias('Name', 'Input', 'InputObject', 'Command')]
-        [string] $Script
+        [string] $Script,
+
+        [switch] $WriteOutput
     )
 
     # If the script is empty or whitespace, return am empty array (nothing to validate)
@@ -80,5 +82,24 @@ function Test-CommandValidity {
         }
     }
 
-    return $Failures
+    if ($WriteOutput) {
+        if ($Failures.Count -eq 0) {
+            Write-Host "VALID" -ForegroundColor Green
+            return
+        }
+
+        # Write the script line and underline the position of each error with a caret (^) and write out the error below it
+        foreach ($Failure in $Failures) {
+            Write-Host ""
+            $ScriptLines = $Script -split "`n"
+            $ErrorLine = $ScriptLines[$Failure.Line - 1]
+            Write-Host $ErrorLine
+            Write-Host (' ' * ($Failure.Column - 1) + '^') -ForegroundColor Red
+            Write-Host $Failure.Message -ForegroundColor Red
+            Write-Host ""
+        }
+    }
+    else {
+        return $Failures
+    }
 }
