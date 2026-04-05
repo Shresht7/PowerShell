@@ -15,7 +15,8 @@ function Get-PSReadLineHistoryFrequency {
         [Alias('Top')]
         [int] $First,
 
-        # The property to sort the results by. Can be either 'Count' or 'Name'. Defaults to 'Count'.
+        # The property to sort the results by. Can be either 'Count' or 'Command'. Defaults to 'Count'.
+        [ValidateSet('Count', 'Command')]
         [string] $SortBy = 'Count'
     )
 

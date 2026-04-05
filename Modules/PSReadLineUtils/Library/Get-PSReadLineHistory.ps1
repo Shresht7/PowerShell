@@ -2,19 +2,27 @@
 .SYNOPSIS
     Returns the contents of the PSReadLine history file
 .DESCRIPTION
-    Returns the contents of the PSReadLine history file.
+    Returns the contents of the PSReadLine history file as a collection of commands.
+    Multi-line commands are correctly reassembled using the backtick continuation
+    format that PSReadLine uses to store them.
 .EXAMPLE
     Get-PSReadLineHistory
     Returns the contents of the PSReadLine history file.
 .EXAMPLE
     Get-PSReadLineHistory -Raw
-    Returns the raw contents of the PSReadLine history file as an array of lines, without any processing or filtering.
+    Returns the raw contents of the PSReadLine history file as a single string, without any processing or filtering.
+.EXAMPLE
+    Get-PSReadLineHistory -Unique
+    Returns only unique commands from the history file.
+.EXAMPLE
+    Get-PSReadLineHistory | fzf
+    Pipe history into fzf for fuzzy selection (multi-line commands display correctly).
 #>
 function Get-PSReadLineHistory {
     [CmdletBinding()]
     [OutputType([string[]])]
     param (
-        # If specified, returns the raw contents of the history file as an array of lines, without any processing or filtering.
+        # If specified, returns the raw contents of the history file as a single string, without any processing or filtering.
         [switch] $Raw,
 
         # If specified, only returns commands that contain the given filter string. 
@@ -24,7 +32,7 @@ function Get-PSReadLineHistory {
         [switch] $Unique
     )
     
-    # If the -Raw switch is specified, return the raw contents of the history file as an array of lines
+    # If the -Raw switch is specified, return the raw contents of the history file as a single string
     if ($Raw) {
         return Get-Content -Path (Get-PSReadLineHistoryPath) -Raw
     }
@@ -32,38 +40,51 @@ function Get-PSReadLineHistory {
     # Holds the unique commands we've seen so far, to filter out duplicates if -Unique is specified
     $seenCommands = [System.Collections.Generic.HashSet[string]]::new()
 
-    # Buffer to accumulate lines of a command until we determine that the command is complete
-    $commandBuffer = [System.Collections.ArrayList]@()
+    # StringBuilder to accumulate lines of a multi-line command
+    $buffer = [System.Text.StringBuilder]::new()
 
-    # Read the history file line-by-line...
+    # Read the history file line-by-line, using PSReadLine's backtick continuation format:
+    # - Lines ending with a backtick (`) are continuation lines; the backtick is stripped
+    #   and the line is joined with a newline to form a multi-line command.
+    # - Lines NOT ending with a backtick mark the end of a command.
     try {
         foreach ($line in [System.IO.File]::ReadLines((Get-PSReadLineHistoryPath))) {
-            # Add the line to the buffer
-            $commandBuffer.Add($line) | Out-Null
-            $command = $commandBuffer -join "`n"
-    
-            # If the command is complete, then output it and clear the buffer for the next command
-            if (Test-CommandComplete $command) {
-                $commandBuffer.Clear()
-    
-                $shouldOutput = $true
-    
-                # If a filter is specified, check if the command contains the filter string. If it doesn't, then we shouldn't output it.
-                if ($Filter -and $command -notlike "*$Filter*") {
-                    $shouldOutput = $false
-                }
-    
-                # If -Unique is specified, check if we've already seen this command before. If we have, then we shouldn't output it again.
-                if ($Unique -and -not $seenCommands.Add($command)) {
-                    $shouldOutput = $false
-                }
-    
-                if ($shouldOutput) {
-                    $command
-                }
+            if ($line.EndsWith('`')) {
+                # Continuation line: strip trailing backtick, append with newline
+                $buffer.Append($line, 0, $line.Length - 1) | Out-Null
+                $buffer.Append("`n") | Out-Null
+                continue
             }
-    
-            # If the command is not complete, then continue accumulating
+
+            # End of command: append last line and emit
+            $buffer.Append($line) | Out-Null
+            $command = $buffer.ToString()
+            $buffer.Clear() | Out-Null
+
+            $shouldOutput = $true
+
+            # If a filter is specified, check if the command contains the filter string
+            if ($Filter -and $command -notlike "*$Filter*") {
+                $shouldOutput = $false
+            }
+
+            # If -Unique is specified, check if we've already seen this command before
+            if ($Unique -and -not $seenCommands.Add($command)) {
+                $shouldOutput = $false
+            }
+
+            if ($shouldOutput) {
+                $command
+            }
+        }
+
+        # If there's leftover content in the buffer (file ended mid-command), emit it as-is
+        if ($buffer.Length -gt 0) {
+            $command = $buffer.ToString()
+            $shouldOutput = $true
+            if ($Filter -and $command -notlike "*$Filter*") { $shouldOutput = $false }
+            if ($Unique -and -not $seenCommands.Add($command)) { $shouldOutput = $false }
+            if ($shouldOutput) { $command }
         }
     }
     catch {

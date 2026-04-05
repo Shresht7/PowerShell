@@ -11,8 +11,8 @@
     Remove-PSReadLineHistoryItem -Command "Get-Service", "Get-Process"
     Removes all instances of the "Get-Service" and "Get-Process" commands from the PSReadLine history.
 .EXAMPLE
-    Get-Service | Remove-PSReadLineHistoryItem
-    Removes all instances of the "Get-Service" command from the PSReadLine history.
+    Get-PSReadLineHistory | Where-Object { $_ -match "secret" } | Remove-PSReadLineHistoryItem
+    Removes all commands matching "secret" from the PSReadLine history.
 .EXAMPLE
     Remove-PSReadLineHistoryItem -Count 10
     Removes the last 10 items from the PSReadLine history.
@@ -29,7 +29,7 @@ function Remove-PSReadLineHistoryItem {
     [OutputType([void])]
     param (
         # Specifies the items that you want to remove from the history.
-        # This parameter supports wildcards, and you can specify multiple items by using a comma-separated list or by using the pipeline.
+        # You can specify multiple items by using a comma-separated list or by using the pipeline.
         [Parameter(
             Mandatory,
             ValueFromPipeline,
@@ -52,12 +52,22 @@ function Remove-PSReadLineHistoryItem {
         [switch] $NoBackup
     )
 
+    begin {
+        $commandsToRemove = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+    }
+
     process {
+        if ($PSCmdlet.ParameterSetName -eq "Command") {
+            $commandsToRemove.Add($Command) | Out-Null
+        }
+    }
+
+    end {
         $history = Get-PSReadLineHistory
 
         switch ($PSCmdlet.ParameterSetName) {
             "Command" {
-                $history = $history | Where-Object { $_ -ne $Command }
+                $history = $history | Where-Object { -not $commandsToRemove.Contains($_) }
             }
             "Count" {
                 $history = $history | Select-Object -SkipLast $Count
@@ -68,7 +78,7 @@ function Remove-PSReadLineHistoryItem {
         }
 
         if ($PSCmdlet.ShouldProcess((Get-PSReadLineHistoryPath))) {
-            $history -join "`n" | Set-PSReadLineHistory -NoBackup:$NoBackup
+            $history | Set-PSReadLineHistory -NoBackup:$NoBackup
         }
     }
 }
