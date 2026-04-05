@@ -26,7 +26,11 @@ function Test-CommandValidity {
 
     if ($Errors) {
         foreach ($ParseError in $Errors) {
-            $Failures += "Syntax error: $($ParseError.Message)"
+            $Failures += [PSCustomObject] @{
+                Message = $ParseError.Message
+                Line    = $ParseError.Extent.StartLineNumber
+                Column  = $ParseError.Extent.StartColumnNumber
+            }
         }
     }
 
@@ -39,7 +43,11 @@ function Test-CommandValidity {
         # Check if the command name is a valid command (cmdlet, function, alias, or executable)
         $CommandInfo = Get-Command $CommandName -ErrorAction SilentlyContinue
         if (-not $CommandInfo) {
-            $Failures += "Unknown Command: $CommandName"
+            $Failures += [PSCustomObject] @{
+                Message = "Unknown Command: $CommandName"
+                Line    = $Node.Extent.StartLineNumber
+                Column  = $Node.Extent.StartColumnNumber
+            }   
             continue
         }
 
@@ -63,7 +71,11 @@ function Test-CommandValidity {
         $AvailableParameters = $CommandInfo.Parameters.Keys
         foreach ($Param in $UsedParameters) {
             if ($AvailableParameters -notcontains $Param.ParameterName) {
-                $Failures += "Unknown Parameter: $($Param.ParameterName) for command $CommandName"
+                $Failures += [PSCustomObject] @{
+                    Message = "Unknown Parameter: $($Param.ParameterName) for command $CommandName"
+                    Line    = $Param.Extent.StartLineNumber
+                    Column  = $Param.Extent.StartColumnNumber
+                }
             }
         }
     }
