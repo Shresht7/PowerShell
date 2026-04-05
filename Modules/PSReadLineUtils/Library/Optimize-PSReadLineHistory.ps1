@@ -53,7 +53,7 @@ function Optimize-PSReadLineHistory {
 
     # Write the history back to the history file
     if ($PSCmdlet.ShouldProcess("Optimize PSReadLine History")) {
-        $History -join "`n" | Set-PSReadLineHistory -NoBackup:$NoBackup
+        $History | Set-PSReadLineHistory -NoBackup:$NoBackup
         Write-Verbose -Message "Optimized PSReadLine history file!"
     }
 
