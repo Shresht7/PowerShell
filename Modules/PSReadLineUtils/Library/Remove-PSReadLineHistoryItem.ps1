@@ -29,7 +29,7 @@ function Remove-PSReadLineHistoryItem {
     [OutputType([void])]
     param (
         # Specifies the items that you want to remove from the history.
-        # This parameter supports wildcards, and you can specify multiple items by using a comma-separated list or by using the pipeline.
+        # You can specify multiple items by using a comma-separated list or by using the pipeline.
         [Parameter(
             Mandatory,
             ValueFromPipeline,
@@ -53,7 +53,7 @@ function Remove-PSReadLineHistoryItem {
     )
 
     begin {
-        $commandsToRemove = [System.Collections.Generic.HashSet[string]]::new()
+        $commandsToRemove = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
     }
 
     process {
