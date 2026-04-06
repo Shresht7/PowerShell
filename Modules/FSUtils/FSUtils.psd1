@@ -73,6 +73,7 @@
         "Enter-NewDirectory",
         "Get-BaseName",
         "Get-FileName",
+        "Get-DirName",
         "Get-BrokenSymlink",
         "Get-GitRepo",
         "Get-Size",
