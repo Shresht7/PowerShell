@@ -30,3 +30,5 @@ function Get-DirName {
         [System.IO.Path]::GetDirectoryName($ResolvedPath)
     }
 }
+
+Set-Alias -Name dirname -Value Get-DirName

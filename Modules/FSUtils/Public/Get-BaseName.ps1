@@ -29,3 +29,5 @@ function Get-BaseName {
         [System.IO.Path]::GetFileNameWithoutExtension($Path)
     }
 }
+
+Set-Alias -Name basename -Value Get-BaseName

@@ -29,3 +29,5 @@ function Get-FileName {
         [System.IO.Path]::GetFileName($Path)
     }
 }
+
+Set-Alias -Name filename -Value Get-FileName
