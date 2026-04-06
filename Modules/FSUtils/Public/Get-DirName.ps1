@@ -18,10 +18,10 @@ function Get-DirName {
     [OutputType([string])]
     param (
         # The path to extract the directory name from
-        [Parameter(Position = 0, Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateScript({ Test-Path $_ })]
         [Alias("Name", "FullName", "FilePath", "FileName", "File", "Dir", "Directory", "DirPath", "DirectoryPath", "Folder", "Location", "Input", "InputObject")]
-        [string]$Path
+        [string]$Path = ($PWD.Path)
     )
 
     process {
