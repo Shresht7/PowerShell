@@ -72,6 +72,7 @@
     FunctionsToExport = @(
         "Enter-NewDirectory",
         "Get-BaseName",
+        "Get-FileName",
         "Get-BrokenSymlink",
         "Get-GitRepo",
         "Get-Size",
