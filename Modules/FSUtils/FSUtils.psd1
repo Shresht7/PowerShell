@@ -100,7 +100,8 @@
     AliasesToExport   = @(
         "basename",
         "filename",
-        "dirname"
+        "dirname",
+        "touch"
     )
 
     # DSC resources to export from this module
