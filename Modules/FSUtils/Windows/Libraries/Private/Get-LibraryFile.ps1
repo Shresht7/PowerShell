@@ -1,13 +1,20 @@
 <#
 .SYNOPSIS
-    Gets library file(s) from the Libraries folder.
+    Gets library file(s) from the Libraries folder
 .DESCRIPTION
     Gets library files from the Windows Libraries folder.
     If a name is provided, only that library is returned.
+.EXAMPLE
+    Get-LibraryFile
+    Returns all library files
+.EXAMPLE
+    Get-LibraryFile Documents
+    Returns the Documents.library-ms file
 #>
 function Get-LibraryFile {
     param(
         # The name of the library to get (optional)
+        [Alias('Library', 'LibraryName')]
         [string] $Name
     )
 

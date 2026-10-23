@@ -8,6 +8,7 @@ function Get-Library {
 
     # The name of the library to get. Can be omitted to list all libraries
     param(
+        [Alias('Library', 'LibraryName')]
         [string] $Name
     )
 
