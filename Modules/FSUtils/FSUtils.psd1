@@ -85,6 +85,7 @@
         "Test-IsSymbolicLink",
         "Get-Library",
         "Get-LibraryPath",
+        "Export-Library",
         "Invoke-Library",
         "Get-DesktopIconVisibility",
         "Get-FileVisibility",
