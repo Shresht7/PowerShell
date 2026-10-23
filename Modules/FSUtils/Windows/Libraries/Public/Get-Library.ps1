@@ -20,11 +20,11 @@ function Get-Library {
                 $XML.libraryDescription.searchConnectorDescriptionList.searchConnectorDescription
             ).Count
             [PSCustomObject]@{
-                Name        = $File.BaseName
-                Pinned      = [bool]::Parse(
+                Name    = $File.BaseName
+                Pinned  = [bool]::Parse(
                     $XML.libraryDescription.isLibraryPinned
                 )
-                FolderCount = $Count
+                Folders = $Count
                 # Icon        = $XML.libraryDescription.iconReference
             }
         }

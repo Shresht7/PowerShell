@@ -13,15 +13,7 @@ Get-ChildItem -Path "$PSScriptRoot\Public" -Filter "*.ps1" -Recurse | ForEach-Ob
 # -----------------
 
 if ($IsWindows) {
-
-    # Private
-    Get-ChildItem -Path "$PSScriptRoot\Libraries\Private" -Filter "*.ps1" | ForEach-Object {
+    Get-ChildItem -Path "$PSScriptRoot\Windows\Libraries" -Recurse -Filter "*.ps1" | ForEach-Object {
         . $_.FullName
     }
-
-    # Public
-    Get-ChildItem -Path "$PSScriptRoot\Libraries\Public" -Filter "*.ps1" | ForEach-Object {
-        . $_.FullName
-    }
-
 }
