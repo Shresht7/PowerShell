@@ -52,9 +52,10 @@ function Get-Library {
 
         # Construct and output object 
         [PSCustomObject]@{
-            Library = $Name
-            Type    = $type
-            URL     = $URL
+            Library               = $Name
+            Type                  = $type
+            URL                   = $URL
+            IsDefaultSaveLocation = $Location.isDefaultSaveLocation
         }
     }
 
