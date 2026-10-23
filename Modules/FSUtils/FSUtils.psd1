@@ -84,6 +84,7 @@
         "Set-LocationToHome",
         "Test-IsSymbolicLink",
         "Get-Library",
+        "Get-LibraryPath",
         "Invoke-Library",
         "Get-DesktopIconVisibility",
         "Get-FileVisibility",
