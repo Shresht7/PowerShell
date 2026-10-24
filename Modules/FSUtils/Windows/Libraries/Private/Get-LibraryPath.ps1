@@ -11,7 +11,7 @@
 function Get-LibraryPath {
     $path = Join-Path $Env:APPDATA 'Microsoft\Windows\Libraries'
 
-    if (-not (Test-Path -Path $path)) {
+    if (-not (Test-Path -LiteralPath $path)) {
         throw "Libraries folder not found! '$path'"
     }
 
