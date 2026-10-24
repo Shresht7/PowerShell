@@ -43,6 +43,8 @@ function Get-Library {
         # Get the URL of the location
         $URL = $Location.simpleLocation.url
 
+        $ResolvedPath = Resolve-LibraryLocation -URL $URL
+
         # Determine type of location
         $type = if ($URL -like 'knownfolder:*') {
             'KnownFolder'
@@ -54,6 +56,7 @@ function Get-Library {
         # Construct and output object 
         [PSCustomObject]@{
             Library               = $Name
+            ResolvedPath          = $ResolvedPath
             Type                  = $type
             URL                   = $URL
             IsDefaultSaveLocation = $Location.isDefaultSaveLocation
