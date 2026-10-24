@@ -16,4 +16,20 @@ if ($IsWindows) {
     Get-ChildItem -Path "$PSScriptRoot\Windows\Libraries" -Recurse -Filter "*.ps1" | ForEach-Object {
         . $_.FullName
     }
+
+    $LibraryCompleter = {
+        param(
+            $CommandName,
+            $ParameterName,
+            $WordToComplete,
+            $CommandAst,
+            $FakeBoundParameters
+        )
+
+        Complete-LibraryName -WordToComplete $WordToComplete
+    }
+
+    Register-ArgumentCompleter -CommandName Get-Library -ParameterName Name -ScriptBlock $LibraryCompleter
+    Register-ArgumentCompleter -CommandName Open-Library -ParameterName Library -ScriptBlock $LibraryCompleter
+    Register-ArgumentCompleter -CommandName Export-Library -ParameterName Name -ScriptBlock $LibraryCompleter
 }
