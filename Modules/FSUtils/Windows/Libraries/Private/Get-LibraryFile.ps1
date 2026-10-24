@@ -23,7 +23,7 @@ function Get-LibraryFile {
 
     # Filter by name if provided
     if ($Name) {
-        $libraryFiles = $libraryFiles | Where-Object { $_.BaseName -eq $Name }
+        $libraryFiles = $libraryFiles.Where({ $_.BaseName -eq $Name })
     }
 
     # Return the library files
