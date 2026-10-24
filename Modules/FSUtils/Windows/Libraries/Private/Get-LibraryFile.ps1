@@ -19,7 +19,7 @@ function Get-LibraryFile {
     )
 
     # Get all library files (*.library-ms) from the Windows Libraries folder
-    $libraryFiles = Get-ChildItem -Path (Get-LibraryPath) -Filter '*.library-ms'
+    $libraryFiles = Get-ChildItem -LiteralPath (Get-LibraryPath) -Filter '*.library-ms'
 
     # Filter by name if provided
     if ($Name) {
