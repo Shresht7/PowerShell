@@ -1,67 +1,48 @@
 <#
 .SYNOPSIS
-    Gets all libraries or a specific one by name
+    Gets a Windows library by name
 .DESCRIPTION
-    By default, lists all Windows libraries. If a $Name is specified, show info for that specific library
+    Gets a Windows library by name.
+    Returns library details like path and pinned status.
 #>
 function Get-Library {
 
-    # The name of the library to get. Can be omitted to list all libraries
+    [CmdletBinding()]
     param(
+        # Name of the library to get
         [Alias('Library', 'LibraryName')]
         [string] $Name
     )
 
-    # If no name is given, list all libraries
-    if (-not $Name) {
+    # Get all library files
+    $Files = Get-LibraryFile
 
-        foreach ($File in Get-LibraryFile) {
-            $XML = Read-LibraryDefinition $File.BaseName
-            $Count = @(
-                $XML.libraryDescription.searchConnectorDescriptionList.searchConnectorDescription
-            ).Count
-            [PSCustomObject]@{
-                Name    = $File.BaseName
-                Pinned  = [bool]::Parse(
-                    $XML.libraryDescription.isLibraryPinned
-                )
-                Folders = $Count
-                # Icon        = $XML.libraryDescription.iconReference
-            }
-        }
-
-        return
+    # Filter by name if given
+    if ($Name) {
+        $Files = $Files | Where-Object BaseName -eq $Name
     }
 
-    # Read the *.library-ms file (XML format)
-    $XML = Read-LibraryDefinition $Name
+    # Read each library file and get details
+    foreach ($File in $Files) {
 
-    # Get all locations from the XML
-    $Locations = $XML.libraryDescription.searchConnectorDescriptionList.searchConnectorDescription
+        # Read library XML definition
+        $XML = Read-LibraryDefinition $File.BaseName
 
-    foreach ($Location in $Locations) {
-        # Get the URL of the location
-        $URL = $Location.simpleLocation.url
+        # Count folders in library
+        $FolderCount = @(
+            $XML.libraryDescription.searchConnectorDescriptionList.searchConnectorDescription
+        ).Count
 
-        $ResolvedPath = Resolve-LibraryLocation -URL $URL
-
-        # Determine type of location
-        $type = if ($URL -like 'knownfolder:*') {
-            'KnownFolder'
-        }
-        else {
-            'FileSystem'
-        }
-
-        # Construct and output object 
+        # Construct object and output
         [PSCustomObject]@{
-            Library               = $Name
-            ResolvedPath          = $ResolvedPath
-            Type                  = $type
-            URL                   = $URL
-            IsDefaultSaveLocation = $Location.isDefaultSaveLocation
+            PSTypeName  = 'FSUtils.WindowsLibraries.Library'
+            Name        = $File.BaseName
+            Path        = $File.FullName
+            Pinned      = [bool]::Parse(
+                $XML.libraryDescription.isLibraryPinned
+            )
+            FolderCount = $FolderCount
         }
     }
-
 
 }

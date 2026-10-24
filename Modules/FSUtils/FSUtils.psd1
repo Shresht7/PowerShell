@@ -84,6 +84,7 @@
         "Set-LocationToHome",
         "Test-IsSymbolicLink",
         "Get-Library",
+        "Get-LibraryFolder",
         "Get-LibraryPath",
         "Export-Library",
         "Open-Library",
