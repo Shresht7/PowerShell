@@ -87,6 +87,7 @@
         "Get-LibraryPath",
         "Export-Library",
         "Open-Library",
+        "Find-LibraryPath",
         "Get-DesktopIconVisibility",
         "Get-FileVisibility",
         "Switch-FileVisibility"
