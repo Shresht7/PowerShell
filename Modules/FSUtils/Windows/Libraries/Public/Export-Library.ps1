@@ -6,6 +6,7 @@ function Export-Library {
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string] $Name,
 
+        # Path to export the library to
         [string] $Path
     )
 
