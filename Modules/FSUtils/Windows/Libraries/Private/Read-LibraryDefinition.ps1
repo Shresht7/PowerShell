@@ -12,10 +12,14 @@ function Read-LibraryDefinition {
         [string] $Name
     )
 
-    $File = Get-LibraryFile | Where-Object BaseName -eq $Name
+    $File = Get-LibraryFile -Name $Name
 
     if (-not $File) {
         throw "Library '$Name' not found."
+    }
+
+    if ($File.Count -gt 1) {
+        throw "Multiple libraries named '$Name' found."
     }
 
     [xml](Get-Content $File.FullName -Raw)
