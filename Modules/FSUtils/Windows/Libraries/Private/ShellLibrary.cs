@@ -139,4 +139,22 @@ namespace FSUtils.WindowsLibraries
             }
         }
     }
+
+    public static class KnownFolders
+    {
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+        static extern void SHGetKnownFolderPath(
+            ref Guid rfid,
+            uint dwFlags,
+            IntPtr hToken,
+            [MarshalAs(UnmanagedType.LPWStr)] out string ppszPath
+        );
+
+        public static string GetPath(Guid id)
+        {
+            string path;
+            SHGetKnownFolderPath(ref id, 0, IntPtr.Zero, out path);
+            return path;
+        }
+    }
 }
