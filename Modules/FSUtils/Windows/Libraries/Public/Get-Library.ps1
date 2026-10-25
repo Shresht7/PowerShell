@@ -38,9 +38,7 @@ function Get-Library {
             PSTypeName  = 'FSUtils.WindowsLibraries.Library'
             Name        = $File.BaseName
             Path        = $File.FullName
-            Pinned      = [bool]::Parse(
-                $XML.libraryDescription.isLibraryPinned
-            )
+            Pinned      = $XML.libraryDescription.isLibraryPinned -eq 'true'            
             FolderCount = $FolderCount
         }
     }

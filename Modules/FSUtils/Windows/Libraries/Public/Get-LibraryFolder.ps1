@@ -45,7 +45,7 @@ function Get-LibraryFolder {
                 Type                  = $Type
                 URL                   = $URL
                 ResolvedPath          = $ResolvedPath
-                IsDefaultSaveLocation = [bool]$Location.isDefaultSaveLocation
+                IsDefaultSaveLocation = $Location.isDefaultSaveLocation -eq 'true'
             }
         }
     }
