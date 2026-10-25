@@ -3,36 +3,10 @@ using System.IO;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+using PSFSUtils.Shell;
+
 namespace FSUtils.WindowsLibraries
 {
-    [ComImport, Guid("43826d1e-e718-42ee-bc55-a1e261c37bfe")]
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IShellItem
-    {
-        void BindToHandler(IntPtr pbc, ref Guid bhid, ref Guid riid, out IntPtr ppv);
-        void GetParent(out IShellItem ppsi);
-        void GetDisplayName(uint sigdnName, [MarshalAs(UnmanagedType.LPWStr)] out string ppszName);
-        void GetAttributes(uint sfgaoMask, out uint psfgaoAttribs);
-        void Compare(IShellItem psi, uint hint, out int piOrder);
-    }
-
-    [ComImport, Guid("b63ea76d-1f85-456f-a19c-48159efa858b")]
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IShellItemArray
-    {
-        // We don't call these, but they are required to hold the vtable positions
-        void BindToHandler(IntPtr pbc, ref Guid bhid, ref Guid riid, out IntPtr ppv);
-        void GetPropertyStore(int flags, ref Guid riid, out IntPtr ppv);
-        void GetPropertyDescriptionList(IntPtr keyType, ref Guid riid, out IntPtr ppv);
-        void GetAttributes(int attribFlags, uint sfgaoMask, out uint psfgaoAttribs);
-
-        // The two we actually use
-        void GetCount(out uint pdwNumItems);
-        void GetItemAt(uint index, out IShellItem ppsi);
-
-        void EnumItems(out IntPtr ppenumShellItems);
-    }
-
     [ComImport, Guid("11a66efa-382e-451a-9234-1e0e12ef3085")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IShellLibrary
@@ -66,29 +40,13 @@ namespace FSUtils.WindowsLibraries
         const int DSFT_DETECT = 1; // let the shell decide private/public
         const uint LSF_FAILIFTHERE = 0;
 
-        static Guid IID_IShellItem = new Guid("43826d1e-e718-42ee-bc55-a1e261c37bfe");
-
         const int LFF_ALLITEMS = 3;
-        const uint SIGDN_FILESYSPATH = 0x80058000;
         static Guid IID_IShellItemArray = new Guid("b63ea76d-1f85-456f-a19c-48159efa858b");
-
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
-        static extern void SHCreateItemFromParsingName(
-            string pszPath, IntPtr pbc, ref Guid riid,
-            [MarshalAs(UnmanagedType.Interface)] out IShellItem ppv
-        );
-
-        static IShellItem ItemFromPath(string path)
-        {
-            IShellItem item;
-            SHCreateItemFromParsingName(path, IntPtr.Zero, ref IID_IShellItem, out item);
-            return item;
-        }
 
         static IShellLibrary Load(string libraryPath, bool write)
         {
             var lib = (IShellLibrary)new ShellLibraryClass();
-            var item = ItemFromPath(libraryPath);
+            var item = ShellItems.FromPath(libraryPath);
             try 
             {
                 lib.LoadLibraryFromItem(item, write ? STGM_READWRITE : STGM_READ);
@@ -103,7 +61,7 @@ namespace FSUtils.WindowsLibraries
         public static void Create(string folderPath, string libraryName)
         {
             var lib = (IShellLibrary)new ShellLibraryClass();
-            var folder = ItemFromPath(folderPath);
+            var folder = ShellItems.FromPath(folderPath);
             IShellItem saved = null;
             try 
             {
@@ -120,7 +78,7 @@ namespace FSUtils.WindowsLibraries
         public static void AddFolder(string libraryPath, string folderPath)
         {
             var lib = Load(libraryPath, true);
-            var folder = ItemFromPath(folderPath);
+            var folder = ShellItems.FromPath(folderPath);
             try
             {
                 lib.AddFolder(folder);
@@ -152,8 +110,7 @@ namespace FSUtils.WindowsLibraries
                     array.GetItemAt(i, out item);
                     try
                     {
-                        string path;
-                        item.GetDisplayName(SIGDN_FILESYSPATH, out path);
+                        string path = ShellItems.GetPath(item);
 
                         if (string.Equals(path.TrimEnd('\\'), target, StringComparison.OrdinalIgnoreCase))
                         {
@@ -180,7 +137,7 @@ namespace FSUtils.WindowsLibraries
         public static void SetDefaultSaveFolder(string libraryPath, string folderPath)
         {
             var lib = Load(libraryPath, true);
-            var folder = ItemFromPath(folderPath);
+            var folder = ShellItems.FromPath(folderPath);
             try {
                 lib.SetDefaultSaveFolder(DSFT_DETECT, folder);
                 lib.Commit();
@@ -209,8 +166,7 @@ namespace FSUtils.WindowsLibraries
                     array.GetItemAt(i, out item);
                     try
                     {
-                        string path;
-                        item.GetDisplayName(SIGDN_FILESYSPATH, out path);
+                        string path = ShellItems.GetPath(item);
                         paths.Add(path);
                     }
                     finally
@@ -225,24 +181,6 @@ namespace FSUtils.WindowsLibraries
             }
 
             return paths.ToArray();
-        }
-    }
-
-    public static class KnownFolders
-    {
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
-        static extern void SHGetKnownFolderPath(
-            ref Guid rfid,
-            uint dwFlags,
-            IntPtr hToken,
-            [MarshalAs(UnmanagedType.LPWStr)] out string ppszPath
-        );
-
-        public static string GetPath(Guid id)
-        {
-            string path;
-            SHGetKnownFolderPath(ref id, 0, IntPtr.Zero, out path);
-            return path;
         }
     }
 }
