@@ -13,4 +13,14 @@ Describe "Write-Separator Parameter Validation" {
         { Write-Separator -Width 1 } | Should -Not -Throw
     }
 
+    It 'uses the specified width' {
+        $output = Write-Separator -Character '*' -Width 4 6>&1
+        $output | Should -Be '****'
+    }
+
+    It 'supports a multi-character separator pattern' {
+        $output = Write-Separator -Character '-=' -Width 3 6>&1
+        $output | Should -Be '-=-=-='
+    }
+
 }
