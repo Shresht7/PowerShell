@@ -26,9 +26,9 @@ function Export-Library {
         ) | ForEach-Object {
             [PSCustomObject]@{
                 URL                           = $_.simpleLocation.url
-                IsDefaultSaveLocation         = $_.isDefaultSaveLocation
-                IsDefaultNonOwnerSaveLocation = $_.isDefaultNonOwnerSaveLocation
-                IsSupported                   = $_.isSupported
+                IsDefaultSaveLocation         = $_.isDefaultSaveLocation -eq 'true'
+                IsDefaultNonOwnerSaveLocation = $_.isDefaultNonOwnerSaveLocation -eq 'true'
+                IsSupported                   = $_.isSupported -eq 'true'
                 Publisher                     = $_.publisher
                 Description                   = $_.description
             }
@@ -39,7 +39,7 @@ function Export-Library {
             Name          = $root.Name
             OwnerSID      = $root.ownerSID
             Version       = $root.Version
-            IsPinned      = $root.isLibraryPinned
+            IsPinned      = $root.isLibraryPinned -eq 'true'
             IconReference = $root.iconReference
             FolderType    = $root.templateInfo.folderType
             Locations     = $locations
