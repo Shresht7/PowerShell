@@ -68,6 +68,10 @@ namespace FSUtils.WindowsLibraries
 
         static Guid IID_IShellItem = new Guid("43826d1e-e718-42ee-bc55-a1e261c37bfe");
 
+        const int LFF_ALLITEMS = 3;
+        const uint SIGDN_FILESYSPATH = 0x80058000;
+        static Guid IID_IShellItemArray = new Guid("b63ea76d-1f85-456f-a19c-48159efa858b");
+
         [DllImport("shell32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
         static extern void SHCreateItemFromParsingName(
             string pszPath, IntPtr pbc, ref Guid riid,
@@ -132,13 +136,43 @@ namespace FSUtils.WindowsLibraries
         public static void RemoveFolder(string libraryPath, string folderPath)
         {
             var lib = Load(libraryPath, true);
-            var folder = ItemFromPath(folderPath);
-            try {
-                lib.RemoveFolder(folder);
-                lib.Commit();
+            IShellItemArray array = null;
+            try
+            {
+                lib.GetFolders(LFF_ALLITEMS, ref IID_IShellItemArray, out array);
+
+                uint count;
+                array.GetCount(out count);
+
+                string target = folderPath.TrimEnd('\\');
+
+                for (uint i = 0; i < count; i++)
+                {
+                    IShellItem item;
+                    array.GetItemAt(i, out item);
+                    try
+                    {
+                        string path;
+                        item.GetDisplayName(SIGDN_FILESYSPATH, out path);
+
+                        if (string.Equals(path.TrimEnd('\\'), target, StringComparison.OrdinalIgnoreCase))
+                        {
+                            lib.RemoveFolder(item);
+                            lib.Commit();
+                            return;
+                        }
+                    }
+                    finally
+                    {
+                        Marshal.ReleaseComObject(item);
+                    }
+                }
+
+                throw new InvalidOperationException("Folder not found in library: " + folderPath);
             }
-            finally {
-                Marshal.ReleaseComObject(folder);
+            finally
+            {
+                if (array != null) Marshal.ReleaseComObject(array);
                 Marshal.ReleaseComObject(lib);
             }
         }
@@ -156,10 +190,6 @@ namespace FSUtils.WindowsLibraries
                 Marshal.ReleaseComObject(lib);
             }
         }
-
-        const int LFF_ALLITEMS = 3;
-        const uint SIGDN_FILESYSPATH = 0x80058000;
-        static Guid IID_IShellItemArray = new Guid("b63ea76d-1f85-456f-a19c-48159efa858b");
 
         public static string[] GetFolders(string libraryPath)
         {
