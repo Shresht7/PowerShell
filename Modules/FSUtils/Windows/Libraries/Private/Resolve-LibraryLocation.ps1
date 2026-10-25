@@ -21,12 +21,10 @@ function Resolve-LibraryLocation {
             Resolve-KnownFolder -Id $Guid
         }
         catch {
-            Write-Output $URL
+            return $URL
         }
-
-        return
     }
 
     # Return URL if not knownfolder
-    $URL
+    return $URL
 }

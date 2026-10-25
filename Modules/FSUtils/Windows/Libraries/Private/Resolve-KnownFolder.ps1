@@ -19,6 +19,8 @@ function Resolve-KnownFolder {
 using System;
 using System.Runtime.InteropServices;
 
+namespace WindowsLibrariesPowerShellModule
+{
 public static class KnownFolderApi
 {
     [DllImport("shell32.dll")]
@@ -53,10 +55,11 @@ public static class KnownFolderApi
         }
     }
 }
+}
 "@
     }
 
     # Get the path from the API
-    [KnownFolderApi]::GetPath($Id)
+    [WindowsLibrariesPowerShellModule.KnownFolderApi]::GetPath($Id)
 
 }
