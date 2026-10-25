@@ -13,3 +13,4 @@ Get-ChildItem -Path "$PSScriptRoot\Public" -Filter "*.ps1" -Recurse | ForEach-Ob
 
 # Windows Libraries
 . "$PSScriptRoot\Libraries\Initialize-Libraries.ps1"
+. "$PSScriptRoot\SavedSearch\Initialize-SavedSearch.ps1"
