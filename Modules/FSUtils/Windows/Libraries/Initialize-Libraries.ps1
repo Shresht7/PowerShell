@@ -29,7 +29,7 @@ $LibraryCompleter = {
 
 $LibraryCommands = @(
     @{ Name = 'Get-Library'; Parameter = 'Name' }
-    @{ Name = 'Open-Library'; Parameter = 'Library' }
+    @{ Name = 'Open-Library'; Parameter = 'Name' }
     @{ Name = 'Export-Library'; Parameter = 'Name' }
 )
 

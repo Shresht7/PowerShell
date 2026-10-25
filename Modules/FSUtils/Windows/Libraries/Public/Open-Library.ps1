@@ -19,15 +19,16 @@ function Open-Library {
     param(
         # The name of the library to open in Explorer
         [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [string] $Library
+        [Alias('Library', 'LibraryName')]
+        [string] $Name
     )
 
     process {
-        $Target = if ([string]::IsNullOrEmpty($Library)) {
+        $Target = if ([string]::IsNullOrEmpty($Name)) {
             Get-LibraryPath
         }
         else {
-            (Get-LibraryFile -Name $Library).FullName
+            (Get-LibraryFile -Name $Name).FullName
         }
 
         if (-not (Test-Path -LiteralPath $Target)) {
