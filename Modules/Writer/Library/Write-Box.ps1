@@ -1,3 +1,19 @@
+<#
+.SYNOPSIS
+    Writes text inside a styled box.
+.DESCRIPTION
+    Displays text in a box with optional padding and style.
+    Supports Ascii, Single, and Rounded styles.
+.EXAMPLE
+    Write-Box -Text 'Hello'
+    # Outputs a box with 'Hello' inside
+.EXAMPLE
+    Write-Box -Text 'Hello' -Padding 4
+    # Outputs a box with extra padding
+.EXAMPLE
+    Write-Box -Text 'Hello' -Style Rounded
+    # Outputs a rounded box with 'Hello' inside
+#>
 function Write-Box {
 
     [CmdletBinding()]
