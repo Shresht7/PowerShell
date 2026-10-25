@@ -13,5 +13,6 @@ Get-ChildItem -Path "$PSScriptRoot\Public" -Filter "*.ps1" -Recurse | ForEach-Ob
 # -----------------
 
 if ($IsWindows) {
+    . "$PSScriptRoot\Windows\Initialize-WindowsFSUtils.ps1"
     . "$PSScriptRoot\Windows\Libraries\Initialize-Libraries.ps1"
 }
