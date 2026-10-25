@@ -28,10 +28,20 @@ function Get-ReversedString(
     [Alias("String", "Input", "InputObject", "Name", "FullName", "InputString")]
     [string] $Text
 ) {
-    # Convert to character array
-    $CharArray = $Text.ToCharArray()
-    # Reverse the array
-    [Array]::Reverse($CharArray)
-    # Join the array back into a string and return
-    -join $CharArray
+
+    $TextElements = [System.Globalization.StringInfo]::ParseCombiningCharacters($Text)
+
+    $ReversedText = for ($Index = $TextElements.Count - 1; $Index -ge 0; $Index--) {
+        $Start = $TextElements[$Index]
+        if ($Index -eq $TextElements.Count - 1) {
+            $Length = $Text.Length - $Start
+        }
+        else {
+            $Length = $TextElements[$Index + 1] - $Start
+        }
+        $Text.Substring($Start, $Length)
+    }
+
+    -join $ReversedText
+
 }
