@@ -26,7 +26,11 @@ function Remove-LibraryFolder {
     process {
 
         $library = Resolve-LibraryPath $Name
-        $resolvedPath = (Resolve-Path -LiteralPath $Path).ProviderPath
+
+        # Turns a relative path into a full path without checking if it exists
+        # We need to do this incase the folder has already been deleted but the library still tracks the path
+        # Trying to resolve a path that does not exist will fail with Resolve-Path; hence this
+        $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
 
         if ($PSCmdlet.ShouldProcess($Name, "Remove '$resolvedPath'")) {
             [FSUtils.WindowsLibraries.ShellLibraryInterop]::RemoveFolder($library, $resolvedPath)
