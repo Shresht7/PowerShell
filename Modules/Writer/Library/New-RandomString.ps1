@@ -17,6 +17,7 @@ function New-RandomString(
 
     # The characters to use for the random string
     [Parameter(ValueFromPipeline)]
+    [ValidateNotNullOrEmpty()]
     [string] $Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 ) {
     $charArray = $Characters.ToCharArray()
