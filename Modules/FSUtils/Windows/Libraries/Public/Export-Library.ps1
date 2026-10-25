@@ -12,13 +12,13 @@ function Export-Library {
 
     process {
 
-        $File = Get-LibraryFile | Where-Object BaseName -eq $Name
+        $File = Get-LibraryFile -Name $Name
 
         if (-not $File) {
             throw "Library '$Name' not found!"
         }
 
-        [xml]$XML = Get-Content $File.FullName -Raw
+        [xml]$XML = Read-LibraryDefinition $Name
         $root = $XML.libraryDescription
 
         $locations = @(
@@ -35,6 +35,7 @@ function Export-Library {
         }
 
         $export = [PSCustomObject]@{
+            PSTypeName    = 'FSUtils.WindowsLibraries.LibraryExport'
             Name          = $root.Name
             OwnerSID      = $root.ownerSID
             Version       = $root.Version
@@ -45,7 +46,7 @@ function Export-Library {
         }
 
         if ($Path) {
-            $json = $export | ConvertTo-Json -Depth 2
+            $json = $export | ConvertTo-Json -Depth 10
             $json | Set-Content -Path $Path -Encoding UTF8
             Get-Item -Path $Path
         }
