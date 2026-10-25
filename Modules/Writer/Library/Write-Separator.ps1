@@ -23,18 +23,15 @@
 #>
 function Write-Separator(
     # The character to use for the separator. (Defaults to "-")
-    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
     [Alias('Symbol', 'Char')]
     [string] $Character = '-',
 
     # The number of times to repeat the character. (Defaults to the WindowSize.Width)
-    [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 1)]
     [Alias('Length')]
     [ValidateRange(1, [int]::MaxValue)]
     [UInt32] $Width = (Get-Host).UI.RawUI.WindowSize.Width,
 
     # The ansi color/style of the separator. Accepts an array of strings
-    [Parameter(Position = 2)]
     [Alias('Color')]
     [string[]] $Style
 ) {
