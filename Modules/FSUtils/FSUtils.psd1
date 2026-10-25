@@ -96,6 +96,7 @@
         "Find-LibraryPath",
         "Get-DesktopIconVisibility",
         "Get-FileVisibility",
+        "Set-FileVisibility",
         "Switch-FileVisibility"
     )
 
