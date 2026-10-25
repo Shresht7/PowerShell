@@ -9,6 +9,11 @@ Describe 'New-RandomString Validation' {
         { New-RandomString -Length 5 -Characters '' } | Should -Throw
     }
 
+    It 'generates the requested number of characters' {
+        $result = New-RandomString -Length 1000 -Characters 'abc'
+        $result.ToCharArray() | Should -HaveCount 1000
+    }
+
     It 'generates characters from the supplied character set' {
         $result = New-RandomString -Length 20 -Characters 'abc'
         $result.ToCharArray() | Should -HaveCount 20
