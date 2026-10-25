@@ -24,20 +24,20 @@ function Open-Library {
     )
 
     process {
-        $Target = if ([string]::IsNullOrEmpty($Name)) {
-            Get-LibraryPath
+        if ([string]::IsNullOrEmpty($Name)) {
+            $Target = Get-LibraryPath
         }
         else {
-            (Get-LibraryFile -Name $Name).FullName
-        }
-
-        if (-not (Test-Path -LiteralPath $Target)) {
-            Write-Error "Invalid Library Path: $Target"
-            return
+            $File = Get-LibraryFile -Name $Name
+            if (-not $File) {
+                Write-Error "Library '$Name' not found"
+                return
+            }
+            $Target = $File.FullName
         }
 
         Write-Verbose "Opening $Target"
-        Start-Process explorer.exe $Target
+        Start-Process explorer.exe -ArgumentList "`"$Target`""
     }
 
 }
