@@ -53,6 +53,22 @@ namespace PSFSUtils.Shell
             item.GetDisplayName(SIGDN_FILESYSPATH, out path);
             return path;
         }
+
+        [DllImport("shell32.dll", PreserveSig = false)]
+        static extern void SHGetKnownFolderItem(
+            ref Guid rfid,
+            uint flags,
+            IntPtr hToken,
+            ref Guid riid,
+            [MarshalAs(UnmanagedType.Interface)] out IShellItem ppv
+        );
+
+        public static IShellItem FromKnownFolder(Guid id)
+        {
+            IShellItem item;
+            SHGetKnownFolderItem(ref id, 0, IntPtr.Zero, ref IID_IShellItem, out item);
+            return item;
+        }
     }
 
     public static class KnownFolders
