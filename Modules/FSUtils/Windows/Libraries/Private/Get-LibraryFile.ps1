@@ -1,8 +1,8 @@
 <#
 .SYNOPSIS
-    Gets library file(s) from the Libraries folder
+    Gets library file(s) from the Libraries folder and current location
 .DESCRIPTION
-    Gets library files from the Windows Libraries folder.
+    Gets library files from the Windows Libraries folder and the current location
     If a name is provided, only that library is returned.
 .EXAMPLE
     Get-LibraryFile
@@ -18,8 +18,8 @@ function Get-LibraryFile {
         [string] $Name
     )
 
-    # Get all library files (*.library-ms) from the Windows Libraries folder
-    $libraryFiles = Get-ChildItem -LiteralPath (Get-LibraryPath) -Filter '*.library-ms'
+    # Get all library files (*.library-ms) from the Windows Libraries folder and the current location
+    $libraryFiles = Get-ChildItem -LiteralPath (Get-LibraryPath), (Get-Location) -Filter '*.library-ms'
 
     # Filter by name if provided
     if ($Name) {
