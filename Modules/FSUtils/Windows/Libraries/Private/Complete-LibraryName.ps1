@@ -10,17 +10,14 @@ function Complete-LibraryName {
         [string] $WordToComplete
     )
 
-    Get-Library | Where-Object {
-        $_.Name.StartsWith(
-            $WordToComplete,
-            [System.StringComparison]::OrdinalIgnoreCase
-        )
-    } | ForEach-Object {
-        [CompletionResult]::new(
-            $_.Name,
-            $_.Name,
-            [CompletionResultType]::ParameterValue,
-            "Library: $($_.Name); Folders: $($_.Folders)"
-        )
+    foreach ($Library in Get-Library) {
+        if ($Library.Name.StartsWith($WordToComplete, [System.StringComparison]::OrdinalIgnoreCase)) {
+            [CompletionResult]::new(
+                $Library.Name,
+                $Library.Name,
+                [CompletionResultType]::ParameterValue,
+                "Library: $($Library.Name); Folders: $($Library.FolderCount)"
+            )
+        }
     }
 }
