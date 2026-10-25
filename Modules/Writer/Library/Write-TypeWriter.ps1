@@ -22,10 +22,12 @@ function Write-TypeWriter {
     
         # Characters per minute
         [Parameter(ParameterSetName = "CPM")]
+        [ValidateRange(1, [uint32]::MaxValue)]
         [uint32] $CPM = 350,
     
         # Speed of the typewriter (150ms by default)
         [Parameter(ParameterSetName = "Speed")]
+        [ValidateRange(1, [uint32]::MaxValue)]
         [uint32] $Speed = 150,
     
         # The minimum time for a keystroke (default: 10ms)
