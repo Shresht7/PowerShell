@@ -25,7 +25,7 @@ function Get-SavedSearch {
             }
         }
 
-        $sort = foreach ($s in $xml.SelectNode('//sortList/sort')) {
+        $sort = foreach ($s in $xml.SelectNodes('//sortList/sort')) {
             [PSCustomObject]@{
                 Property  = $s.GetAttribute('viewField')
                 Direction = $s.GetAttribute('direction')
@@ -36,8 +36,8 @@ function Get-SavedSearch {
             PSTypeName = 'PSFSUtils.WindowsSavedSearch.SavedSearch'
             Name       = $file.BaseName
             Path       = $file.FullName
-            Scope      = @($xml.SelectNode('//scope/include')).ForEach({ $_.GetAttribute('path') })
-            Kind       = @($xml.SelectNode('//kindList/kind')).ForEach({ $_.GetAttribute('name') })
+            Scope      = @($xml.SelectNodes('//scope/include')).ForEach({ $_.GetAttribute('path') })
+            Kind       = @($xml.SelectNodes('//kindList/kind')).ForEach({ $_.GetAttribute('name') })
             Conditions = @($conditions)
             Sort       = @($sort)
         }
