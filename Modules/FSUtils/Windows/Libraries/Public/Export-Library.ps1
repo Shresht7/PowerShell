@@ -35,7 +35,7 @@ function Export-Library {
         }
 
         $export = [PSCustomObject]@{
-            PSTypeName    = 'FSUtils.WindowsLibraries.LibraryExport'
+            PSTypeName    = 'PSFSUtils.WindowsLibraries.LibraryExport'
             Name          = $root.Name
             OwnerSID      = $root.ownerSID
             Version       = $root.Version

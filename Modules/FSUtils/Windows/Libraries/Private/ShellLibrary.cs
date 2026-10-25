@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 using PSFSUtils.Shell;
 
-namespace FSUtils.WindowsLibraries
+namespace PSFSUtils.WindowsLibraries
 {
     [ComImport, Guid("11a66efa-382e-451a-9234-1e0e12ef3085")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]

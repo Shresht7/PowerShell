@@ -40,7 +40,7 @@ function Get-LibraryFolder {
 
             # Construct object and output
             [PSCustomObject]@{
-                PSTypeName            = 'FSUtils.WindowsLibraries.LibraryLocation'
+                PSTypeName            = 'PSFSUtils.WindowsLibraries.LibraryLocation'
                 Library               = $Name
                 Type                  = $Type
                 URL                   = $URL

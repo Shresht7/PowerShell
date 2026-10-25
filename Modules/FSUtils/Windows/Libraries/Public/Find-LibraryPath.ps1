@@ -28,7 +28,7 @@ function Find-LibraryPath {
                 $folderPath = $folder.ResolvedPath.TrimEnd('\')
                 if ($folderPath -like $SearchPath) {
                     [PSCustomObject]@{
-                        PSTypeName            = 'FSUtils.WindowsLibraries.LibraryMatch'
+                        PSTypeName            = 'PSFSUtils.WindowsLibraries.LibraryMatch'
                         Library               = $Library.Name
                         Type                  = $folder.Type
                         Path                  = $folder.ResolvedPath

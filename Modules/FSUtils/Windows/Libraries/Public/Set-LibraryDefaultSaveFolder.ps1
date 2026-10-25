@@ -23,7 +23,7 @@ function Set-LibraryDefaultSaveFolder {
     $library = Resolve-LibraryPath $Name
     $resolvedPath = (Resolve-Path -LiteralPath $Path).ProviderPath
     if ($PSCmdlet.ShouldProcess($Name, "Set default save folder to '$resolvedPath'")) {
-        [FSUtils.WindowsLibraries.ShellLibraryInterop]::SetDefaultSaveFolder($library, $resolvedPath)
+        [PSFSUtils.WindowsLibraries.ShellLibraryInterop]::SetDefaultSaveFolder($library, $resolvedPath)
     }
 
 }

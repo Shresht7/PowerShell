@@ -35,7 +35,7 @@ function Get-Library {
 
         # Construct object and output
         [PSCustomObject]@{
-            PSTypeName  = 'FSUtils.WindowsLibraries.Library'
+            PSTypeName  = 'PSFSUtils.WindowsLibraries.Library'
             Name        = $File.BaseName
             Path        = $File.FullName
             Pinned      = $XML.libraryDescription.isLibraryPinned -eq 'true'            

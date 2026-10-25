@@ -33,7 +33,7 @@ function Remove-LibraryFolder {
         $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
 
         if ($PSCmdlet.ShouldProcess($Name, "Remove '$resolvedPath'")) {
-            [FSUtils.WindowsLibraries.ShellLibraryInterop]::RemoveFolder($library, $resolvedPath)
+            [PSFSUtils.WindowsLibraries.ShellLibraryInterop]::RemoveFolder($library, $resolvedPath)
         }
 
     }

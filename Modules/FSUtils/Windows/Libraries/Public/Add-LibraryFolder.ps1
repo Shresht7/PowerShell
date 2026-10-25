@@ -37,7 +37,7 @@ function Add-LibraryFolder {
         $resolvedPath = (Resolve-Path -LiteralPath $Path).ProviderPath
 
         if ($PSCmdlet.ShouldProcess($Name, "Add '$resolvedPath'")) {
-            [FSUtils.WindowsLibraries.ShellLibraryInterop]::AddFolder($library, $resolvedPath)
+            [PSFSUtils.WindowsLibraries.ShellLibraryInterop]::AddFolder($library, $resolvedPath)
         }
 
     }
