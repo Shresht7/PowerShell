@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace FSUtils.WindowsLibraries
@@ -15,6 +16,23 @@ namespace FSUtils.WindowsLibraries
         void Compare(IShellItem psi, uint hint, out int piOrder);
     }
 
+    [ComImport, Guid("b63ea76d-1f85-456f-a19c-48159efa858b")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IShellItemArray
+    {
+        // We don't call these, but they are required to hold the vtable positions
+        void BindToHandler(IntPtr pbc, ref Guid bhid, ref Guid riid, out IntPtr ppv);
+        void GetPropertyStore(int flags, ref Guid riid, out IntPtr ppv);
+        void GetPropertyDescriptionList(IntPtr keyType, ref Guid riid, out IntPtr ppv);
+        void GetAttributes(int attribFlags, uint sfgaoMask, out uint psfgaoAttribs);
+
+        // The two we actually use
+        void GetCount(out uint pdwNumItems);
+        void GetItemAt(uint index, out IShellItem ppsi);
+
+        void EnumItems(out IntPtr ppenumShellItems);
+    }
+
     [ComImport, Guid("11a66efa-382e-451a-9234-1e0e12ef3085")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IShellLibrary
@@ -23,7 +41,7 @@ namespace FSUtils.WindowsLibraries
         void LoadLibraryFromKnownFolder(ref Guid kfidLibrary, uint grfMode);
         void AddFolder(IShellItem psiLocation);
         void RemoveFolder(IShellItem psiLocation);
-        void GetFolders(int lff, ref Guid riid, out IntPtr ppv);
+        void GetFolders(int lff, ref Guid riid, [MarshalAs(UnmanagedType.Interface)] out IShellItemArray ppv);
         void ResolveFolder(IShellItem psiFolderToResolve, uint dwTimeout, ref Guid riid, out IntPtr ppv);
         void GetDefaultSaveFolder(int dsft, ref Guid riid, out IntPtr ppv);
         void SetDefaultSaveFolder(int dsft, IShellItem psi);
@@ -137,6 +155,46 @@ namespace FSUtils.WindowsLibraries
                 Marshal.ReleaseComObject(folder);
                 Marshal.ReleaseComObject(lib);
             }
+        }
+
+        const int LFF_ALLITEMS = 3;
+        const uint SIGDN_FILESYSPATH = 0x80058000;
+        static Guid IID_IShellItemArray = new Guid("b63ea76d-1f85-456f-a19c-48159efa858b");
+
+        public static string[] GetFolders(string libraryPath)
+        {
+            var lib = Load(libraryPath, false);
+            IShellItemArray array = null;
+            var paths = new List<string>();
+            try
+            {
+                lib.GetFolders(LFF_ALLITEMS, ref IID_IShellItemArray, out array);
+
+                uint count;
+                array.GetCount(out count);
+
+                for (uint i = 0; i < count; i++)
+                {
+                    IShellItem item;
+                    array.GetItemAt(i, out item);
+                    try
+                    {
+                        string path;
+                        item.GetDisplayName(SIGDN_FILESYSPATH, out path);
+                        paths.Add(path);
+                    }
+                    finally
+                    {
+                        Marshal.ReleaseComObject(item);
+                    }
+                }
+            }
+            finally {
+                if (array != null) Marshal.ReleaseComObject(array);
+                Marshal.ReleaseComObject(lib);
+            }
+
+            return paths.ToArray();
         }
     }
 
