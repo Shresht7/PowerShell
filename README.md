@@ -82,10 +82,10 @@ Search the web and manage browser bookmarks.
 
 - `Get-Bookmarks`, `Get-BookmarksPath`, `Get-BrowserDataPath`, `Get-DefaultBrowser`, `Search-Web`
 
-### [Writer](./Modules/Writer/) `v0.1.0`
-Utilities for writing strings to the console.
+### [Writer](./Modules/Writer/) `v0.2.0`
+Utilities for writing and formatting text in the console.
 
-- `Get-ReversedString`, `New-RandomString`, `Write-Separator`, `Write-TypeWriter`
+- `Get-ReversedString`, `New-RandomString`, `Write-Box`, `Write-Heading`, `Write-Separator`, `Write-StatusMessage`, `Write-TypeWriter`
 
 ---
 
