@@ -19,6 +19,7 @@ function Remove-LibraryFolder {
         [string] $Name,
 
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Alias('FullName')]
         [string] $Path
     )
 
