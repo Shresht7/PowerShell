@@ -7,7 +7,9 @@
 function Resolve-LibraryPath {
     
     param([string] $Name)
-    
+
+    Initialize-ShellLibraryInterop
+
     $path = if ($Name -like '*.library-ms') {
         $Name 
     }

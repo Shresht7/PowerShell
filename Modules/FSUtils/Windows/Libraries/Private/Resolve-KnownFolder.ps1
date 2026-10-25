@@ -13,5 +13,7 @@ function Resolve-KnownFolder {
         [Guid] $Id
     )
 
+    Initialize-ShellLibraryInterop
+
     [FSUtils.WindowsLibraries.KnownFolders]::GetPath($Id)
 }

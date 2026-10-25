@@ -17,6 +17,8 @@ function New-Library {
         [string] $Name
     )
 
+    Initialize-ShellLibraryInterop
+
     if ($PSCmdlet.ShouldProcess($Name, 'Create Library')) {
         $LibPath = Get-LibraryPath
         [FSUtils.WindowsLibraries.ShellLibraryInterop]::Create($LibPath, $Name)
