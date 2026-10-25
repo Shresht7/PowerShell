@@ -12,8 +12,9 @@ function Complete-LibraryName {
 
     foreach ($Library in Get-Library) {
         if ($Library.Name.StartsWith($WordToComplete, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $text = if ($Library.Name -match '\s') { "`"$Library.Name`"" } else { $Library.Name }
             [CompletionResult]::new(
-                $Library.Name,
+                $text,
                 $Library.Name,
                 [CompletionResultType]::ParameterValue,
                 "Library: $($Library.Name); Folders: $($Library.FolderCount)"
