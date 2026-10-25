@@ -182,5 +182,21 @@ namespace PSFSUtils.WindowsLibraries
 
             return paths.ToArray();
         }
+
+        public static void AddKnownFolder(string libraryPath, Guid knownFolderId)
+        {
+            var lib = Load(libraryPath, true);
+            var folder = ShellItems.FromKnownFolder(knownFolderId);
+            try
+            {
+                lib.AddFolder(folder);
+                lib.Commit();
+            }
+            finally
+            {
+                Marshal.ReleaseComObject(folder);
+                Marshal.ReleaseComObject(lib);
+            }
+        }
     }
 }
