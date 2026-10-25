@@ -38,11 +38,6 @@ function Write-Separator(
     [Alias('Color')]
     [string[]] $Style
 ) {
-    # If the width is not valid, default to 80
-    if ($Width -le 0) {
-        $Width = 80
-    }
-
     # Create the separator
     $Separator = ($Character * $Width)
 
