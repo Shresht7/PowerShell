@@ -27,6 +27,13 @@ $LibraryCompleter = {
     Complete-LibraryName -WordToComplete $WordToComplete
 }
 
-Register-ArgumentCompleter -CommandName Get-Library -ParameterName Name -ScriptBlock $LibraryCompleter
-Register-ArgumentCompleter -CommandName Open-Library -ParameterName Library -ScriptBlock $LibraryCompleter
-Register-ArgumentCompleter -CommandName Export-Library -ParameterName Name -ScriptBlock $LibraryCompleter
+$LibraryCommands = @(
+    @{ Name = 'Get-Library'; Parameter = 'Name' }
+    @{ Name = 'Open-Library'; Parameter = 'Library' }
+    @{ Name = 'Export-Library'; Parameter = 'Name' }
+)
+
+foreach ($cmd in $LibraryCommands) {
+    Register-ArgumentCompleter -CommandName $cmd.Name -ParameterName $cmd.Parameter -ScriptBlock $LibraryCompleter
+}
+
