@@ -22,22 +22,11 @@ function Remove-Library {
         [string] $Name
     )
 
-    begin {
-        $defaultLibraries = @(
-            "Camera Roll",
-            "Documents",
-            "Music", 
-            "Pictures", 
-            "SavedPictures",
-            "Videos"
-        )
-    }
-
     process {
         $resolvedPath = Resolve-LibraryPath $Name
         $baseName = [System.IO.Path]::GetFileNameWithoutExtension($resolvedPath)
 
-        if ($defaultLibraries -contains $baseName) {
+        if (Test-DefaultLibrary $baseName) {
             Write-Error "Cannot remove default library '$baseName'"
             return
         }
