@@ -1,3 +1,6 @@
+# IMPORTS
+# -------
+
 # Import Private Functions
 Get-ChildItem -Path "$PSScriptRoot\Private" -Filter "*.ps1" -Recurse | ForEach-Object {
     . $_.FullName
@@ -8,11 +11,10 @@ Get-ChildItem -Path "$PSScriptRoot\Public" -Filter "*.ps1" -Recurse | ForEach-Ob
     . $_.FullName
 }
 
-# -----------------
-# WINDOWS LIBRARIES
-# -----------------
+
+# WINDOWS SPECIFIC MODULES
+# ------------------------
 
 if ($IsWindows) {
-    . "$PSScriptRoot\Windows\Initialize-WindowsFSUtils.ps1"
-    . "$PSScriptRoot\Windows\Libraries\Initialize-Libraries.ps1"
+    . "$PSScriptRoot\Windows\Initialize.ps1"
 }
