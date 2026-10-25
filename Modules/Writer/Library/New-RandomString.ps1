@@ -21,10 +21,8 @@ function New-RandomString(
     [string] $Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 ) {
     $charArray = $Characters.ToCharArray()
-    $randomChars = ""
-    for ($i = 0; $i -lt $Length; $i++) {
-        $randomChar = Get-Random -InputObject $charArray
-        $randomChars += $randomChar
-    }
-    return $randomChars
+    $randomChars = for ($i = 0; $i -lt $Length; $i++) {
+        Get-Random -InputObject $charArray
+    } 
+    -join $randomChars
 }
