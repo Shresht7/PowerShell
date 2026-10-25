@@ -35,6 +35,10 @@ $LibraryCommands = @(
     @{ Name = 'Get-Library'; Parameter = 'Name' }
     @{ Name = 'Open-Library'; Parameter = 'Name' }
     @{ Name = 'Export-Library'; Parameter = 'Name' }
+    @{ Name = 'Get-LibraryFolder'; Parameter = 'Name' }
+    @{ Name = 'Add-LibraryFolder'; Parameter = 'Name' }
+    @{ Name = 'Remove-LibraryFolder'; Parameter = 'Name' }
+    @{ Name = 'Set-LibraryDefaultSaveFolder'; Parameter = 'Name' }
 )
 
 foreach ($cmd in $LibraryCommands) {
