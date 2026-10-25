@@ -28,6 +28,11 @@ function Add-LibraryFolder {
 
     process {
 
+        if (-not (Test-Path -LiteralPath $Path -PathType Container)) {
+            Write-Error "Not a folder: $Path"
+            return
+        }
+
         $library = Resolve-LibraryPath $Name
         $resolvedPath = (Resolve-Path -LiteralPath $Path).ProviderPath
 
