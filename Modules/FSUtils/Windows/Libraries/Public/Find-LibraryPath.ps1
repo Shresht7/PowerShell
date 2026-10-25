@@ -1,4 +1,3 @@
-
 <#
 .SYNOPSIS
     Finds which libraries the folder belongs to
@@ -22,13 +21,14 @@ function Find-LibraryPath {
     )
 
     process {
+        $SearchPath = $SearchPath.TrimEnd('\')
         foreach ($Library in Get-Library) {
-            $folders = Get-Library $Library.Name
+            $folders = Get-LibraryFolder $Library.Name
             foreach ($folder in $folders) {
-                $SearchPath = $SearchPath.TrimEnd('\')
                 $folderPath = $folder.ResolvedPath.TrimEnd('\')
                 if ($folderPath -like $SearchPath) {
                     [PSCustomObject]@{
+                        PSTypeName            = 'FSUtils.WindowsLibraries.LibraryMatch'
                         Library               = $Library.Name
                         Type                  = $folder.Type
                         Path                  = $folder.ResolvedPath
