@@ -8,5 +8,4 @@
 function Initialize-ShellLibraryInterop {
     if ('PSFSUtils.WindowsLibraries.ShellLibraryInterop' -as [type]) { return }
     Initialize-ShellInterop # ensure shell types are loaded
-    Add-Type -Path (Join-Path $PSScriptRoot 'ShellLibrary.cs')
 }
