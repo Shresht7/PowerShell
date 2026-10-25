@@ -100,3 +100,67 @@ Describe "Library Lifecycle" {
     }
 
 }
+
+Describe 'Known Folders' {
+
+    BeforeAll {
+        $DocumentsId = [guid]'FDD39AD0-238F-46AF-ADB4-6C85480369C7'
+    }
+
+    Context 'Resolve-KnownFolder' {
+        It 'resolves the Documents known folder' {
+            Resolve-KnownFolder -Id $DocumentsId | Should -Be ([Environment]::GetFolderPath('MyDocuments'))
+        }
+
+        It 'returns the same result on a second call' {
+            # Regression: the old inline Add-Type failed on every call after the first
+            $first = Resolve-KnownFolder -Id $DocumentsId
+            $second = Resolve-KnownFolder -Id $DocumentsId
+            $second | Should -Be $first
+        }
+
+        It 'throws for an unknown known folder id' {
+            { Resolve-KnownFolder -Id ([guid]::NewGuid()) } | Should -Throw
+        }
+    }
+
+    Context 'Resolve-LibraryLocation' {
+        It 'returns exactly one value for a known folder URL' {
+            # Regression: a missing return used to emit both the path and the URL
+            $result = @(Resolve-LibraryLocation -Url "knownfolder:{$DocumentsId}")
+            $result.Count | Should -Be 1
+            $result[0] | Should -Be ([Environment]::GetFolderPath('MyDocuments'))
+        }
+
+        It 'falls back to the raw URL for an unknown known folder' {
+            $url = "knownfolder:{$([guid]::NewGuid())}"
+            Resolve-LibraryLocation -URL $url | Should -Be $url
+        }
+
+        It 'passes a plain path through unchanged' {
+            Resolve-LibraryLocation -URL 'C:\Some\Path' | Should -Be 'C:\Some\Path'
+        }
+    }
+
+    Context 'Get-LibraryFolder on Documents' {
+        BeforeAll {
+            $folders = @(Get-LibraryFolder -Name 'Documents')
+        }
+
+        It 'returns at least one folder' {
+            $folders.Count | Should -BeGreaterThan 0
+        }
+
+        It 'resolves every known folder entry to a single path string' {
+            foreach ($f in $folders.Where({ $_.Type -eq 'KnownFolder' })) {
+                $f.ResolvedPath | Should -BeOfType [string]
+                $f.ResolvedPath | Should -Not -BeLike 'knownfolder:*'
+            }
+        }
+
+        It 'marks exactly one entry as the default save location' {
+            @($folders.Where({ $_.IsDefaultSaveLocation })).Count | Should -Be 1
+        }
+    }
+
+}
