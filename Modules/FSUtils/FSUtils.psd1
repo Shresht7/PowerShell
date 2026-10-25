@@ -93,6 +93,7 @@
         "Remove-LibraryFolder",
         "Get-LibraryPath",
         "Export-Library",
+        "Import-Library",
         "Open-Library",
         "Find-LibraryPath",
         "Get-DesktopIconVisibility",
