@@ -11,7 +11,7 @@
     Opens the Pictures library in Explorer
 .EXAMPLE
     Open-Library
-    Opens the default library in Explorer
+    Opens the Windows Libraries folder
 #>
 function Open-Library {
 
@@ -22,21 +22,21 @@ function Open-Library {
         [string] $Library
     )
 
-    Write-Verbose $Library
+    process {
+        $Target = if ([string]::IsNullOrEmpty($Library)) {
+            Get-LibraryPath
+        }
+        else {
+            (Get-LibraryFile -Name $Library).FullName
+        }
 
-    if ([string]::IsNullOrEmpty($Library)) {
-        $Library = Get-LibraryPath
-    }
-    else {
-        $Library = Get-LibraryFile $Library
-    }
+        if (-not (Test-Path -LiteralPath $Target)) {
+            Write-Error "Invalid Library Path: $Target"
+            return
+        }
 
-    if (-not (Test-Path -Path $Library)) {
-        Write-Error "Invalid library path: $Library"
-        return
+        Write-Verbose "Opening $Target"
+        Start-Process explorer.exe $Target
     }
-
-    Write-Verbose "Opening '$Library' in Explorer"
-    Start-Process explorer.exe $Library
 
 }
