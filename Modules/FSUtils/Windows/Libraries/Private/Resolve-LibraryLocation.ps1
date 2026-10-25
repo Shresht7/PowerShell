@@ -18,7 +18,7 @@ function Resolve-LibraryLocation {
         $Guid = [guid] $Matches[1]
 
         try {
-            Resolve-KnownFolder -Id $Guid
+            return Resolve-KnownFolder -Id $Guid
         }
         catch {
             return $URL
