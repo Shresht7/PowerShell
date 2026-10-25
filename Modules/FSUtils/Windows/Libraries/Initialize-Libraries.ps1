@@ -2,6 +2,10 @@
 # IMPORTS
 # -------
 
+if (-not ('FSUtils.WindowsLibraries.ShellLibraryInterop' -as [type])) {
+    Add-Type -Path "$PSScriptRoot\Private\ShellLibrary.cs"
+}
+
 Get-ChildItem -Path "$PSScriptRoot\Private" -Filter "*.ps1" -Recurse | ForEach-Object {
     . $_.FullName
 }
