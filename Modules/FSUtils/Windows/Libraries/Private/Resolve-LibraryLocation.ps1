@@ -15,10 +15,8 @@ function Resolve-LibraryLocation {
 
     # Handle knownfolder URLs
     if ($URL -match '^knownfolder:(\{.+\})$') {
-        $Guid = [guid] $Matches[1]
-
         try {
-            return Resolve-KnownFolder -Id $Guid
+            return Resolve-KnownFolder -Id ([guid] $Matches[1])
         }
         catch {
             return $URL
