@@ -5,7 +5,19 @@
     Resolves library paths to full .library-ms files
 #>
 function Resolve-LibraryPath {
+    
     param([string] $Name)
-    if ($Name -like '*.library-ms') { return $Name }
-    Join-Path (Get-LibraryPath) "$Name.library-ms"
+    
+    $path = if ($Name -like '*.library-ms') {
+        $Name 
+    }
+    else {
+        Join-Path (Get-LibraryPath) "$Name.library-ms"
+    }
+    
+    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+        throw "Library not found: $path"
+    }
+
+    $path
 }
