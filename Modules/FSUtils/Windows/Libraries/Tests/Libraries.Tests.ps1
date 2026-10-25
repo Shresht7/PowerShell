@@ -2,7 +2,7 @@
 
 BeforeAll {
     # Load the module (this also compiles ShellLibrary.cs)
-    . "$PSScriptRoot\..\Initialize-Libraries.ps1"
+    . "$PSScriptRoot\..\..\Initialize.ps1"
 
     # Everything below touches ONLY this uniquely named library
     $LibName = "PesterTest-$([guid]::NewGuid().ToString('N').Substring(0, 8))"
@@ -163,4 +163,56 @@ Describe 'Known Folders' {
         }
     }
 
+}
+
+Describe 'Import-Library' {
+
+    BeforeAll {
+        $name = "PesterImport-$([guid]::NewGuid().ToString('N').Substring(0, 8))"
+        $root = Join-Path $env:TEMP $name
+        $a = Join-Path $root 'A'
+        $b = Join-Path $root 'B'
+        New-Item -ItemType Directory -Path $a, $b | Out-Null
+
+        $json = Join-Path $root 'lib.json'
+        @{
+            Name      = $name
+            Locations = @(
+                @{ URL = $a; IsDefaultSaveLocation = $true }
+                @{ URL = $b }
+                @{ URL = (Join-Path $root 'Missing') }
+            )
+        } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $json
+    }
+
+    AfterAll {
+        if ($name -like 'PesterImport-*') {
+            $file = Join-Path (Get-LibraryPath) "$name.library-ms"
+            if (Test-Path -LiteralPath $file) { Remove-Item -LiteralPath $file -Force }
+            Remove-Item -LiteralPath $root -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It 'creates the library with the existing folders and skips missing ones' {
+        Import-Library -Path $json -WarningAction SilentlyContinue | Out-Null
+        $folders = @(Get-LibraryFolder -Name $name)
+
+        $folders.ResolvedPath | Should -Contain $a
+        $folders.ResolvedPath | Should -Contain $b
+        $folders.Count | Should -Be 2
+    }
+
+    It 'sets the default save location' {
+        ($folders = Get-LibraryFolder -Name $name) | Out-Null
+        ($folders | Where-Object ResolvedPath -eq $a).IsDefaultSaveLocation | Should -BeTrue
+    }
+
+    It 'fails without -Merge when the library exists' {
+        { Import-Library -Path $json -ErrorAction Stop } | Should -Throw '*already exists*'
+    }
+
+    It 'is idempotent with -Merge' {
+        Import-Library -Path $json -Merge -WarningAction SilentlyContinue | Out-Null
+        @(Get-LibraryFolder -Name $name).Count | Should -Be 2
+    }
 }

@@ -15,5 +15,5 @@ function Resolve-KnownFolder {
 
     Initialize-ShellLibraryInterop
 
-    [PSFSUtils.WindowsLibraries.KnownFolders]::GetPath($Id)
+    [PSFSUtils.Shell.KnownFolders]::GetPath($Id)
 }
