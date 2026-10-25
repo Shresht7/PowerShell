@@ -85,6 +85,7 @@
         "Test-IsSymbolicLink",
         "Get-Library",
         "New-Library",
+        "Remove-Library",
         "Set-LibraryDefaultSaveFolder",
         "Get-LibraryFolder",
         "Add-LibraryFolder",
