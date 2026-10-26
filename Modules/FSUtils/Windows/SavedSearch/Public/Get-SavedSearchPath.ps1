@@ -3,6 +3,9 @@
     Gets the path to the Searches folder
 .DESCRIPTION
     Returns the full path to the Searches folder
+.EXAMPLE
+    Get-SavedSearchPath
+    Returns the path to the current user's Searches folder.
 #>
 function Get-SavedSearchPath {
     $Path = Join-Path $Env:USERPROFILE 'Searches'

@@ -4,6 +4,15 @@
 .DESCRIPTION
     Gets saved searches from the default saved search location.
     (USERPROFILE\Searches) by default.
+.EXAMPLE
+    Get-SavedSearch
+    Gets all saved searches from the user's Searches folder.
+.EXAMPLE
+    Get-SavedSearch -Name 'PDF Documents'
+    Gets a saved search by name, including its scope, conditions, and sort order.
+.EXAMPLE
+    Get-SavedSearch | Select-Object Name, Scope, Conditions
+    Lists selected details for all saved searches.
 #>
 function Get-SavedSearch {
 
@@ -19,9 +28,9 @@ function Get-SavedSearch {
 
         $conditions = foreach ($c in $xml.SelectNodes('//conditions//condition[@type="leafCondition"]')) {
             [PSCustomObject]@{
-                Property  = $c.GetAttribute('property')
-                Operator  = $c.GetAttribute('operator')
-                Value     = $c.GetAttribute('value')
+                Property = $c.GetAttribute('property')
+                Operator = $c.GetAttribute('operator')
+                Value    = $c.GetAttribute('value')
             }
         }
 

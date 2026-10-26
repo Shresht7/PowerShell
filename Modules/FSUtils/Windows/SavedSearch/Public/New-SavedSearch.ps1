@@ -3,6 +3,28 @@
     Creates a Windows saved search.
 .DESCRIPTION
     Creates a .search-ms file in the user's Searches folder.
+.EXAMPLE
+    New-SavedSearch -Name 'PDF Documents' `
+        -Scope 'C:\Users\Me\Documents' `
+        -Condition @{ Property = 'System.FileExtension'; Operator = 'starts with'; Value = '.pdf' }
+    Creates a saved search for PDF files under the Documents folder.
+.EXAMPLE
+    $conditions = @(
+        @{ Property = 'System.FileExtension'; Operator = 'starts with'; Value = '.pdf' }
+        @{ Property = 'System.Size'; Operator = 'greater than'; Value = '1048576'; PropertyType = 'integer' }
+    )
+    New-SavedSearch -Name 'Large PDFs' `
+        -Scope 'C:\Users\Me\Documents', 'C:\Users\Me\Downloads' `
+        -Condition $conditions `
+        -SortBy 'System.DateModified' `
+        -SortDirection descending
+    Creates a saved search with multiple conditions and scopes.
+.EXAMPLE
+    New-SavedSearch -Name 'PDF Documents' `
+        -Scope 'C:\Users\Me\Documents' `
+        -Condition @{ Property = 'System.FileExtension'; Operator = 'starts with'; Value = '.pdf' } `
+        -Force
+    Replaces an existing saved search with the same name.
 #>
 function New-SavedSearch {
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]

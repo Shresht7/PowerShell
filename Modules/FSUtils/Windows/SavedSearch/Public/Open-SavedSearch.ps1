@@ -3,6 +3,15 @@
     Opens a saved search in Explorer
 .DESCRIPTION
     Opens a saved search in Explorer.
+.EXAMPLE
+    Open-SavedSearch -Name 'PDF Documents'
+    Opens the named saved search in File Explorer.
+.EXAMPLE
+    Open-SavedSearch
+    Opens the user's Searches folder in File Explorer.
+.EXAMPLE
+    Get-SavedSearch -Name 'PDF Documents' | Open-SavedSearch
+    Opens a saved search received through the pipeline.
 #>
 function Open-SavedSearch {
 
