@@ -82,78 +82,15 @@ function New-SavedSearch {
         }
     }
 
-    # Create XML document
-    $Document = [System.Xml.XmlDocument]::new()
-    $Declaration = $Document.CreateXmlDeclaration('1.0', 'utf-8', $null)
-    $null = $Document.AppendChild($Declaration)
-
-    # persistedQuery
-    $PersistedQuery = $Document.CreateElement('persistedQuery')
-    $PersistedQuery.SetAttribute('version', '1.0')
-    $null = $Document.AppendChild($PersistedQuery)
-
-    # viewInfo
-    $ViewInfo = $Document.CreateElement('viewInfo')
-    $ViewInfo.SetAttribute('viewMode', 'details')
-    $null = $PersistedQuery.AppendChild($ViewInfo)
-
-    # sortList
-    $SortList = $Document.CreateElement('sortList')
-    $Sort = $Document.CreateElement('sort')
-    $Sort.SetAttribute('viewField', $SortBy)
-    $Sort.SetAttribute('direction', $SortDirection)
-    $null = $SortList.AppendChild($Sort)
-    $null = $ViewInfo.AppendChild($SortList)
-
-    # query
-    $Query = $Document.CreateElement('query')
-    $null = $PersistedQuery.AppendChild($Query)
-
-    # conditions
-    $Conditions = $Document.CreateElement('conditions')
-    foreach ($Definition in $Condition) {
-        $ValidatedCondition = Test-SavedSearchCondition -Condition $Definition
-
-        $ConditionElement = $Document.CreateElement('condition')
-        $ConditionElement.SetAttribute('type', 'leafCondition')
-        $ConditionElement.SetAttribute('property', $ValidatedCondition.Property)
-        $ConditionElement.SetAttribute('operator', $ValidatedCondition.Operator)
-        $ConditionElement.SetAttribute('propertyType', $ValidatedCondition.PropertyType)
-        $ConditionElement.SetAttribute('value', $ValidatedCondition.Value)
-        $null = $Conditions.AppendChild($ConditionElement)
-    }
-    $null = $Query.AppendChild($Conditions)
-
-    # kindList
-    $KindList = $Document.CreateElement('kindList')
-    $KindElement = $Document.CreateElement('kind')
-    $KindElement.SetAttribute('name', $Kind)
-    $null = $KindList.AppendChild($KindElement)
-    $null = $Query.AppendChild($KindList)
-
-    # scope
-    $ScopeElement = $Document.CreateElement('scope')
-    foreach ($Item in $Scope) {
-        $Include = $Document.CreateElement('include')
-        $Include.SetAttribute('path', $Item)
-        $null = $ScopeElement.AppendChild($Include)
-    }
-    $null = $Query.AppendChild($ScopeElement)
-
     # Create .search-ms file
     if ($PSCmdlet.ShouldProcess($Path, 'Create saved search')) {
-        $Settings = [System.Xml.XmlWriterSettings]::new()
-        $Settings.Encoding = [System.Text.UTF8Encoding]::new($false)
-        $Settings.Indent = $true
-
-        $Writer = [System.Xml.XmlWriter]::Create($Path, $Settings)
-        try {
-            $Document.Save($Writer)
-        }
-        finally {
-            $Writer.Dispose()
-        }
-
+        $Document = New-SavedSearchXml `
+            -Scope $Scope `
+            -Condition $Condition `
+            -Kind $Kind `
+            -SortBy $SortBy `
+            -SortDirection $SortDirection
+        Write-SavedSearchDefinition -Document $Document -Path $Path
         Get-Item -LiteralPath $Path
     }
 }

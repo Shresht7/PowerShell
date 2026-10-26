@@ -8,6 +8,8 @@ Describe 'Set-SavedSearch' {
         . (Join-Path $privateRoot 'Read-SavedSearchDefinition.ps1')
         . (Join-Path $privateRoot 'Resolve-SavedSearchPath.ps1')
         . (Join-Path $privateRoot 'Test-SavedSearchCondition.ps1')
+        . (Join-Path $privateRoot 'New-SavedSearchXml.ps1')
+        . (Join-Path $privateRoot 'Write-SavedSearchDefinition.ps1')
         . (Join-Path $publicRoot 'Get-SavedSearchPath.ps1')
         . (Join-Path $publicRoot 'New-SavedSearch.ps1')
         . (Join-Path $publicRoot 'Set-SavedSearch.ps1')
@@ -54,6 +56,17 @@ Describe 'Set-SavedSearch' {
         @($xml.persistedQuery.query.scope.include) | Should -HaveCount 2
         @($xml.persistedQuery.query.conditions.condition) | Should -HaveCount 2
         $xml.persistedQuery.query.conditions.condition[0].propertyType | Should -Be 'integer'
+    }
+
+    It 'allows conditions to be cleared' {
+        New-SavedSearch -Name 'Clear Conditions' `
+            -Scope 'C:\Temp' `
+            -Condition @{ Property = 'System.FileExtension'; Operator = 'equals'; Value = '.txt' } | Out-Null
+
+        Set-SavedSearch -Name 'Clear Conditions' -Condition @() | Out-Null
+
+        $xml = [xml](Get-Content -LiteralPath (Join-Path $testSearchPath 'Clear Conditions.search-ms') -Raw)
+        $xml.SelectNodes('/persistedQuery/query/conditions/condition').Count | Should -Be 0
     }
 
     It 'supports WhatIf without changing the file' {

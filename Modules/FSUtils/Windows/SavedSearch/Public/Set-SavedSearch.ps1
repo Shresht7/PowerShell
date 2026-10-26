@@ -27,7 +27,6 @@ function Set-SavedSearch {
         [string[]] $Scope,
 
         # Conditions for the search (array of hashtables)
-        [ValidateNotNullOrEmpty()]
         [object[]] $Condition,
 
         # Kind of items to include (e.g., item)
@@ -137,16 +136,7 @@ function Set-SavedSearch {
                 }
             }
 
-            $Settings = [System.Xml.XmlWriterSettings]::new()
-            $Settings.Encoding = [System.Text.UTF8Encoding]::new($false)
-            $Settings.Indent = $true
-            $Writer = [System.Xml.XmlWriter]::Create($Path, $Settings)
-            try {
-                $Xml.Save($Writer)
-            }
-            finally {
-                $Writer.Dispose()
-            }
+            Write-SavedSearchDefinition -Document $Xml -Path $Path
 
             Get-Item -LiteralPath $Path
         }

@@ -15,6 +15,8 @@ Describe 'New-SavedSearch' {
         . (Join-Path $savedSearchRoot 'Private\Get-SavedSearchFile.ps1')
         . (Join-Path $savedSearchRoot 'Private\Read-SavedSearchDefinition.ps1')
         . (Join-Path $savedSearchRoot 'Private\Test-SavedSearchCondition.ps1')
+        . (Join-Path $savedSearchRoot 'Private\New-SavedSearchXml.ps1')
+        . (Join-Path $savedSearchRoot 'Private\Write-SavedSearchDefinition.ps1')
         . (Join-Path $publicRoot 'Get-SavedSearch.ps1')
     }
 
