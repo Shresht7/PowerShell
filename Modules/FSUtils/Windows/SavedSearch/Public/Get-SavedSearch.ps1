@@ -20,7 +20,7 @@ function Get-SavedSearch {
         $conditions = foreach ($c in $xml.SelectNodes('//conditions//condition[@type="leafCondition"]')) {
             [PSCustomObject]@{
                 Property  = $c.GetAttribute('property')
-                Operation = $c.GetAttribute('operation')
+                Operator  = $c.GetAttribute('operator')
                 Value     = $c.GetAttribute('value')
             }
         }
