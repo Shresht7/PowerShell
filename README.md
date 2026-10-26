@@ -25,7 +25,7 @@ Tab-completers for CLI tools (cargo, code, fd, go, npm, scoop).
 A collection of file-system utilities.
 
 - `Get-BrokenSymlink`, `Get-GitRepo`, `Get-Size`, `Get-SpecialFolders`, `Move-ItemAndCreateLink`, `Set-LocationFuzzy`, `Set-LocationToHome`, `Test-IsSymbolicLink`, `New-Shortcut`, `Enter-NewDirectory`
-- **Windows:** `Get-DesktopIconVisibility`, `Get-FileVisibility`, `Get-Library`, `Invoke-Library`, `Switch-FileVisibility`, `Get-SavedSearch`, `Get-SavedSearchPath`, `New-SavedSearch`, `Open-SavedSearch`, `Remove-SavedSearch`, `Set-SavedSearch`
+- **Windows:** `Get-DesktopIconVisibility`, `Get-FileVisibility`, `Get-Library`, `Invoke-Library`, `Switch-FileVisibility`, `Get-SavedSearch`, `Get-SavedSearchPath`, `New-SavedSearch`, `Open-SavedSearch`, `Remove-SavedSearch`, `Rename-SavedSearch`, `Set-SavedSearch`
 
 ### [NetworkUtils](./Modules/NetworkUtils/) `v0.0.1`
 Network utility functions.

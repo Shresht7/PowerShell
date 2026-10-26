@@ -23,6 +23,7 @@ $cmds = @(
     'Get-SavedSearch',
     'New-SavedSearch',
     'Set-SavedSearch',
+    'Rename-SavedSearch',
     'Open-SavedSearch',
     'Remove-SavedSearch'
 )
