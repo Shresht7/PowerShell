@@ -34,14 +34,12 @@ function Import-Library {
         $libName = if ($Name) { $Name } else { $json.Name }
 
         if (-not $libName) {
-            Write-Error "No library name in '$Path'. Pass -Name."
-            return
+            throw "No library name in '$Path'. Pass -Name."
         }
 
         $exists = [bool](Get-LibraryFile -Name $libName)
         if ($exists -and -not $Merge) {
-            Write-Error "Library '$libName' already exists. Use -Merge to add to it."
-            return
+            throw "Library '$libName' already exists. Use -Merge to add to it."
         }
 
         $action = if ($exists) { "Merge '$Path' into library" } else { "Create library from '$Path'" }
@@ -50,7 +48,7 @@ function Import-Library {
         Initialize-ShellLibraryInterop
         $interop = [PSFSUtils.WindowsLibraries.ShellLibraryInterop]
 
-        if (-not $exists) { New-Library -Name $libName }
+        if (-not $exists) { New-Library -Name $libName -Confirm:$false }
         $libFile = Resolve-LibraryPath $libName
 
         $present = @((Get-LibraryFolder -Name $libName).ResolvedPath)
