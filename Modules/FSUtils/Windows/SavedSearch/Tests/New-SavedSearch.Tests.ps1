@@ -63,12 +63,24 @@ Describe 'New-SavedSearch' {
 
     It 'round-trips property types through Get-SavedSearch' {
         New-SavedSearch -Name 'Round Trip' `
-            -Scope 'C:\Temp' `
-            -Condition @{ Property = 'System.Size'; Operator = 'greater than'; Value = '1024'; PropertyType = 'integer' }
+            -Scope @('C:\Temp', 'C:\Windows\Temp') `
+            -Condition @{ Property = 'System.Size'; Operator = 'greater than'; Value = '1024'; PropertyType = 'integer' } `
+            -Kind 'document' `
+            -SortBy 'System.DateCreated' `
+            -SortDirection ascending
 
         $search = Get-SavedSearch -Name 'Round Trip'
 
+        $search.Name | Should -Be 'Round Trip'
+        $search.Path | Should -Match 'Round Trip\.search-ms$'
+        $search.Scope | Should -Be @('C:\Temp', 'C:\Windows\Temp')
+        $search.Kind | Should -Be 'document'
         $search.Conditions.PropertyType | Should -Be 'integer'
+        $search.Conditions.Property | Should -Be 'System.Size'
+        $search.Conditions.Operator | Should -Be 'greater than'
+        $search.Conditions.Value | Should -Be '1024'
+        $search.Sort.Property | Should -Be 'System.DateCreated'
+        $search.Sort.Direction | Should -Be 'ascending'
     }
 
     It 'escapes XML attribute values' {

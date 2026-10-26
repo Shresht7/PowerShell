@@ -25,6 +25,11 @@
         -Condition @{ Property = 'System.FileExtension'; Operator = 'starts with'; Value = '.pdf' } `
         -Force
     Replaces an existing saved search with the same name.
+.EXAMPLE
+    $search = Get-SavedSearch -Name 'Large PDFs'
+    $search.Conditions
+    $search.Sort
+    Reads a saved search definition after it has been created.
 #>
 function New-SavedSearch {
     

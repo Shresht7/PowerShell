@@ -13,6 +13,11 @@
 .EXAMPLE
     Get-SavedSearch | Select-Object Name, Scope, Conditions
     Lists selected details for all saved searches.
+.EXAMPLE
+    $search = Get-SavedSearch -Name 'Large PDFs'
+    $search.Conditions
+    $search.Sort
+    Reads the conditions and sort definition from a saved search.
 #>
 function Get-SavedSearch {
 
