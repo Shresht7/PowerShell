@@ -22,6 +22,7 @@ $SavedSearchCompleter = {
 $cmds = @(
     'Get-SavedSearch',
     'New-SavedSearch',
+    'Set-SavedSearch',
     'Open-SavedSearch',
     'Remove-SavedSearch'
 )
@@ -37,4 +38,8 @@ $NewSavedSearchCompleter = {
 
 foreach ($parameter in @('Kind', 'SortBy', 'SortDirection', 'Condition')) {
     Register-ArgumentCompleter -CommandName 'New-SavedSearch' -ParameterName $parameter -ScriptBlock $NewSavedSearchCompleter
+}
+
+foreach ($parameter in @('Kind', 'SortBy', 'SortDirection', 'Condition')) {
+    Register-ArgumentCompleter -CommandName 'Set-SavedSearch' -ParameterName $parameter -ScriptBlock $NewSavedSearchCompleter
 }
