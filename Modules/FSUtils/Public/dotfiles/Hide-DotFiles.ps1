@@ -34,7 +34,10 @@ function Hide-DotFiles {
         [switch] $Recurse,
 
         # Depth for recursion
-        [uint] $Depth
+        [uint] $Depth,
+
+        # Return hidden items if set
+        [switch] $PassThru
     )
 
     process {
@@ -57,6 +60,9 @@ function Hide-DotFiles {
                 Write-Verbose -Message "Hiding $($Item.Name)"
                 $Item.Attributes = $Item.Attributes -bor [System.IO.FileAttributes]::Hidden
             }
+
+            # Output if requested
+            if ($PassThru) { $Item }
 
         }
     }

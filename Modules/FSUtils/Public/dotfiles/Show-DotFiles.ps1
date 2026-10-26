@@ -34,7 +34,10 @@ function Show-DotFiles {
         [switch] $Recurse,
 
         # Depth for recursion
-        [uint] $Depth
+        [uint] $Depth,
+
+        # Return shown items if set
+        [switch] $PassThru
     )
 
     process {
@@ -55,9 +58,12 @@ function Show-DotFiles {
 
             # Make it visible
             if ($PSCmdlet.ShouldProcess($Item.FullName, "Show")) {
-                Write-Verbose -Message "Show $($Item.FullName)"
+                Write-Verbose -Message "Showing $($Item.FullName)"
                 $Item.Attributes = $Item.Attributes -band (-bnot [System.IO.FileAttributes]::Hidden) # remove only hidden flag
             }
+
+            # Output if requested
+            if ($PassThru) { $Item }
         }
 
     }
