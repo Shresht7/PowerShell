@@ -16,14 +16,32 @@ function Write-SavedSearchDefinition {
         [string] $Path
     )
 
-    $Settings = [System.Xml.XmlWriterSettings]::new()
-    $Settings.Encoding = [System.Text.UTF8Encoding]::new($false)
-    $Settings.Indent = $true
-    $Writer = [System.Xml.XmlWriter]::Create($Path, $Settings)
+    $Directory = Split-Path -Parent $Path
+    $TemporaryPath = Join-Path $Directory ".tmp-$([guid]::NewGuid().ToString('N')).search-ms"
+
     try {
-        $Document.Save($Writer)
+        $Settings = [System.Xml.XmlWriterSettings]::new()
+        $Settings.Encoding = [System.Text.UTF8Encoding]::new($false)
+        $Settings.Indent = $true
+
+        $Writer = [System.Xml.XmlWriter]::Create($TemporaryPath, $Settings)
+        try {
+            $Document.Save($Writer)
+        }
+        finally {
+            $Writer.Dispose()
+        }
+
+        if (Test-Path -LiteralPath $Path) {
+            [System.IO.File]::Move($TemporaryPath, $Path, $true)
+        }
+        else {
+            [System.IO.File]::Move($TemporaryPath, $Path)
+        }
     }
     finally {
-        $Writer.Dispose()
+        if (Test-Path -LiteralPath $TemporaryPath) {
+            Remove-Item -LiteralPath $TemporaryPath -Force -ErrorAction SilentlyContinue
+        }
     }
 }
