@@ -10,6 +10,10 @@ Describe 'New-SavedSearch' {
         function Get-SavedSearchPath {
             $testSearchPath
         }
+
+        . (Join-Path $savedSearchRoot 'Private\Get-SavedSearchFile.ps1')
+        . (Join-Path $savedSearchRoot 'Private\Read-SavedSearchDefinition.ps1')
+        . (Join-Path $publicRoot 'Get-SavedSearch.ps1')
     }
 
     It 'creates a valid persisted query with operator conditions' {
@@ -41,6 +45,28 @@ Describe 'New-SavedSearch' {
         @($xml.persistedQuery.query.conditions.condition) | Should -HaveCount 2
         @($xml.persistedQuery.query.scope.include) | Should -HaveCount 2
         $xml.persistedQuery.query.conditions.condition[1].propertyType | Should -Be 'integer'
+    }
+
+    It 'preserves property types in generated conditions' {
+        $file = New-SavedSearch -Name 'Typed Search' `
+            -Scope 'C:\Temp' `
+            -Condition @{ Property = 'System.Size'; Operator = 'greater than'; Value = '1024'; PropertyType = 'integer' }
+
+        $xml = [xml](Get-Content -LiteralPath $file.FullName -Raw)
+        $condition = $xml.persistedQuery.query.conditions.condition
+
+        $condition.propertyType | Should -Be 'integer'
+        $condition.operator | Should -Be 'greater than'
+    }
+
+    It 'round-trips property types through Get-SavedSearch' {
+        New-SavedSearch -Name 'Round Trip' `
+            -Scope 'C:\Temp' `
+            -Condition @{ Property = 'System.Size'; Operator = 'greater than'; Value = '1024'; PropertyType = 'integer' }
+
+        $search = Get-SavedSearch -Name 'Round Trip'
+
+        $search.Conditions.PropertyType | Should -Be 'integer'
     }
 
     It 'escapes XML attribute values' {
