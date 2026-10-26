@@ -1,8 +1,8 @@
 <#
 .SYNOPSIS
-    Creates a Windows saved search.
+    Creates a Windows saved search
 .DESCRIPTION
-    Creates a .search-ms file in the user's Searches folder.
+    Creates a .search-ms file in the user's Searches folder
 .EXAMPLE
     New-SavedSearch -Name 'PDF Documents' `
         -Scope 'C:\Users\Me\Documents' `
@@ -27,6 +27,7 @@
     Replaces an existing saved search with the same name.
 #>
 function New-SavedSearch {
+    
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
     param(
         # Name of the saved search file
@@ -69,19 +70,29 @@ function New-SavedSearch {
         throw "Saved search '$Name' already exists. Use -Force to overwrite it."
     }
 
+    # Validate scope entries
+    foreach ($Item in $Scope) {
+        if ([string]::IsNullOrWhiteSpace($Item)) {
+            throw 'Scope entries cannot be empty.'
+        }
+    }
+
     # Create XML document
     $Document = [System.Xml.XmlDocument]::new()
     $Declaration = $Document.CreateXmlDeclaration('1.0', 'utf-8', $null)
     $null = $Document.AppendChild($Declaration)
 
+    # persistedQuery
     $PersistedQuery = $Document.CreateElement('persistedQuery')
     $PersistedQuery.SetAttribute('version', '1.0')
     $null = $Document.AppendChild($PersistedQuery)
 
+    # viewInfo
     $ViewInfo = $Document.CreateElement('viewInfo')
     $ViewInfo.SetAttribute('viewMode', 'details')
     $null = $PersistedQuery.AppendChild($ViewInfo)
 
+    # sortList
     $SortList = $Document.CreateElement('sortList')
     $Sort = $Document.CreateElement('sort')
     $Sort.SetAttribute('viewField', $SortBy)
@@ -89,53 +100,33 @@ function New-SavedSearch {
     $null = $SortList.AppendChild($Sort)
     $null = $ViewInfo.AppendChild($SortList)
 
+    # query
     $Query = $Document.CreateElement('query')
     $null = $PersistedQuery.AppendChild($Query)
 
+    # conditions
     $Conditions = $Document.CreateElement('conditions')
     foreach ($Definition in $Condition) {
-        if ($Definition -is [System.Collections.IDictionary]) {
-            $Property = if ($Definition.ContainsKey('Property')) { $Definition['Property'] }
-            $Operator = if ($Definition.ContainsKey('Operator')) { $Definition['Operator'] }
-            $Value = if ($Definition.ContainsKey('Value')) { $Definition['Value'] }
-            $PropertyType = if ($Definition.ContainsKey('PropertyType')) { $Definition['PropertyType'] }
-        }
-        else {
-            $Property = $Definition.PSObject.Properties['Property'].Value
-            $Operator = $Definition.PSObject.Properties['Operator'].Value
-            $Value = $Definition.PSObject.Properties['Value'].Value
-            $PropertyType = $Definition.PSObject.Properties['PropertyType'].Value
-        }
-
-        if ([string]::IsNullOrWhiteSpace([string] $Property) -or
-            [string]::IsNullOrWhiteSpace([string] $Operator) -or
-            $null -eq $Value) {
-            throw 'Each condition must contain Property, Operator, and Value.'
-        }
-
-        if ([string]::IsNullOrWhiteSpace([string] $PropertyType)) {
-            $PropertyTypeValue = 'string'
-        }
-        else {
-            $PropertyTypeValue = [string] $PropertyType
-        }
+        $ValidatedCondition = Test-SavedSearchCondition -Condition $Definition
 
         $ConditionElement = $Document.CreateElement('condition')
         $ConditionElement.SetAttribute('type', 'leafCondition')
-        $ConditionElement.SetAttribute('property', [string] $Property)
-        $ConditionElement.SetAttribute('operator', [string] $Operator)
-        $ConditionElement.SetAttribute('propertyType', $PropertyTypeValue)
-        $ConditionElement.SetAttribute('value', [string] $Value)
+        $ConditionElement.SetAttribute('property', $ValidatedCondition.Property)
+        $ConditionElement.SetAttribute('operator', $ValidatedCondition.Operator)
+        $ConditionElement.SetAttribute('propertyType', $ValidatedCondition.PropertyType)
+        $ConditionElement.SetAttribute('value', $ValidatedCondition.Value)
         $null = $Conditions.AppendChild($ConditionElement)
     }
     $null = $Query.AppendChild($Conditions)
 
+    # kindList
     $KindList = $Document.CreateElement('kindList')
     $KindElement = $Document.CreateElement('kind')
     $KindElement.SetAttribute('name', $Kind)
     $null = $KindList.AppendChild($KindElement)
     $null = $Query.AppendChild($KindList)
 
+    # scope
     $ScopeElement = $Document.CreateElement('scope')
     foreach ($Item in $Scope) {
         $Include = $Document.CreateElement('include')
@@ -144,6 +135,7 @@ function New-SavedSearch {
     }
     $null = $Query.AppendChild($ScopeElement)
 
+    # Create .search-ms file
     if ($PSCmdlet.ShouldProcess($Path, 'Create saved search')) {
         $Settings = [System.Xml.XmlWriterSettings]::new()
         $Settings.Encoding = [System.Text.UTF8Encoding]::new($false)

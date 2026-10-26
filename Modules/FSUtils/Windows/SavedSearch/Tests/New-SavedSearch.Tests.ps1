@@ -7,12 +7,14 @@ Describe 'New-SavedSearch' {
         $testSearchPath = Join-Path $TestDrive 'Searches'
         New-Item -ItemType Directory -Path $testSearchPath | Out-Null
 
+        # Override Get-SavedSearchPath to use test path
         function Get-SavedSearchPath {
             $testSearchPath
         }
 
         . (Join-Path $savedSearchRoot 'Private\Get-SavedSearchFile.ps1')
         . (Join-Path $savedSearchRoot 'Private\Read-SavedSearchDefinition.ps1')
+        . (Join-Path $savedSearchRoot 'Private\Test-SavedSearchCondition.ps1')
         . (Join-Path $publicRoot 'Get-SavedSearch.ps1')
     }
 
@@ -36,9 +38,9 @@ Describe 'New-SavedSearch' {
         $file = New-SavedSearch -Name 'Documents' `
             -Scope @('C:\Users\Test\Documents', 'C:\Users\Test\Downloads') `
             -Condition @(
-                @{ Property = 'System.FileExtension'; Operator = 'starts with'; Value = '.pdf' }
-                @{ Property = 'System.Size'; Operator = 'greater than'; Value = '1024'; PropertyType = 'integer' }
-            )
+            @{ Property = 'System.FileExtension'; Operator = 'starts with'; Value = '.pdf' }
+            @{ Property = 'System.Size'; Operator = 'greater than'; Value = '1024'; PropertyType = 'integer' }
+        )
 
         $xml = [xml](Get-Content -LiteralPath $file.FullName -Raw)
 
@@ -84,7 +86,30 @@ Describe 'New-SavedSearch' {
         {
             New-SavedSearch -Name 'Invalid' -Scope 'C:\Temp' `
                 -Condition @{ Property = 'System.FileExtension'; Value = '.pdf' }
-        } | Should -Throw '*Property, Operator, and Value*'
+        } | Should -Throw '*non-empty Operator*'
+    }
+
+    It 'rejects unsupported property types' {
+        {
+            New-SavedSearch -Name 'Invalid Type' -Scope 'C:\Temp' `
+                -Condition @{ Property = 'System.Size'; Operator = 'greater than'; Value = '1024'; PropertyType = 'currency' }
+        } | Should -Throw '*Unsupported PropertyType*'
+    }
+
+    It 'defaults a missing property type to string' {
+        $file = New-SavedSearch -Name 'Default Type' -Scope 'C:\Temp' `
+            -Condition @{ Property = 'System.FileExtension'; Operator = 'equals'; Value = '.txt' }
+
+        $xml = [xml](Get-Content -LiteralPath $file.FullName -Raw)
+
+        $xml.persistedQuery.query.conditions.condition.propertyType | Should -Be 'string'
+    }
+
+    It 'rejects blank scope entries' {
+        {
+            New-SavedSearch -Name 'Invalid Scope' -Scope @('C:\Temp', ' ') `
+                -Condition @{ Property = 'System.FileExtension'; Operator = 'equals'; Value = '.txt' }
+        } | Should -Throw '*Scope entries cannot be empty*'
     }
 
     It 'does not overwrite an existing search without Force' {
