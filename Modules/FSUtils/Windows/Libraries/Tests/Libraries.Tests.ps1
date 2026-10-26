@@ -3,28 +3,28 @@
 BeforeAll {
     # Load the module (this also compiles ShellLibrary.cs)
     . "$PSScriptRoot\..\..\Initialize.ps1"
-
-    # Everything below touches ONLY this uniquely named library
-    $LibName = "PesterTest-$([guid]::NewGuid().ToString('N').Substring(0, 8))"
-    $LibFile = Join-Path (Get-LibraryPath) "$LibName.library-ms"
-
-    $Root = Join-Path $Env:TEMP $LibName
-    $FolderA = Join-Path $Root "A"
-    $FolderB = Join-Path $Root "B"
-    $FolderStale = Join-Path $Root "Stale"
-    New-Item -ItemType Directory -Path $FolderA, $FolderB, $FolderStale | Out-Null
 }
 
-AfterAll {
-    # Cleanup, guarded so it can only ever delete our own test library
-    if ($LibName -like 'PesterTest-*') {
-        if (Test-Path -LiteralPath $LibFile) { Remove-Item -LiteralPath $LibFile -Force }
-        if (Test-Path -LiteralPath $Root) { Remove-Item -LiteralPath $Root -Recurse -Force }
-    }
-}
-
-# NOTE: These tests build on each other and must be run in order
 Describe "Library Lifecycle" {
+
+    BeforeEach {
+        # Each test owns a unique library and temporary folder tree.
+        $LibName = "PesterTest-$([guid]::NewGuid().ToString('N').Substring(0, 8))"
+        $LibFile = Join-Path (Get-LibraryPath) "$LibName.library-ms"
+        $Root = Join-Path $Env:TEMP $LibName
+        $FolderA = Join-Path $Root "A"
+        $FolderB = Join-Path $Root "B"
+        $FolderStale = Join-Path $Root "Stale"
+        New-Item -ItemType Directory -Path $FolderA, $FolderB, $FolderStale | Out-Null
+    }
+
+    AfterEach {
+        # Cleanup, guarded so it can only ever delete this test's resources.
+        if ($LibName -like 'PesterTest-*') {
+            if (Test-Path -LiteralPath $LibFile) { Remove-Item -LiteralPath $LibFile -Force }
+            if (Test-Path -LiteralPath $Root) { Remove-Item -LiteralPath $Root -Recurse -Force }
+        }
+    }
 
     Context 'New-Library' {
         It 'creates the .library-ms file' {
@@ -33,17 +33,20 @@ Describe "Library Lifecycle" {
         }
 
         It 'shows up in Get-Library' {
+            New-Library -Name $LibName
             (Get-Library -Name $LibName).Name | Should -Be $LibName
         }
     }
 
     Context 'Add-LibraryFolder' {
         It 'adds a folder to the library' {
+            New-Library -Name $LibName
             Add-LibraryFolder -Library $LibName -Path $FolderA
             (Get-LibraryFolder -Name $LibName).ResolvedPath | Should -Contain $FolderA
         }
 
         It 'adds a second folder' {
+            New-Library -Name $LibName
             Add-LibraryFolder -Library $LibName -Path $FolderB
             (Get-LibraryFolder -Name $LibName).ResolvedPath | Should -Contain $FolderB
         }
@@ -53,6 +56,7 @@ Describe "Library Lifecycle" {
         }
 
         It 'rejects a path that is not a valid folder' {
+            New-Library -Name $LibName
             $file = Join-Path $Root 'file.txt'
             Set-Content -LiteralPath $file -Value 'x'
             { Add-LibraryFolder -Library $LibName -Path $file -ErrorAction Stop } | Should -Throw -ExpectedMessage "*not a folder*"
@@ -62,6 +66,9 @@ Describe "Library Lifecycle" {
 
     Context 'Set-LibraryDefaultSaveFolder' {
         It 'marks the chosen folder as the default' {
+            New-Library -Name $LibName
+            Add-LibraryFolder -Library $LibName -Path $FolderA
+            Add-LibraryFolder -Library $LibName -Path $FolderB
             Set-LibraryDefaultSaveFolder -Library $LibName -Path $FolderB
             $folders = Get-LibraryFolder -Name $LibName
             ($folders | Where-Object ResolvedPath -eq $FolderB).IsDefaultSaveLocation | Should -BeTrue
@@ -71,11 +78,14 @@ Describe "Library Lifecycle" {
 
     Context 'Remove-LibraryFolder' {
         It 'removes a folder' {
+            New-Library -Name $LibName
+            Add-LibraryFolder -Library $LibName -Path $FolderA
             Remove-LibraryFolder -Library $LibName -Path $FolderA
             (Get-LibraryFolder -Name $LibName).ResolvedPath | Should -Not -Contain $FolderA
         }
 
         It 'removes a stale entry whose folder was deleted' {
+            New-Library -Name $LibName
             Add-LibraryFolder -Library $LibName -Path $FolderStale
             Remove-Item -LiteralPath $FolderStale -Recurse -Force
             (Get-LibraryFolder -Name $LibName).ResolvedPath | Should -Contain $FolderStale
@@ -94,6 +104,7 @@ Describe "Library Lifecycle" {
         }
 
         It 'deletes the test library' {
+            New-Library -Name $LibName
             Remove-Library -Name $LibName -Confirm:$false
             Test-Path -LiteralPath $LibFile | Should -BeFalse
         }
