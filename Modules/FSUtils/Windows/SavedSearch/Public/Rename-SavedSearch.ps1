@@ -20,21 +20,16 @@ function Rename-SavedSearch {
         # Name of the saved search to rename
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Search', 'SearchName')]
-        [ValidateNotNullOrEmpty()]
         [string] $Name,
 
         # New name for the search
         [Parameter(Mandatory, Position = 1)]
-        [ValidateNotNullOrEmpty()]
-        [ValidatePattern('^[^\\/:*?"<>|]+$')]
         [string] $NewName
     )
 
     process {
-        if ($NewName.EndsWith('.search-ms', [System.StringComparison]::OrdinalIgnoreCase)) {
-            throw "NewName must be a base name without the '.search-ms' extension."
-        }
-
+        Test-SavedSearchName -Name $Name | Out-Null
+        Test-SavedSearchName -Name $NewName | Out-Null
         $SourcePath = Resolve-SavedSearchPath $Name
         $DestinationPath = Join-Path (Get-SavedSearchPath) "$NewName.search-ms"
 

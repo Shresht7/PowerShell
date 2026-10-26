@@ -9,6 +9,7 @@ Describe 'Set-SavedSearch' {
         . (Join-Path $privateRoot 'Resolve-SavedSearchPath.ps1')
         . (Join-Path $privateRoot 'Test-SavedSearchCondition.ps1')
         . (Join-Path $privateRoot 'New-SavedSearchXml.ps1')
+        . (Join-Path $privateRoot 'Test-SavedSearchName.ps1')
         . (Join-Path $privateRoot 'Write-SavedSearchDefinition.ps1')
         . (Join-Path $publicRoot 'Get-SavedSearchPath.ps1')
         . (Join-Path $publicRoot 'New-SavedSearch.ps1')

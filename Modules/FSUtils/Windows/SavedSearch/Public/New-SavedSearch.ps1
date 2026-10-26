@@ -37,8 +37,6 @@ function New-SavedSearch {
     param(
         # Name of the saved search file
         [Parameter(Mandatory, Position = 0)]
-        [ValidateNotNullOrEmpty()]
-        [ValidatePattern('^[^\\/:*?"<>|]+$')]
         [string] $Name,
 
         # Scope paths to include
@@ -67,6 +65,7 @@ function New-SavedSearch {
     )
 
     # Get path for saved searches
+    Test-SavedSearchName -Name $Name | Out-Null
     $SearchesPath = Get-SavedSearchPath
     $Path = Join-Path $SearchesPath "$Name.search-ms"
 

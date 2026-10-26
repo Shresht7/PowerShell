@@ -6,6 +6,7 @@ Describe 'Rename-SavedSearch' {
 
         . (Join-Path $privateRoot 'Get-SavedSearchFile.ps1')
         . (Join-Path $privateRoot 'Resolve-SavedSearchPath.ps1')
+        . (Join-Path $privateRoot 'Test-SavedSearchName.ps1')
         . (Join-Path $publicRoot 'Get-SavedSearchPath.ps1')
         . (Join-Path $publicRoot 'Rename-SavedSearch.ps1')
 
