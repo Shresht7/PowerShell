@@ -1,13 +1,31 @@
+<#
+.SYNOPSIS
+    Exports a Windows library definition.
+.DESCRIPTION
+    Returns a library definition as an object or writes it as JSON.
+.EXAMPLE
+    Export-Library -Name 'Documents'
+    Returns the library definition as an object.
+.EXAMPLE
+    Export-Library -Name 'Documents' -Path .\documents.json
+    Writes the library definition to a JSON file.
+.EXAMPLE
+    Export-Library -Name 'Documents' -Path .\documents.json -Force
+    Overwrites an existing JSON file.
+#>
 function Export-Library {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
     param(
         # Name of the library to export
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string] $Name,
 
         # Path to export the library to
-        [string] $Path
+        [string] $Path,
+
+        # Overwrite an existing export file
+        [switch] $Force
     )
 
     process {
@@ -46,9 +64,15 @@ function Export-Library {
         }
 
         if ($Path) {
+            if ((Test-Path -LiteralPath $Path) -and -not $Force) {
+                throw "Export path '$Path' already exists. Use -Force to overwrite it."
+            }
+
             $json = $export | ConvertTo-Json -Depth 10
-            $json | Set-Content -Path $Path -Encoding UTF8
-            Get-Item -Path $Path
+            if ($PSCmdlet.ShouldProcess($Path, 'Export library')) {
+                $json | Set-Content -LiteralPath $Path -Encoding UTF8
+                Get-Item -LiteralPath $Path
+            }
         }
         else {
             $export
