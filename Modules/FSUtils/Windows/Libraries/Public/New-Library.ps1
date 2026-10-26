@@ -17,6 +17,8 @@ function New-Library {
         [string] $Name
     )
 
+    Test-LibraryName -Name $Name | Out-Null
+    
     Initialize-ShellLibraryInterop
 
     if ($PSCmdlet.ShouldProcess($Name, 'Create Library')) {

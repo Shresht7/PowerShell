@@ -11,13 +11,12 @@ function Rename-Library {
     )
 
     process {
+
+        Test-LibraryName -Name $Name | Out-Null
+        Test-LibraryName -Name $NewName | Out-Null
+
         if ((Test-DefaultLibrary $Name) -or (Test-DefaultLibrary $NewName)) {
             Write-Error "Cannot rename to or from a default library."
-            return
-        }
-
-        if ($NewName.IndexOfAny([IO.Path]::GetInvalidFileNameChars()) -ge 0) {
-            Write-Error "Invalid library name: '$NewName'"
             return
         }
 
@@ -32,5 +31,6 @@ function Rename-Library {
         if ($PSCmdlet.ShouldProcess($Name, "Rename library to '$NewName'")) {
             Rename-Item -LiteralPath $source -NewName $targetName
         }
+        
     }
 }
