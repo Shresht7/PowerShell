@@ -53,6 +53,7 @@ function New-SavedSearch {
         [string] $SortBy = 'System.DateModified',
 
         # Sort direction
+        [ValidateSet('ascending', 'descending')]
         [string] $SortDirection = 'descending',
 
         # Overwrite if exists

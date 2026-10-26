@@ -29,3 +29,12 @@ $cmds = @(
 foreach ($cmd in $cmds) {
     Register-ArgumentCompleter -CommandName $cmd -ParameterName 'Name' -ScriptBlock $SavedSearchCompleter
 }
+
+$NewSavedSearchCompleter = {
+    param($CommandName, $ParameterName, $WordToComplete, $CommandAst, $FakeBoundParameters)
+    Complete-SavedSearchArgument -ParameterName $ParameterName -WordToComplete $WordToComplete
+}
+
+foreach ($parameter in @('Kind', 'SortBy', 'SortDirection', 'Condition')) {
+    Register-ArgumentCompleter -CommandName 'New-SavedSearch' -ParameterName $parameter -ScriptBlock $NewSavedSearchCompleter
+}
