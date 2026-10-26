@@ -21,6 +21,7 @@ $SavedSearchCompleter = {
 
 $cmds = @(
     'Get-SavedSearch',
+    'New-SavedSearch',
     'Open-SavedSearch',
     'Remove-SavedSearch'
 )
