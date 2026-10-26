@@ -24,6 +24,8 @@
 .EXAMPLE
     Get-DotFiles -Shown
     Gets only visible dot files
+.OUTPUTS
+    System.IO.FileSystemInfo
 #>
 function Get-DotFiles {
 
