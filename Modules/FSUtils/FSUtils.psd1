@@ -107,6 +107,8 @@
         "Remove-SavedSearch",
         "Set-SavedSearch",
         "Rename-SavedSearch",
+        "Show-Item",
+        "Hide-Item",
         "Get-DotFiles",
         "Show-DotFiles",
         "Hide-DotFiles"
